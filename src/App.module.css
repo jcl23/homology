@@ -1,0 +1,31 @@
+.board {
+
+}
+
+.panelHolder {
+    width: min-content;
+    display: flex;
+    margin: 15px;
+    flex-direction: column;
+}
+
+
+
+
+.upperPanel {
+
+    /* Should be arranged horizontally */
+    height: calc(100vh - 300px - 50px);
+    z-index: 1;
+    right: 0;
+}
+
+.lowerPanel {
+    height: 200px;
+    margin: left auto;
+    box-shadow: inset 0 1px 0 2px rgba(0,0, 0, 0.5);
+}
+
+.centerHolder {
+    
+}

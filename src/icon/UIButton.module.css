@@ -1,0 +1,31 @@
+svg.icon {
+    transition-duration: 0.2s;
+    transition-timing-function: ease-in-out;
+    transition-property: backgroundColor;
+}
+.button:active {
+    box-shadow: none;
+    transform: translateY(2px);
+}
+.button {
+    transition-property: box-shadow, transform, background-color;
+    transition-duration: 0.1s;
+    font-weight: bold;
+    width: 52px; /* Square button dimensions */
+    height: 57px;
+    text-transform: none;
+    box-shadow: 2px 2px 2px 0px #0004;
+    min-width: 0;
+    margin: 5px;
+    margin-bottom: 5px;
+    padding: 0px;
+    border: 2px solid #0004;
+    border-bottom-right-radius: 0px;
+    position: relative; /* Enable overlaying icons */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--unselected-fg); /* Default color */
+    background-color: var(--background-color); /* Default background color */
+}

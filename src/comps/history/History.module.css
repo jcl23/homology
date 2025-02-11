@@ -1,0 +1,13 @@
+.historyOuter {
+    width: 100%;
+    border: 1px solid grey;
+    margin-bottom: 15px;
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .historyOuter > div {
+    margin: 5px;
+    border: 1px solid lightgray;
+  }
