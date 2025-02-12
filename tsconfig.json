@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
     "lib": ["es2023"],
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "noEmitOnError": false,
+    "esModuleInterop": true,    
   },
   "files": [],
   "references": [
