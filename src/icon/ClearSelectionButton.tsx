@@ -18,7 +18,7 @@ export default function ClearSelectionButton({ enabled, onClick }: ClearSelectio
             <UIButton
                 selected={false}
                 onClick={onClick}
-                className={styles.button}
+                name="clear"
             >
                 <div style={{
                     width: "20px",

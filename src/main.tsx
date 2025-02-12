@@ -1,4 +1,4 @@
-import { Fragment, StrictMode } from 'react'
+import { Fragment } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'

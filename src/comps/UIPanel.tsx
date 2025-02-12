@@ -14,7 +14,7 @@ import SelectButton from "../icon/SelectButton";
 import TrashButton from "../icon/TrashButton";
 import { CWComplexStateEditor, EditorState } from "../hooks/useCWComplexEditor";
 import { CWComplex } from "../math/CWComplex";
-import { classifySelected, SelectedState } from "../math/selectedState";
+import { SelectedState } from "../math/selectedState";
 import VertexAddButton from "../icon/VertexAddButton";
 import MoveButton from "../icon/MoveButton";
 import UIButton from "../icon/UIButton";
@@ -47,8 +47,8 @@ export type UIPanelProps = {
 
 const SelectButtons = (props: UIPanelProps) => {
     const { setEditOptions, editOptions, setViewOptions, viewOptions, complexEditor, editorState } = props;
-    const selectedState: SelectedState = classifySelected(editorState.selectedKeys);
-    const { selectionKey } = editOptions;
+    // const selectedState: SelectedState = classifySelected(editorState.selectedKeys);
+    // const { selectionKey } = editOptions;
     const setEditMode = (mode: EditOptions["mode"]) => {
         setEditOptions({ ...editOptions, mode });
     }
@@ -142,7 +142,7 @@ const LeftMoveButtons = (props: UIPanelProps) => {
             <UIButton name="down" selected={false} onClick={moveDown} >
                 <ArrowDownwardIcon />
             </UIButton>
-        </>
+    </>
     );
 };
 

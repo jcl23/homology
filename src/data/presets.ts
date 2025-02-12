@@ -18,49 +18,49 @@ const square = () => {
     c.addVertex([1, 0, 1], "d");
 }
 
-const T2: () => CWComplex = () => {
-    const v1 = { id: "v1", name: "v1", dimension: 0, index: 0, point: [0, 0, 0], attachingMap: [] };
-    const v2 = { id: "v2", name: "v2", dimension: 0, index: 1, point: [1, 0, 1], attachingMap: [] };
-    const v3 = { id: "v3", name: "v3", dimension: 0, index: 2, point: [1, 0, 0], attachingMap: [] };
-    const v4 = { id: "v4", name: "v4", dimension: 0, index: 3, point: [0, 0, 1], attachingMap: [] };
-    const e1 = { id: "e1", index: 0, dimension: 1, name: "e1", attachingMap: [v3, v1] };
-    const e2 = { id: "e2", index: 1, dimension: 1, name: "e2", attachingMap: [v3, v2] };
-    const e3 = { id: "e3", index: 2, dimension: 1, name: "e3", attachingMap: [v4, v1] };
-    const e4 = { id: "e4", index: 3, dimension: 1, name: "e4", attachingMap: [v4, v2] };
-    const e5 = { id: "e5", index: 4, dimension: 1, name: "e5", attachingMap: [v4, v3] };
-    const f1 = { id: "f1", index: 0, dimension: 2, name: "f1", attachingMap: [e1, e3, e5] };
-    const f2 = { id: "f2", index: 1, dimension: 2, name: "f2", attachingMap: [e2, e4, e5] };
-    return {
-        cells: {
-            0: [v1, v2, v3, v4],
-            1: [e1, e2, e3, e4, e5],
-            2: [f1, f2],
-            3: []
-        }
-    };
-}
+// const T2: () => CWComplex = () => {
+//     const v1 = { id: "v1", name: "v1", dimension: 0, index: 0, point: [0, 0, 0], attachingMap: [] };
+//     const v2 = { id: "v2", name: "v2", dimension: 0, index: 1, point: [1, 0, 1], attachingMap: [] };
+//     const v3 = { id: "v3", name: "v3", dimension: 0, index: 2, point: [1, 0, 0], attachingMap: [] };
+//     const v4 = { id: "v4", name: "v4", dimension: 0, index: 3, point: [0, 0, 1], attachingMap: [] };
+//     const e1 = { id: "e1", index: 0, dimension: 1, name: "e1", attachingMap: [v3, v1] };
+//     const e2 = { id: "e2", index: 1, dimension: 1, name: "e2", attachingMap: [v3, v2] };
+//     const e3 = { id: "e3", index: 2, dimension: 1, name: "e3", attachingMap: [v4, v1] };
+//     const e4 = { id: "e4", index: 3, dimension: 1, name: "e4", attachingMap: [v4, v2] };
+//     const e5 = { id: "e5", index: 4, dimension: 1, name: "e5", attachingMap: [v4, v3] };
+//     const f1 = { id: "f1", index: 0, dimension: 2, name: "f1", attachingMap: [e1, e3, e5] };
+//     const f2 = { id: "f2", index: 1, dimension: 2, name: "f2", attachingMap: [e2, e4, e5] };
+//     return {
+//         cells: {
+//             0: [v1, v2, v3, v4],
+//             1: [e1, e2, e3, e4, e5],
+//             2: [f1, f2],
+//             3: []
+//         }
+//     };
+// }
 
 
 // }
 
 
-const TestComplex: () => CWComplex = () => {
-    // Three vertices total, with an edge connecting two of them.
+// const TestComplex: () => CWComplex = () => {
+//     // Three vertices total, with an edge connecting two of them.
 
-    const v1 = { id: 1, name: "v1", dimension: 0, index: 0, attachingMap: [] };
-    const v2 = { id: 2, name: "v2", dimension: 0, index: 1, attachingMap: [] };
-    const v3 = { id: 3, name: "v3", dimension: 0, index: 2, attachingMap: [] };
-    const e1 = { id: 1, name: "e1", dimension: 1, index: 0, attachingMap: [v2, v1]};
+//     const v1 = { id: 1, name: "v1", dimension: 0, index: 0, attachingMap: [] };
+//     const v2 = { id: 2, name: "v2", dimension: 0, index: 1, attachingMap: [] };
+//     const v3 = { id: 3, name: "v3", dimension: 0, index: 2, attachingMap: [] };
+//     const e1 = { id: 1, name: "e1", dimension: 1, index: 0, attachingMap: [v2, v1]};
     
-    return {
-        cells: {
-            0: [v1, v2, v3],
-            1: [e1],
-            2: [],
-            3: []
-        }
-    };
-}
+//     return {
+//         cells: {
+//             0: [v1, v2, v3],
+//             1: [e1],
+//             2: [],
+//             3: []
+//         }
+//     };
+// }
 
 
 export const complexes = {

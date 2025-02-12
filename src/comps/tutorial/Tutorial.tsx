@@ -26,7 +26,7 @@ const Tutorial = () => {
   return (
     <div>
       <button onClick={startTutorial}>Start Tutorial</button>
-      <Joyride
+      {/* <Joyride
         steps={steps}
         run={run}
         continuous
@@ -37,7 +37,7 @@ const Tutorial = () => {
             zIndex: 10000,
           },
         }}
-      />
+      /> */}
     </div>
   );
 };

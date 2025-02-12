@@ -2,7 +2,7 @@
 import { useControls } from "leva";
 import { useState } from "react";
 import { Vector3, ArrowHelper, Color, CylinderGeometry, Mesh, MeshStandardMaterial } from "three";
-import { AbstractEdge, AbstractVertex } from "../../math/classes/cells";
+import { AbstractEdge, AbstractVertex, Vertex } from "../../math/classes/cells";
 import { CellsProps } from "./cellProps";
 import { Html } from "@react-three/drei";
 import Label from "./Label";
@@ -26,7 +26,7 @@ export const ComplexEdges = ({ mode, edges, selectedReps, toggleRepSelection, sh
                     cell === edge
                 );
                 const color = isSelected ? selectedBg : unselectedFg;
-                const [start, end] = edge.attachingMap.map((vertex) => new Vector3(...vertex.point));
+                const [start, end] = edge.attachingMap.map((vertex: Vertex) => new Vector3(...vertex.point));
 
                 const middle = new Vector3().addVectors(start, end).multiplyScalar(0.5);
                 const direction = new Vector3().subVectors(end, start).normalize();
@@ -54,7 +54,7 @@ export const ComplexEdges = ({ mode, edges, selectedReps, toggleRepSelection, sh
                 copy.lookAt(end);
                 // Customize the ArrowHelper
                 arrow.setColor(new Color(color));           // Set the color of the arrow
-                arrow.line.material.linewidth = 4;          // Set the line width (only works for WebGL2)
+                /// Set the line width (only works for WebGL2)
                 // adjust arrowhead size
                 arrow.scale.set(2, 0.6, 2);
 
@@ -84,7 +84,7 @@ export const ComplexEdges = ({ mode, edges, selectedReps, toggleRepSelection, sh
                             if (mode !== 'select') return;
                             if (hovered === edge) return;
                             console.notify("123)")
-                            hovered = edge;
+                    
                             e.stopPropagation();
                             if (isMouseDown) {
                                 // setHovered(edge);

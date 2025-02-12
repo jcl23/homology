@@ -53,7 +53,7 @@ const History = ({ editorState, complexEditor }: HistoryProps) => {
                 <HistoryGroup group={group} />
             ))}
         </div>
-    );a
+    );
     return (
         <div className={styles.historyOuter}>
             {editorState.history.map((step, i) => {

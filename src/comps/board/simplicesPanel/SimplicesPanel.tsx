@@ -8,10 +8,10 @@ type SimplicesPanelProps = {
     //selectedCells: Set<number>[];
     selectedKeys: Set<string>;
     //selectCell: (dim: number, index: number) => void;
-    selectRep: (cell: AbstractCell) => void;
+    selectRep: (key: string) => void
     //unselectCell: (dim: number, index: number) => void;
     //unselectCell: (dim: number, index: number) => void;
-    unselectRep: (cell: AbstractCell) => void;
+    unselectRep: (key: string) => void
 }
 
 // A list of cells that can be selected. The currently selected cells are highlighted. It's
@@ -43,7 +43,7 @@ const SimplicesPanel = ({
             console.notify("Unselecting")
             unselectRep(cell.key);
         } else {
-            selectRep(cell);
+            selectRep(cell.key);
         }
     }
     const describeBoundary = (cell: AbstractCell) => {

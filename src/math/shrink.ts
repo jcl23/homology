@@ -1,4 +1,4 @@
-import { Vector2, Vector3 } from 'three';
+import { Vector3 } from 'three';
 
 // Computes the normal vector of the plane defined by points A, B, C
 const computePlaneNormal = (A: Vector3, B: Vector3, C: Vector3): Vector3 => {

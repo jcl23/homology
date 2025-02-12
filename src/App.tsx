@@ -1,15 +1,14 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import UIPanel from "./comps/UIPanel";
 import Board from "./comps/board/Board";
-import { identifyVertices, printSelected, printCWComplex, identifyEdges, CWComplex, saturate, getVertices, retrieveCellsFromSelectedKeys } from "./math/CWComplex";
+import { printSelected, retrieveCellsFromSelectedKeys } from "./math/CWComplex";
 import SimplicesPanel from "./comps/board/simplicesPanel/SimplicesPanel";
-import { complexes, defaultComplex } from "./data/presets";
+import { defaultComplex } from "./data/presets";
 import { HomologyPanel } from "./comps/HomologyPanel";
 import { getChainGroups } from "./math/homology";
-import DebugComplex from "./comps/debug/DebugComplex";
 import { LoadComplex } from "./comps/modals/LoadComplex";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import theme from "./style/theme";
 import { useEditComplex } from "./hooks/useCWComplexEditor";
@@ -34,7 +33,6 @@ export type EditOptions = {
 export type SetEditOptions = React.Dispatch<React.SetStateAction<EditOptions>>;
 export type ViewOptions = {
   nameState: boolean[];
-  lastTarget: [number, number, number];
 }
 export type SetViewOptions = React.Dispatch<React.SetStateAction<ViewOptions>>;
 
@@ -54,7 +52,6 @@ function App() {
   const { mode, selectionKey } = editOptions
   const [ viewOptions, setViewOptions] = useState<ViewOptions>({
     nameState: [true, true, true, true],
-    lastTarget: [0, 0, 0]
   });
   const { nameState } = viewOptions;
   const [preset, setPreset] = useState(defaultComplex);

@@ -68,9 +68,7 @@ table.simplexPanel {
     background: transparent;
     border: none;
 }
-.expandedData {
-    /* max-height: 200px; Set a value larger than the maximum expected height of the content */
-}
+
 
 
 .selected {
@@ -78,9 +76,7 @@ table.simplexPanel {
     color: white;
 }
 
-.unselected {
 
-}
 fontW
 .dimName {
     text-align: center;

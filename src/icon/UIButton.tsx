@@ -19,10 +19,10 @@ const UIButton: React.FC<UIButtonProps> = ({ onClick, selected, children, name, 
     const backgroundColor = `var(--${selected ? 'selected-bg' : 'unselected-bg'})`;
     return (
         <button
-            variant="contained"
+   
             onMouseDown={onClick}
             className={`${styles.button} ${selected ? styles.selected : styles.unselected}`}
-            startIcon={startIcon}
+      
             // style={{
             //     fontWeight: 'bold',
             //     width: '55px', // Square button dimensions

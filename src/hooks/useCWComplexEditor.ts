@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { CWComplex, copyStep, getBoundary, getBoundaryOfCell, getVertices, madeWithGivenVertices, retrieveCellsFromSelectedKeys } from "../math/CWComplex";
 import { AbstractCell, Cell, Edge,Vertex } from "../math/classes/cells";
-import { CWComplexEditStep, makeAddEdgeStep, makeAddFaceStep } from "../logic/steps";
+import { CWComplexEditStep  } from "../logic/steps";
 import { MAX_DIMENSION, MAX_VERTEX_SELECT} from "../data/configuration";
 
 type CellIdentifier = {
@@ -340,11 +340,11 @@ export class CWComplexStateEditor  {
     }
     
     
-    selectRep = (cell: AbstractCell): void => {
+    selectRep = (key: string): void => {
         this.setEditorState(({history, selectedKeys, complex}: EditorState) => {
             const newSelected = new Set(selectedKeys);
-            newSelected.add(cell.key);
-            console.notify("Selecting", cell.key);
+            newSelected.add(key);
+            console.notify("Selecting", key);
             this.selected_ = transferSelected(complex, newSelected);
 
             return {

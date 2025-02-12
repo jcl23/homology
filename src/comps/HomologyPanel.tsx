@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { createPreset, CWComplex, printCWComplex, toLabeledMatrices } from "../math/CWComplex"
 import { computeHomology } from "../math/homology"
 import styles   from './HomologyPanel.module.css'
-import { computeTorsion, isZeroMatrix, LabeledMatrix, numFree, numNonZero, numPivotCols, numPivotRows, rankImage, rankKernel, reduce, simultaneousReduce, } from "../math/matrix"
+import { computeTorsion, isZeroMatrix, LabeledMatrix,  } from "../math/matrix"
 import Matrix from "ml-matrix";
 import { AbelianGroup, printGroup, groupsEqual, GroupWithBasis } from "../math/group";
 import Group from "./Group";

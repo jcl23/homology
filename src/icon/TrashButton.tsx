@@ -21,7 +21,7 @@ export default function({ selected, onClick }: TrashButtonProps) {
             <UIButton
 
                 //backgroundColor={(( theme.palette as any).button?.[(mode == "select") ? 'selected' : 'unselected'].background, "#CCC")} // Color based on state
-                color={foreground}
+         
                 name="remove"
                 onClick={onClick}
                 // className={mode === "select" ? styles.selected : ""}

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styles from "./DebugComplex.module.css";
-import { CWComplex, AbstractCell } from "../../math/CWComplex";
+import { CWComplex } from "../../math/CWComplex";
+import { AbstractCell } from "../../math/classes/cells";
 
 
 type DebugComplexProps = {

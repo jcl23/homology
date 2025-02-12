@@ -131,7 +131,7 @@ export class CWComplex {
                 const newAttachingMap = cell.attachingMap.map(oldCell => {
                     return oldToNewMap.get(`${oldCell.dimension} ${oldCell.id}`)!;
                 });
-                cell.attachingMap = () => newAttachingMap;
+                cell.attachingMap = newAttachingMap;
             });
         }
         // for each dimension, for each cell in the dimension, get the current coboundary, and replace it with the new cells.
@@ -147,7 +147,10 @@ export class CWComplex {
         return newComplex;
     }
 
-
+    reindex(): void {
+        resetIndices(this);
+        resetIds(this);
+    }
 
     get center(): [number, number, number] {
         if (this.cells[0].length === 0) return [0, 0, 0];
@@ -209,15 +212,15 @@ export const getRepsByName = function(complex: CWComplex, name: string, dim?: nu
     }
 }
 
-const getNewAttachingMap = (cell: AbstractCell, newFaces: AbstractCell[]): () => AbstractCell[] => {
-    // The cells in "newFaces" are copies of cells one dimension lower than cell. We want to replace the attaching map of cell with the equivalent in new faces.
+// const getNewAttachingMap = (cell: AbstractCell, newFaces: AbstractCell[]): () => AbstractCell[] => {
+//     // The cells in "newFaces" are copies of cells one dimension lower than cell. We want to replace the attaching map of cell with the equivalent in new faces.
 
-    const newAttachingMapData = cell.attachingMap.map(face => {
-        const newFace = newFaces.find(f => f.id === face.id);
-        if (!newFace) throw new Error("Couldn't find new face");
-        return newFace;
-    });
-}
+//     const newAttachingMapData = cell.attachingMap.map(face => {
+//         const newFace = newFaces.find(f => f.id === face.id);
+//         if (!newFace) throw new Error("Couldn't find new face");
+//         return newFace;
+//     });
+// }
 
 export const getStartStep = (): CWComplexEditStep => ({
     step: () => new CWComplex(),
@@ -321,14 +324,14 @@ export const copyStep = (step: CWComplexEditStep): CWComplexEditStep => {
 type Chain = {
     sign: number;
     index: number;
-    dimension: 0|1|2|3;
+    dimension:number;
 }[];
 
-export const getAnyCell = (complex: CWComplex, dimension: 0|1|2|3, index: number): AbstractCell => {
+export const getAnyCell = (complex: CWComplex, dimension: number, index: number): AbstractCell => {
     return complex.cells[dimension].find(cell => cell.index === index)!;
 }
 
-export const getCells = (complex: CWComplex, dimension: 0|1|2|3, index: number): AbstractCell[] => {
+export const getCells = (complex: CWComplex, dimension: number, index: number): AbstractCell[] => {
     return complex.cells[dimension].filter(cell => cell.index === index)!;
 }
 export const getVertices = (c: AbstractCell): AbstractVertex[] => {
@@ -425,7 +428,7 @@ export const getBoundary = function (complex: CWComplex, chain: Chain): Chain {
             }
         }
     }
-    return [...boundaryTracker.values()].map(({ count, dim, index }) => ({ sign: count, dimension: dim as (0|1|2|3), index: index }));
+    return [...boundaryTracker.values()].map(({ count, dim, index }) => ({ sign: count, dimension: dim as (number), index: index }));
     // combine like terms
 
 }
@@ -438,8 +441,8 @@ export const isCycle = (complex: CWComplex, chain: Chain): boolean => {
 export const formsCycle = (complex: CWComplex, cells: AbstractCell[]): boolean => {
     return printChain(complex, getBoundaryFromParts(cells)) === "0";
 }
-// export const getBoundaryOfCell = (complex: CWComplex, dimension: 0|1|2|3, index: number): Chain => {
-// export const getBoundaryOfCell = (complex: CWComplex, dimension: 0|1|2|3, index: number): Chain => {
+// export const getBoundaryOfCell = (complex: CWComplex, dimension: number, index: number): Chain => {
+// export const getBoundaryOfCell = (complex: CWComplex, dimension: number, index: number): Chain => {
 
 
 type SubFace = { face: AbstractCell, missing: AbstractVertex };
@@ -463,7 +466,7 @@ export const getBoundaryFromParts = (faces: AbstractCell[]): Chain => {
     const boundaryChain: Chain = subFaces.flatMap(({ face, missing }, i) => {
         const sign = (i % 2 == 0) ? 1 : -1;
         return getBoundaryOfCell(face).map(({ dimension, index }, j) => ({ sign: sign * ((j % 2 == 0) ? 1 : -1), dimension, index }));
-        return { sign, index: face.index, dimension: face.dimension as 0|1|2|3 };
+        return { sign, index: face.index, dimension: face.dimension as number };
     });
     return boundaryChain;
     // const boundaryChain = upperChain.map
@@ -516,7 +519,11 @@ export const isValidVertexIdentification = (complex: CWComplex, vertices: Abstra
     const allVertices = complex.cells[0];
     return vertices.every(v => allVertices.includes(v));
 }
+type FiniteNumber = number & { _finiteBrand: never };
 
+const isFiniteNumber = (value: number): value is FiniteNumber => {
+    return Number.isFinite(value);
+};
 export const identifyVertices = (complex: CWComplex, cells: Set<AbstractCell>): void => {
     // select a representative vertex.Create a new complex in which all the vertices are identified with the representative vertex.
     
@@ -537,8 +544,9 @@ export const identifyVertices = (complex: CWComplex, cells: Set<AbstractCell>): 
 
     for (let i = 1; i < elements.length; i++) {
         const cell = elements[i];
-        cell.index = repIndex;
-        cell.name = repName;
+        // cell.index = repIndex;
+        // cell.name = repName;
+        // Put this back later
     }
 
     complex.reindex();
@@ -665,7 +673,7 @@ export const simplifyChain = (complex: CWComplex, chain: Chain): Chain => {
     }
     return [...tracker.entries()].filter(([key, val]) => (val !== 0)).map(([key, sign]) => {
         const [dimension, index] = key.split(", ").map(Number);
-        return { sign, dimension: dimension as (0|1|2|3), index };
+        return { sign, dimension: dimension as (number), index };
     });
 }
 export const printChain = (complex: CWComplex, chain: Chain) => {

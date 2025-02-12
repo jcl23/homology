@@ -1,9 +1,8 @@
 import { CWComplex } from "../CWComplex";
 
 
-// export type AbstractCell = {(AbstractVertex | AbstractEdge | AbstractFace | AbstractBall) & { dimension: (0|1|2|3)};
+// export type AbstractCell = {(AbstractVertex | AbstractEdge | AbstractFace | AbstractBall) & { dimension: (number)};
 export type AbstractCell = {
-    dimension: number;
     id: number;
     index: number;
     name: string;
@@ -20,11 +19,12 @@ export type AbstractCell = {
     isBall: () => boolean;
     positionKey: string;
     shift: (dx: number, dy: number, dz: number) => void;
+    dimension: number;
 }
-export type AbstractVertex = AbstractCell & { dimension: 0; point: [number, number, number]; attachingMap: AbstractCell[]; cob: AbstractEdge[] };
-export type AbstractEdge =   AbstractCell & { dimension: 1; attachingMap: AbstractVertex[]; cob:  AbstractFace[] };
-export type AbstractFace =   AbstractCell & { dimension: 2; attachingMap: AbstractEdge[]; cob: AbstractBall[] };
-export type AbstractBall =   AbstractCell & { dimension: 3; attachingMap: AbstractFace[]; cob: AbstractCell[] };
+export type AbstractVertex = AbstractCell & { point: [number, number, number];  };
+export type AbstractEdge =   AbstractCell;//AbstractCell & { attachingMap: AbstractVertex[]; cob:  AbstractFace[] };
+export type AbstractFace =   AbstractCell;//AbstractCell & { attachingMap: AbstractEdge[]; cob: AbstractBall[] };
+export type AbstractBall =   AbstractCell;//AbstractCell & { attachingMap: AbstractFace[]; cob: AbstractCell[] };
 
 type classes = [Vertex, Edge, Face, Ball];
 
@@ -132,11 +132,10 @@ export class Cell implements AbstractCell {
 export class Vertex extends Cell implements AbstractVertex {
     // id: number;
     // index: number;
-    dimension: 0 = 0;
     // name: string;
     point: [number, number, number];
 
-    cob: AbstractEdge[];
+    
 
     constructor(point: [number, number, number], id: number, index: number, name?: string) {
         super(id, index, name);
@@ -144,6 +143,7 @@ export class Vertex extends Cell implements AbstractVertex {
         this.attachingMap = [];
         this.cob = [];
         this.vertices_ = [this];
+        this.dimension = 0;
     }
 
     get positionKey(): string {
@@ -157,29 +157,27 @@ export class Vertex extends Cell implements AbstractVertex {
 
 export class Edge extends Cell implements AbstractEdge {
 
-    dimension: 1 = 1;
-    attachingMap: AbstractVertex[];
-    cob: AbstractFace[];
+
     constructor(v1: AbstractVertex, v2: AbstractVertex, id: number, index: number, name?: string) {
         super(id, index, name ?? "e" + id);
         this.attachingMap = [v1, v2];
         this.cob = [];
         this.vertices_ = [v1, v2];
         this.vertices_.sort((a, b) => a.id - b.id);
+        this.dimension = 1;
+
     }
 
     copy(): Edge {
-        const [v1, v2] = this.attachingMap;
+        const [v1, v2] = this.attachingMap as [AbstractVertex, AbstractVertex];
         return new Edge(v1, v2, this.id, this.index);
     }
 }
 
 export class Face extends Cell implements AbstractFace {
 
-    dimension: 2 = 2;
 
-    attachingMap: AbstractEdge[];
-    cob: AbstractBall[];
+
 
     constructor(edges: AbstractEdge[], id: number, index: number, name?: string) {
         super(id, index, name ?? "f" + id);
@@ -187,6 +185,7 @@ export class Face extends Cell implements AbstractFace {
         this.cob = [];
         this.vertices_ = [...new Set(edges.flatMap(e => e.vertices))];
         this.vertices_.sort((a, b) => a.id - b.id);
+        this.dimension = 2;
     }
 
     copy(): Face {
@@ -195,11 +194,7 @@ export class Face extends Cell implements AbstractFace {
 }
 
 export class Ball extends Cell implements AbstractBall {
-    id: number;
-    index: number;
-    dimension: 3 = 3;
-    name: string;
-    attachingMap: AbstractFace[];
+
     // cob: AbstractCell[];
 
     constructor(faces: AbstractFace[], id: number, index: number, name?: string) {
@@ -210,6 +205,7 @@ export class Ball extends Cell implements AbstractBall {
         this.attachingMap = [...faces];
         this.vertices_  = [...new Set(faces.flatMap(f => f.vertices))];
         this.vertices_.sort((a, b) => a.id - b.id);
+        this.dimension = 3;
     }
 
     copy(): Ball {
