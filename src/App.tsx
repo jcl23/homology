@@ -16,8 +16,7 @@ import { SelectedState } from "./math/selectedState";
 import { keybinds } from "./data/keybinds";
 import { ErrorBoundary } from "./comps/ErrorBoundary";
 import NotificationManager from "./comps/notifs/NotificationManager";
-import TutorialModal from "./comps/tutorial/TutorialModal";
-import History from "./comps/history/History";
+import History from "./comps/history/History.tsx";
 import styles from "./App.module.css";
 import { defaultPreset } from "./data/defaultComplexes";
 import { HelpPanel } from "./comps/help/HelpPanel";
@@ -167,9 +166,7 @@ useEffect(() => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <NotificationManager /> 
       <ErrorBoundary> 
-        <TutorialModal />
         <div className="board">
           <div className={styles.panelHolder}>
             <HelpPanel />
@@ -207,7 +204,19 @@ useEffect(() => {
           complex={complex}
           selectedReps={selectedKeys}
         />
-
+        <div className={styles.keybinds}>
+      <div className={styles.keybindLabel}> a: Add Cell </div>
+      <div className={styles.keybindLabel}> s: Select </div>
+      <div className={styles.keybindLabel}> m: Move </div>
+      <div className={styles.keybindLabel}> t: Trash All </div>
+      <div className={styles.keybindLabel}> d: Delete </div>
+      <div className={styles.keybindLabel}> f: Fill </div>
+      <div className={styles.keybindLabel}> i: Identify </div>
+      <div className={styles.keybindLabel}> Ctrl-z: Undo </div>
+      <div className={styles.keybindLabel}> Ctrl-a: Select All </div>
+      <div className={styles.keybindLabel}> Ctrl-d: Deselect All </div>
+      <div className={styles.keybindLabel}> c: Select none</div>
+    </div>
       </div>
     </div>
     </ErrorBoundary>

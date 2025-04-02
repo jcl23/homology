@@ -65,7 +65,7 @@ const NotificationManager: React.FC = () => {
       return newSet;
     });
   };
-
+  return <></>
   return (
     <>
       {/* Expandable Menu */}

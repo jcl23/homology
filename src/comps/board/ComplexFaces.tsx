@@ -73,7 +73,7 @@ export const ComplexFaces = ({ faces, selectedReps, toggleRepSelection, setDragS
                 
                return (
                     <mesh
-                        renderOrder={-1}
+                        renderOrder={-1000}
                         key={face.id + face.positionKey}
                         // This has to be a bad idea
                         onPointerDown={(e) => { 
@@ -87,7 +87,7 @@ export const ComplexFaces = ({ faces, selectedReps, toggleRepSelection, setDragS
                         <bufferGeometry>
                             <bufferAttribute
                                 attach="attributes-position"
-                                array={new Float32Array([...p1_, ...p2_, ...p3_].flat())}
+                                array={new Float32Array([...p1, ...p2, ...p3].flat())}
                                 count={vertexPositions.flat().length / 3}
                                 itemSize={3}
                                needsUpdate={true}

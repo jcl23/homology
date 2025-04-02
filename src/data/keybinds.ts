@@ -14,7 +14,7 @@ const debugOn: Record<string, boolean> = {
     "c": false,
     "[": false,
     "]": false,
-    "i": true,
+    "i": false,
 };
 export const keybinds: Keybinds = {
     // *fill*: add a cell

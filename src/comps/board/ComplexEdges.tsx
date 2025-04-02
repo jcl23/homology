@@ -9,6 +9,7 @@ import Label from "./Label";
 import { MAX_DIMENSION } from "../../data/configuration";
 const computedStyles = getComputedStyle(document.documentElement);
 const unselectedFg = computedStyles.getPropertyValue("--unselected-fg").trim();
+const unselectedMid = computedStyles.getPropertyValue("--unselected-mid").trim();
 const selectedFg = computedStyles.getPropertyValue("--selected-fg").trim();
 const selectedBg = computedStyles.getPropertyValue("--selected-bg").trim();
 type ComplexEdgesProps = CellsProps & {
@@ -25,7 +26,7 @@ export const ComplexEdges = ({ mode, edges, selectedReps, toggleRepSelection, sh
                 const isSelected = Array.from(selectedReps).some(cell =>
                     cell === edge
                 );
-                const color = isSelected ? selectedBg : unselectedFg;
+                const color = isSelected ? selectedBg : unselectedMid;
                 const [start, end] = edge.attachingMap.map((vertex: Vertex) => new Vector3(...vertex.point));
 
                 const middle = new Vector3().addVectors(start, end).multiplyScalar(0.5);
@@ -47,7 +48,7 @@ export const ComplexEdges = ({ mode, edges, selectedReps, toggleRepSelection, sh
                 mesh.rotateZ(Math.PI / 2);
                 mesh.position.copy(start);
                 mesh.lookAt(end);
-                const copy = new Mesh(cylinder, new MeshStandardMaterial({ color, opacity: outerOpacity, transparent: false }));
+                const copy = new Mesh(cylinder, new MeshStandardMaterial({ color, opacity: 0, transparent: true }));
                 copy.scale.set(0.005, 0.005, length);
                 copy.rotateZ(Math.PI / 2);
                 copy.position.copy(start);

@@ -1,2 +1,2 @@
 # homology
- A graphical editor for simplicial complexes with homology calculation.
+ A graphical editor for simplicial complexes with homology calculation

@@ -1,9 +1,20 @@
 :root {
  --selected-bg-old : #050012;
+
+
  --selected-bg: red;
  --selected-fg: white;
  --unselected-bg: white;
   --unselected-fg: black;
+  --unselected-mid: #888;
+}
+
+a {
+  color: var(--unselected-fg);
+}
+a:hover {
+  color: var(--selected-fg);
+  background-color: var(--selected-bg);
 }
 #root {
   margin: 0 auto;

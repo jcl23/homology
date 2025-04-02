@@ -10,8 +10,17 @@
 }
 
 
-
-
+.keybinds {
+    display: flex;
+    justify-content: center;
+}
+.keybinds > div {
+    border-width: 1px 0px;
+    border-color: rgb(173, 173, 173);
+    border-style: solid;
+    margin: 5px;
+    padding: 0px 5px;
+}
 .upperPanel {
 
     /* Should be arranged horizontally */

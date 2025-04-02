@@ -232,7 +232,6 @@ export class CWComplexStateEditor  {
     }
 
     addCell() {
-        debugger;
         this.setEditorState(({history, selectedKeys, complex}: EditorState) => {
             const keyList = [...selectedKeys];
             // use coboundaries to check for shit
