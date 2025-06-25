@@ -167,6 +167,17 @@ const UIPanel = (props: UIPanelProps) => {
     return (
         <div className={styles.panel}>
             <div className={styles.buttonColumn}>
+                <div 
+                    style={{
+                        width: "50px",
+                        height: "258px",
+                        transform: "translateY(5px)",
+                        position: "absolute"
+                    }}
+                    className="tour_mode_buttons"
+                >   
+                </div>
+
                 {/* LEFT COLUMN */}
                 <VertexAddButton selected={editMode == "add"} onClick={() => { complexEditor.deselectAll(); setEditMode("add")} }/>              
                 <SelectButton selected={editMode == "select"} onClick={() => { complexEditor.deselectAll(); setEditMode("select")} }/>

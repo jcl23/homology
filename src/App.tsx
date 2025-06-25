@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
+import "./comps/Joyride.css";
 import UIPanel from "./comps/UIPanel";
 import Board from "./comps/board/Board";
 import { printSelected, retrieveCellsFromSelectedKeys } from "./math/CWComplex";
@@ -20,6 +21,10 @@ import History from "./comps/history/History.tsx";
 import styles from "./App.module.css";
 import { defaultPreset } from "./data/defaultComplexes";
 import { HelpPanel } from "./comps/help/HelpPanel";
+import Joyride from "react-joyride";
+import steps from "./tutorial/steps.ts";
+import { useKeybindings } from "./keybinding.ts";
+
 const MAX_DIM = 3;
 
 export type EditOptions = {
@@ -48,124 +53,66 @@ function App() {
     dimSelected: -1
   });
 
-  const { mode, selectionKey } = editOptions
   const [ viewOptions, setViewOptions] = useState<ViewOptions>({
     nameState: [true, true, true, true],
   });
-  const { nameState } = viewOptions;
+
   const [preset, setPreset] = useState(defaultComplex);
-
-  // const [startingComplex, setStartingComplex] = useState<CWComplex>(defaultComplex.complex);
   
-const [editorState, complexEditor] = useEditComplex();
+  const [editorState, complexEditor] = useEditComplex();
+  
+  useEffect(() => {
+    complexEditor.reset();
+    defaultPreset(complexEditor);
+  }, [defaultPreset]);
+  
+  const { mode, selectionKey } = editOptions
+  const { nameState } = viewOptions;
 
-useEffect(() => {
-  complexEditor.reset();
-  defaultPreset(complexEditor);
-}, [defaultPreset]);
-// useMemo(() => {  
-//   return useEditComplex(defaultPreset);
-// }, []);
   const { selectedKeys, complex} = editorState;
-  const selectedRepresentatives = retrieveCellsFromSelectedKeys(complex, selectedKeys);
-  const selectedRepList = [...selectedRepresentatives];
-  console.notify("NumSelected", selectedRepList.length);
-  const selectedVertexReps = new Set(selectedRepList.filter((cell) => cell.dimension === 0));
-  const selectedEdgeReps = new Set(selectedRepList.filter((cell) => cell.dimension === 1));
-  const selectedFaceReps = new Set(selectedRepList.filter((cell) => cell.dimension === 2));
+  // console.notify("NumSelected", selectedRepList.length);
+  // const selectedVertexReps = new Set(selectedRepList.filter((cell) => cell.dimension === 0));
+  // const selectedEdgeReps = new Set(selectedRepList.filter((cell) => cell.dimension === 1));
+  // const selectedFaceReps = new Set(selectedRepList.filter((cell) => cell.dimension === 2));
 
-  const cellCounts = getChainGroups(complex);
+  // const cellCounts = getChainGroups(complex);
 
 
   ///  const selectedBalls = selectedCellList.filter((cell) => cell.dimension === 3);
 
-  const noneSelected = selectedRepList.length === 0;
-  const onlyVerticesSelected = selectedVertexReps.size > 0 && selectedEdgeReps.size === 0 && selectedFaceReps.size === 0;
-  const onlyEdgesSelected = selectedVertexReps.size === 0 && selectedEdgeReps.size > 0 && selectedFaceReps.size === 0;
-  const onlyFacesSelected = selectedVertexReps.size === 0 && selectedEdgeReps.size === 0 && selectedFaceReps.size > 0;
+  // const noneSelected = selectedRepList.length === 0;
+  // const onlyVerticesSelected = selectedVertexReps.size > 0 && selectedEdgeReps.size === 0 && selectedFaceReps.size === 0;
+  // const onlyEdgesSelected = selectedVertexReps.size === 0 && selectedEdgeReps.size > 0 && selectedFaceReps.size === 0;
+  // const onlyFacesSelected = selectedVertexReps.size === 0 && selectedEdgeReps.size === 0 && selectedFaceReps.size > 0;
   // With useEffect, log the states of selectedCells and complex
-  React.useEffect(() => {
-    // console.log("Selected cells");
+  // React.useEffect(() => {
+  //   // console.log("Selected cells");
 
-    console.log(printSelected(complex, new Set(selectedRepList)));
-    // console.log("Whole complex");
-    // printCWComplex(complex);
-  }, [selectedRepList]);
+  //   console.log(printSelected(complex, new Set(selectedRepList)));
+  //   // console.log("Whole complex");
+  //   // printCWComplex(complex);
+  // }, [selectedRepList]);
 
-  const selectedState: SelectedState = (
-    noneSelected ? "none"
-    : onlyVerticesSelected ? "verticesOnly"
-    : onlyEdgesSelected ? "edgesOnly"
-    : onlyFacesSelected ? "facesOnly"
-    : "other"
-  );
+  // const selectedState: SelectedState = (
+  //   noneSelected ? "none"
+  //   : onlyVerticesSelected ? "verticesOnly"
+  //   : onlyEdgesSelected ? "edgesOnly"
+  //   : onlyFacesSelected ? "facesOnly"
+  //   : "other"
+  // );
+  useKeybindings(setEditOptions, setViewOptions, complexEditor);
 
-  useEffect(() => {
-    // State to track Shift and Control keys
-    let isShiftPressed = false;
-    let isControlPressed = false;
-  
-    const handleKeydown = (event: KeyboardEvent) => {
-      if (event.repeat) { 
-        event.preventDefault(); 
-        event.stopPropagation();
-        return;
-      };
-      if (event.key === 'Shift') {
-        isShiftPressed = true;
-        console.warn("Shift pressed");
-        setEditOptions((prev) => ({...prev, mode: "move"}));
-        return;
-      } else if (event.key === 'Control') {
-        isControlPressed = true;
-        console.warn("Control pressed");
-        return;
-      } else {
-        if (event.ctrlKey || event.shiftKey) {
-          event.preventDefault();
-        }
-      }
-      // if (isControlPressed) {
-      // //   event.preventDefault()
-      //   isControlPressed = true;
-      // }
-      console.log("Called function for ", event.key);
-      const keyCombination = `${event.ctrlKey ? 'Ctrl' : ''}${event.shiftKey ? 'Shift' : ''}${event.key}`;
-      const func = keybinds?.[keyCombination];
-      
-      if (func) {
-        func(complexEditor, setEditOptions, setViewOptions);
-      }
-    };
-  
-    const handleKeyup = (event: KeyboardEvent) => {
-      if (event.key === 'Shift') {
-        setEditOptions((prev) => ({...prev, mode: "select"}));
-        isShiftPressed = false;
-      }
-      if (event.key === 'Control') isControlPressed = false;
-    };
-  
-    // Attach keydown and keyup event listeners
-    window.addEventListener('keydown', handleKeydown);
-    window.addEventListener('keyup', handleKeyup);
-  
-    // Cleanup on unmount
-    return () => {
-      window.removeEventListener('keydown', handleKeydown);
-      window.removeEventListener('keyup', handleKeyup);
-    };
-  }, [editorState]); 
-
-  useEffect(() => {
-    // If the mode is delete, delete the selected cells
-    if (mode === "remove") {
-      // performActionOnSelectedReps((cell) => {throw new Error("Pluh")});
-    }
-  }, [selectedState]);
+  // useEffect(() => {
+  //   // If the mode is delete, delete the selected cells
+  //   if (mode === "remove") {
+  //     // performActionOnSelectedReps((cell) => {throw new Error("Pluh")});
+  //   }
+  // }, [selectedState]);
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <NotificationManager />
+      
       <ErrorBoundary> 
         <div className="board">
           <div className={styles.panelHolder}>

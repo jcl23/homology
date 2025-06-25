@@ -82,12 +82,16 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, selectedReps  }
             
         <Leva collapsed />
             <Canvas
+                className="canvas"
                 style={{
                     border: '1px solid grey',
                     width: '100%',
                     height: '100%',
+                    margin: "5px 0px",
                     zIndex: 0,
                     userSelect: 'none',
+                    boxShadow: "2px 2px 2px 0px #0004 inset;"
+
                 }}
                 // onMouseMove={(e) => {
                 //     console.notify("Mouse move", e.relatedTarget);
