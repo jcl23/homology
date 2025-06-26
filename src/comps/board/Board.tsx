@@ -25,6 +25,7 @@ export type BoardProps = {
     complex: CWComplex;
     //setComplex: (c: CWComplex) => void;
     selectedReps: Set<string>;
+    allowEditing: boolean;
 
     // toggleRepSelection: (cell: AbstractCell) => void;
     editComplex: CWComplexStateEditor;
@@ -68,7 +69,7 @@ const BoardStateDebug = ({ dragSelectData }: { dragSelectData: DragSelectData })
 }
 
 
-const Board = ({ viewOptions, editOptions, complex, editComplex, selectedReps  }: BoardProps) => {
+const Board = ({ viewOptions, editOptions, complex, editComplex, selectedReps, allowEditing  }: BoardProps) => {
     //const { history } = editComplex;
     const { nameState } = viewOptions;
     //const complex = history[history.length - 1].complex;
@@ -112,6 +113,7 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, selectedReps  }
                     editComplex={editComplex}
                     viewOptions={viewOptions}
                     editOptions={editOptions}
+                    allowEditing={allowEditing}
                 />
             </Canvas>
         </ErrorBoundary>

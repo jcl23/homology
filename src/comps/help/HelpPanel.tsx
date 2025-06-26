@@ -9,17 +9,17 @@ export const HelpPanel = () => {
         <div className={styles.panel}>
             {/* <FAQModal /> */}
             <Joyride
-                    steps={steps}
-                    run={true}
-                    continuous={true}
-                    showSkipButton={true}
-                    showProgress={true}
-                    styles={{
-                      options: {
-                        zIndex: 10000,
-                      },
-                    }}
-                  />
+              steps={steps}
+              run={true}
+              continuous={true}
+              showSkipButton={true}
+              showProgress={true}
+              styles={{
+                options: {
+                  zIndex: 10000,
+                },
+              }}
+            />
         </div>
     );
 }

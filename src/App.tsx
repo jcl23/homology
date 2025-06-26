@@ -24,6 +24,7 @@ import { HelpPanel } from "./comps/help/HelpPanel";
 import Joyride from "react-joyride";
 import steps from "./tutorial/steps.ts";
 import { useKeybindings } from "./keybinding.ts";
+import { TutorialProvider } from "./tutorial/TutorialContex.tsx";
 
 const MAX_DIM = 3;
 
@@ -43,8 +44,8 @@ export type SetViewOptions = React.Dispatch<React.SetStateAction<ViewOptions>>;
 
 
 function App() {
-  // const [complex, setComplex] = useState<CWComplex>({ cells: { 0: [], 1: [], 2: [] } });
-  //const [clickSimplex, setClickSimplex] = useState<(s: AbstractCell) => void>(() => () => {});
+  
+  const [allowEditing, setAllowEditing] = useState(true);
   const [ editOptions, setEditOptions] = useState<EditOptions>({
     mode: "select",
     selectionKey: "index",
@@ -52,7 +53,6 @@ function App() {
     isMouseDown: false,
     dimSelected: -1
   });
-
   const [ viewOptions, setViewOptions] = useState<ViewOptions>({
     nameState: [true, true, true, true],
   });
@@ -100,7 +100,8 @@ function App() {
   //   : onlyFacesSelected ? "facesOnly"
   //   : "other"
   // );
-  useKeybindings(setEditOptions, setViewOptions, complexEditor);
+
+  useKeybindings(setEditOptions, setViewOptions, complexEditor, allowEditing);
 
   // useEffect(() => {
   //   // If the mode is delete, delete the selected cells
@@ -110,6 +111,8 @@ function App() {
   // }, [selectedState]);
   return (
     <ThemeProvider theme={theme}>
+      <TutorialProvider>
+
       <CssBaseline />
       <NotificationManager />
       
@@ -117,6 +120,7 @@ function App() {
         <div className="board">
           <div className={styles.panelHolder}>
             <HelpPanel />
+              <button style={{height: "40px"}} onClick={() => setAllowEditing(!allowEditing) } >{allowEditing ? "Edit" : "View"}</button>
             <div className={styles.upperPanel} style={{ display: 'flex', flexDirection: 'row' }}>
               {/* <DebugComplex complex={complex} /> */}
               <LoadComplex setPreset={setPreset} />
@@ -144,7 +148,8 @@ function App() {
       
       <div className="centerHolder">
         <History complexEditor={complexEditor} editorState={editorState}/>
-        <Board 
+        <Board
+          allowEditing={allowEditing} 
           viewOptions={viewOptions} 
           editOptions={editOptions} 
           editComplex={complexEditor}
@@ -167,6 +172,7 @@ function App() {
       </div>
     </div>
     </ErrorBoundary>
+      </TutorialProvider>
       </ThemeProvider>
   );
 }

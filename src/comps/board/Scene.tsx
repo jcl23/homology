@@ -20,7 +20,7 @@ const computedStyles = getComputedStyle(document.documentElement);
 const unselectedFg = computedStyles.getPropertyValue("--unselected-fg").trim();
 const selectedFg = computedStyles.getPropertyValue("--selected-fg").trim();
 const selectedBg = computedStyles.getPropertyValue("--selected-bg").trim();
-export const Scene = ({ editComplex, viewOptions, complex, editOptions, selectedReps, setDragSelectData, dragSelectData }: SceneProps) => {
+export const Scene = ({ editComplex, viewOptions, complex, editOptions, selectedReps, setDragSelectData, dragSelectData, allowEditing }: SceneProps) => {
     console.notify("Scene");
     
     // const complex = history[history.length - 1].complex;
@@ -32,7 +32,7 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, selected
     const [previewPosition, setPreviewPosition] = useState<[number, number, number] | null>(null);
     
     const handlePointerMove = (e) => {
-        // e.stopPropagation();
+        if (!allowEditing) return;
         try {
 
             if (editOptions.mode === 'add' && e.intersections.length > 0 && e.intersections[0].object === planeRef.current) {
@@ -55,11 +55,14 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, selected
     };
 
     const handlePointerOut = () => {
+        if (!allowEditing) return;
+
         setPreviewPosition(null);
     };
 
 
     const handlePointerDown = (e) => {
+        if (!allowEditing) return;
         e.stopPropagation();
         try {
             if (editOptions.mode  === 'add' && previewPosition) {
@@ -181,10 +184,12 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, selected
                     args={[gridExtent * 2, gridExtent * 2]} // Size matching the grid
                     position={new Vector3(0, editOptions.gridHeight - 0.2, 0)}
                     rotation={[-Math.PI / 2, 0, 0]}
-                    onPointerMove={handlePointerMove}
-                    onPointerOut={handlePointerOut}
-                    onPointerDown={handlePointerDown}
+                    // onPointerMove={handlePointerMove}
+                    // onPointerOut={handlePointerOut}
+                    // onPointerDown={handlePointerDown}
+                    
                     receiveShadow
+
                 >
                    
                     <meshStandardMaterial color="#f5f5f5" transparent opacity={0.4} roughness={0.4} metalness={0.1} depthTest={true}  side={DoubleSide}/>

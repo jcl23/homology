@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { keybinds } from "./data/keybinds";
-
+import { useTutorial } from "./tutorial/TutorialContex";
 let keyModifierStates = {
     shift: false,
     control: false,
@@ -10,7 +10,7 @@ const handleKeydown =
     (
         setEditOptions: React.Dispatch<React.SetStateAction<any>>,
         setViewOptions: React.Dispatch<React.SetStateAction<any>>,
-        complexEditor: any
+        complexEditor: any,
     ) =>
         (event: KeyboardEvent) => {
             if (event.repeat) {
@@ -49,7 +49,8 @@ const handleKeyup =
     (
         setEditOptions: React.Dispatch<React.SetStateAction<any>>,
         setViewOptions: React.Dispatch<React.SetStateAction<any>>,
-        complexEditor: any
+        complexEditor: any,
+
     ) =>
         (event: KeyboardEvent) => {
             console.log("Successfuly using the new keybinding system (keyup)");
@@ -71,18 +72,25 @@ const handleKeyup =
 export const useKeybindings = (
     setEditOptions: React.Dispatch<React.SetStateAction<any>>,
     setViewOptions: React.Dispatch<React.SetStateAction<any>>,
-    complexEditor: any
+    complexEditor: any,
+    allowEditing: boolean
 ) => {
     useEffect(() => {
-        const keydownHandler = handleKeydown(setEditOptions, setViewOptions, complexEditor);
-        const keyupHandler = handleKeyup(setEditOptions, setViewOptions, complexEditor);
+        const keydownHandler = (e: KeyboardEvent) => {
+            if (!allowEditing) return;
+            handleKeydown(setEditOptions, setViewOptions, complexEditor)(e);
+        };
 
+        const keyupHandler = (e: KeyboardEvent) => {
+            if (!allowEditing) return;
+            handleKeyup(setEditOptions, setViewOptions, complexEditor)(e);
+        };
         window.addEventListener('keydown', keydownHandler);
         window.addEventListener('keyup', keyupHandler);
-
+        
         return () => {
             window.removeEventListener('keydown', keydownHandler);
             window.removeEventListener('keyup', keyupHandler);
         };
-    }, [setEditOptions, setViewOptions, complexEditor]);
+    }, [setEditOptions, setViewOptions, complexEditor, allowEditing]);
 }
