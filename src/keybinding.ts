@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { keybinds } from "./data/keybinds";
-import { useTutorial } from "./tutorial/TutorialContex";
+import { useTutorial } from "./tutorial/TutorialContext";
 let keyModifierStates = {
     shift: false,
     control: false,

@@ -63,7 +63,6 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, selected
 
     const handlePointerDown = (e) => {
         if (!allowEditing) return;
-        e.stopPropagation();
         try {
             if (editOptions.mode  === 'add' && previewPosition) {
                 // const newVertex: AbstractVertex = {

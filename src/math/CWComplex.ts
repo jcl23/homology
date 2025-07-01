@@ -544,9 +544,8 @@ export const identifyVertices = (complex: CWComplex, cells: Set<AbstractCell>): 
 
     for (let i = 1; i < elements.length; i++) {
         const cell = elements[i];
-        // cell.index = repIndex;
-        // cell.name = repName;
-        // Put this back later
+        cell.index = repIndex;
+        cell.name = repName;
     }
 
     complex.reindex();
@@ -604,6 +603,8 @@ export const madeWithGivenVertices = (face: AbstractCell, vertices: AbstractVert
 }
 
 export const identifyEdges = (complex: CWComplex, cells: Set<AbstractCell>, newName?: string): void => {
+    
+    debugger;
     const indices = Array.from(cells).map(c => c.index);
     const representative = complex.cells[1].find(e => indices.some(index => index == e.index))!;
     const [startIndex, endIndex] = representative.attachingMap.map(v => v.index);

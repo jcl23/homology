@@ -3,28 +3,22 @@ import "./App.css";
 import "./comps/Joyride.css";
 import UIPanel from "./comps/UIPanel";
 import Board from "./comps/board/Board";
-import { printSelected, retrieveCellsFromSelectedKeys } from "./math/CWComplex";
 import SimplicesPanel from "./comps/board/simplicesPanel/SimplicesPanel";
 import { defaultComplex } from "./data/presets";
 import { HomologyPanel } from "./comps/HomologyPanel";
-import { getChainGroups } from "./math/homology";
 import { LoadComplex } from "./comps/modals/LoadComplex";
 import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import theme from "./style/theme";
 import { useEditComplex } from "./hooks/useCWComplexEditor";
-import { SelectedState } from "./math/selectedState";
-import { keybinds } from "./data/keybinds";
 import { ErrorBoundary } from "./comps/ErrorBoundary";
 import NotificationManager from "./comps/notifs/NotificationManager";
 import History from "./comps/history/History.tsx";
 import styles from "./App.module.css";
 import { defaultPreset } from "./data/defaultComplexes";
 import { HelpPanel } from "./comps/help/HelpPanel";
-import Joyride from "react-joyride";
-import steps from "./tutorial/steps.ts";
 import { useKeybindings } from "./keybinding.ts";
-import { TutorialProvider } from "./tutorial/TutorialContex.tsx";
+import { TutorialProvider } from "./tutorial/TutorialContext.tsx";
 
 const MAX_DIM = 3;
 
@@ -70,36 +64,6 @@ function App() {
   const { nameState } = viewOptions;
 
   const { selectedKeys, complex} = editorState;
-  // console.notify("NumSelected", selectedRepList.length);
-  // const selectedVertexReps = new Set(selectedRepList.filter((cell) => cell.dimension === 0));
-  // const selectedEdgeReps = new Set(selectedRepList.filter((cell) => cell.dimension === 1));
-  // const selectedFaceReps = new Set(selectedRepList.filter((cell) => cell.dimension === 2));
-
-  // const cellCounts = getChainGroups(complex);
-
-
-  ///  const selectedBalls = selectedCellList.filter((cell) => cell.dimension === 3);
-
-  // const noneSelected = selectedRepList.length === 0;
-  // const onlyVerticesSelected = selectedVertexReps.size > 0 && selectedEdgeReps.size === 0 && selectedFaceReps.size === 0;
-  // const onlyEdgesSelected = selectedVertexReps.size === 0 && selectedEdgeReps.size > 0 && selectedFaceReps.size === 0;
-  // const onlyFacesSelected = selectedVertexReps.size === 0 && selectedEdgeReps.size === 0 && selectedFaceReps.size > 0;
-  // With useEffect, log the states of selectedCells and complex
-  // React.useEffect(() => {
-  //   // console.log("Selected cells");
-
-  //   console.log(printSelected(complex, new Set(selectedRepList)));
-  //   // console.log("Whole complex");
-  //   // printCWComplex(complex);
-  // }, [selectedRepList]);
-
-  // const selectedState: SelectedState = (
-  //   noneSelected ? "none"
-  //   : onlyVerticesSelected ? "verticesOnly"
-  //   : onlyEdgesSelected ? "edgesOnly"
-  //   : onlyFacesSelected ? "facesOnly"
-  //   : "other"
-  // );
 
   useKeybindings(setEditOptions, setViewOptions, complexEditor, allowEditing);
 

@@ -1,17 +1,34 @@
 import React, { createContext, useContext, useState } from 'react';
+import { CallBackProps } from 'react-joyride';
 
 type TutorialContextType = {
   isTutorialActive: boolean;
   setTutorialActive: (active: boolean) => void;
+  stepIndex: number;
+  handleJoyrideCallback?: (data: CallBackProps) => void;
 };
 
 const TutorialContext = createContext<TutorialContextType | undefined>(undefined);
 
 export function TutorialProvider({ children }: { children: React.ReactNode }) {
     const [isTutorialActive, setTutorialActive] = useState(false);
+    const [stepIndex, setStepIndex] = useState(0);
 
+  const handleJoyrideCallback = (data: CallBackProps) => {
+    const { action, index, status } = data;
+    if (action === 'next' || action === 'prev') {
+      setStepIndex(index);
+    }
+    if (status === 'finished' || status === 'skipped') {
+      setTutorialActive(false);
+      setStepIndex(0);
+    }
+    if (status === 'running') {
+      setTutorialActive(true);
+    }
+  }
     return (
-        <TutorialContext.Provider value={{ isTutorialActive, setTutorialActive }}>
+        <TutorialContext.Provider value={{ isTutorialActive, setTutorialActive, stepIndex, handleJoyrideCallback }}>
             {children}
         </TutorialContext.Provider>
     );
