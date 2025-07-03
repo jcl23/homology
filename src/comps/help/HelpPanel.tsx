@@ -2,7 +2,7 @@ import { useContext, useState } from 'react';
 import { FAQModal } from '../faq/FAQModal';
 import styles from './HelpPanel.module.css';
 import Joyride from 'react-joyride';
-import steps from '../../tutorial/steps';
+import { steps1} from '../../tutorial/steps';
 import { useTutorial } from '../../tutorial/TutorialContext';
 
 export const HelpPanel = () => {
@@ -11,7 +11,7 @@ export const HelpPanel = () => {
         <div className={styles.panel}>
             {/* <FAQModal /> */}
             <Joyride
-              steps={steps}
+              steps={steps1}
               run={true}
               stepIndex={stepIndex}
               callback={handleJoyrideCallback}
