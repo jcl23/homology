@@ -5,9 +5,10 @@
     border: 2px solid rgba(0, 0, 0, 0.26) !important;
     box-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.26) !important;
     color: var(--unselected-fg) !important;
-    font-size: 14px !important;
+    font-size: 14px;
     font-weight: bold;
-    padding: 16px !important;
+    padding: 8px !important;
+    min-width: 200px;
 }
 
 .react-joyride__tooltip__container {
@@ -26,15 +27,23 @@
     padding: 0 !important;
 }
 
+.react-joyride__tooltip__edge {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: space-between !important;
+    margin-top: 16px !important;
+    padding: 5px !important;
+    margin: 0 !important;    width: 100% !important;
+}
 /* Button base styles matching UIButton */
-.react-joyride__tooltip__footer button {
+.react-joyride__tooltip__edge button {
     background-color: var(--unselected-bg) !important;
     color: var(--unselected-fg) !important;
     border: 2px solid rgba(0, 0, 0, 0.26) !important;
     border-radius: 0px !important;
     box-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.26) !important;
     font-weight: bold !important;
-    padding: 8px 16px !important;
+    padding: 4px 8px !important;
     margin: 0 4px !important;
     transition: box-shadow 0.1s, transform 0.1s, background-color 0.1s !important;
     cursor: pointer !important;
@@ -42,37 +51,46 @@
 }
 
 /* Button hover state */
-.react-joyride__tooltip__footer button:hover {
+.react-joyride__tooltip__edge button:hover {
     box-shadow: 3px 3px 3px 0px rgba(0, 0, 0, 0.26) !important;
     transform: translateY(-1px) !important;
 }
 
 /* Button active state */
-.react-joyride__tooltip__footer button:active {
+.react-joyride__tooltip__edge button:active {
     box-shadow: none !important;
     transform: translateY(2px) !important;
 }
 
 /* Skip button specific styling */
-.react-joyride__tooltip__footer button[data-action="skip"] {
+.react-joyride__tooltip__edge button[data-action="skip"] {
     background-color: var(--unselected-bg) !important;
     color: var(--unselected-fg) !important;
 }
 
 /* Close/Finish button specific styling (use selected colors) */
-.react-joyride__tooltip__footer button[data-action="close"] {
-    background-color: var(--selected-bg) !important;
-    color: var(--selected-fg) !important;
+.react-joyride__tooltip__edge button[data-action="close"] {
+    background-color: none;
+    border: none!important;
+    font-size: x-large;
+    margin: 0!important;
+    margin-right: 3px!important;
+    padding: 0!important;
+    box-shadow: none!important;
+    color: var(--unselected-fg) !important;
+    width: min-content!important;
+    aspect-ratio: 1!important;
+
 }
 
 /* Primary action button (Next) */
-.react-joyride__tooltip__footer button[data-action="next"] {
+.react-joyride__tooltip__edge button[data-action="next"] {
     background-color: var(--unselected-bg) !important;
     color: var(--unselected-fg) !important;
 }
 
 /* Back button */
-.react-joyride__tooltip__footer button[data-action="back"] {
+.react-joyride__tooltip__edge button[data-action="back"] {
     background-color: var(--unselected-bg) !important;
     color: var(--unselected-fg) !important;
 }

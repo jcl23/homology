@@ -1,6 +1,7 @@
 import { testSteps, chunkSteps, printChunkedSteps, linkChunkedSteps, GeneralStep, } from "./steps";
 import { describe, expect, it } from 'vitest';
-
+import { tutorialSteps } from "./tutorialSteps";
+import { storageElement } from "three/src/nodes/utils/StorageArrayElementNode.js";
 describe('linkChunkedSteps', () => {
     it('Should link each step to the next available within the branch our outside', () => {
         const chunked = chunkSteps(testSteps);
@@ -71,3 +72,18 @@ describe('chunkSteps', () => {
     })
 })
 
+describe('tutorialSteps', () => {
+
+    it('Should have indices match place in array', () => {
+        // begin by logging the steps
+        console.log("Tutorial Steps:");
+        tutorialSteps.forEach((step, index) => {
+            console.log(`(${index} / ${step.index}:`);
+        });
+        const allSteps = [...tutorialSteps];
+        for (let index = 0; index < allSteps.length; index++) {
+            const step = allSteps[index];
+            expect(step.index).toEqual(index);
+        }
+    })
+})

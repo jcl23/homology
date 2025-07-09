@@ -21,7 +21,7 @@ const SimplexData = ({ selected, cell, toggleCellSelection }: SimplexDataProps) 
                 <div>{cell.name}</div>
                 <div style={{display: "flex", alignItems: "center"}}>
                     <div>
-                    id={cell.id}
+                    {/* id={cell.id} */}
                     </div>
                     <button 
                         className={styles.expandButton}

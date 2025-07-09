@@ -82,9 +82,11 @@ function App() {
       
       <ErrorBoundary> 
         <div className="board">
+          <div className="modalHolder">
+          </div>
           <div className={styles.panelHolder}>
             <HelpPanel />
-              <button style={{height: "40px"}} onClick={() => setAllowEditing(!allowEditing) } >{allowEditing ? "Edit" : "View"}</button>
+              <button className={styles.button} style={{height: "40px", color: "#555"}} onClick={() => setAllowEditing(!allowEditing) } >{allowEditing ? "toggle demo mode" : "View"}</button>
             <div className={styles.upperPanel} style={{ display: 'flex', flexDirection: 'row' }}>
               {/* <DebugComplex complex={complex} /> */}
               <LoadComplex setPreset={setPreset} />
@@ -121,17 +123,19 @@ function App() {
           selectedReps={selectedKeys}
         />
         <div className={styles.keybinds}>
-      <div className={styles.keybindLabel}> a: Add Cell </div>
-      <div className={styles.keybindLabel}> s: Select </div>
-      <div className={styles.keybindLabel}> m: Move </div>
-      <div className={styles.keybindLabel}> t: Trash All </div>
-      <div className={styles.keybindLabel}> d: Delete </div>
-      <div className={styles.keybindLabel}> f: Fill </div>
-      <div className={styles.keybindLabel}> i: Identify </div>
-      <div className={styles.keybindLabel}> Ctrl-z: Undo </div>
-      <div className={styles.keybindLabel}> Ctrl-a: Select All </div>
-      <div className={styles.keybindLabel}> Ctrl-d: Deselect All </div>
-      <div className={styles.keybindLabel}> c: Select none</div>
+      <div className={styles.keybindLabel}> a: add cell </div>
+      <div className={styles.keybindLabel}> s: select </div>
+      <div className={styles.keybindLabel}> m: move </div>
+      <div className={styles.keybindLabel}> t: trash </div>
+      <div className={styles.keybindLabel}> d: delete </div>
+      <div className={styles.keybindLabel}> f: fill </div>
+    </div>
+        <div className={styles.keybinds}>
+      <div className={styles.keybindLabel}> i: identify </div>
+      <div className={styles.keybindLabel}> ctrl-z: undo </div>
+      <div className={styles.keybindLabel}> ctrl-a: select all </div>
+      <div className={styles.keybindLabel}> ctrl-d: deselect all </div>
+      <div className={styles.keybindLabel}> c: select none</div>
     </div>
       </div>
     </div>

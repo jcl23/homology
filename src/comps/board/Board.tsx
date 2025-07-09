@@ -81,7 +81,7 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, selectedReps, a
     return (
         <ErrorBoundary>
             
-        <Leva collapsed />
+        <Leva collapsed hidden />
             <Canvas
                 className="canvas"
                 style={{
@@ -102,7 +102,7 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, selectedReps, a
                 onPointerUp={() => setDragSelectData(data => ({ ...data, isMouseDown: false}))}    
                 onPointerDown={() => setDragSelectData(data => ({ ...data, isMouseDown: true}))}  
             >
-                <Stats />
+                {/* <Stats /> */}
                 <ambientLight intensity={2} />
 
                 <Scene
