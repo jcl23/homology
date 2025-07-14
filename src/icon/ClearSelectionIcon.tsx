@@ -14,7 +14,7 @@ export const ClearSelectionIcon = ({ enabled }: ClearSelectionIconProps) => (
             height: "20px",
             width: "20px",
             transform: "translate(5px,-5px)",
-            backgroundColor: "white",
+            backgroundColor: "var(--unselected-bg)",
             border: "2px solid black",
             position: "relative"
         }}>

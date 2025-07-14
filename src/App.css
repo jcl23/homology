@@ -2,9 +2,14 @@
  --selected-bg-old : #050012;
 
 
- --selected-bg: red;
- --selected-fg: white;
- --unselected-bg: white;
+  /* --selected-bg: red;
+  --selected-fg: rgb(120, 246, 225);
+  --unselected-bg: rgb(0, 4, 255);
+  --unselected-fg: rgb(0, 0, 0);
+  --unselected-mid: rgb(0, 115, 255) */
+  --selected-bg: red;
+  --selected-fg: white;
+  --unselected-bg: white;
   --unselected-fg: rgb(0, 0, 0);
   --unselected-mid: #888;
 }

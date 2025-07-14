@@ -26,7 +26,7 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     }
   }
     return (
-        <TutorialContext.Provider value={{ isTutorialActive, setTutorialActive, stepInddex, setStepIndex, handleJoyrideCallback }}>
+        <TutorialContext.Provider value={{ isTutorialActive, setTutorialActive, stepIndex, setStepIndex, handleJoyrideCallback }}>
             {children}
         </TutorialContext.Provider>
     );

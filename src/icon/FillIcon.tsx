@@ -13,7 +13,7 @@ export const FillIcon = ({enabled}: FillIconProps) => (
                 </pattern>
             </defs>
             <polygon points="2,4 6,29 30,30" style={{ fill: "url(#dashedFill)", stroke: "black", strokeWidth: 2.5 }} />
-            <polygon points="5,10 8,27 24,28" style={{ fill: "transparent", stroke: "white", strokeWidth: 2 }} />
+            <polygon points="5,10 8,27 24,28" style={{ fill: "transparent", stroke: "var(--unselected-bg)", strokeWidth: 2 }} />
         <circle cx="2" cy="4" r="4" fill="black" />
         <circle cx="6" cy="28" r="4" fill="black" />
         <circle cx="30" cy="30" r="4" fill="black" />

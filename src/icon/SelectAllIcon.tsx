@@ -13,9 +13,9 @@ export const SelectAllIcon = ({enabled}: SelectAllIconProps) => (
             height: "20px",
             width: "20px",
             transform: "translate(5px,-5px)",
-            backgroundColor: "white",
+            backgroundColor: "var(--unselected-bg)",
             border: "2px solid black",
-            filter: "drop-shadow(-2px 2px 0px white)"
+            filter: "drop-shadow(-2px 2px 0px var(--unselected-bg))"
         }}>
             <div style={{
                 width: "12px",

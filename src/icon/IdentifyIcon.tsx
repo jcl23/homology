@@ -41,7 +41,7 @@ export const IdentifyIcon = ({enabled}: IdentifyIconProps) => (
                      Z"
                   stroke="#000"
                   strokeWidth="1"
-                  fill="white"
+                  fill="var(--unselected-bg)"
                 />
                 <circle cx="28" cy="13" r="3"  stroke="#000" strokeWidth="0" />
                 <polygon points="23,8 25,13 28,10" fill="black" stroke="#000" strokeWidth="1" />

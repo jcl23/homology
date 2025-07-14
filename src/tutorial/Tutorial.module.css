@@ -1,0 +1,8 @@
+.desc {
+    font-size: 0.8em;
+    margin: 0.5em 0;
+    font-weight: lighter;
+    font-style: italic !important;
+    transform: skewX(-10deg);
+    color: #555;
+}

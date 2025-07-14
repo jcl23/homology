@@ -214,13 +214,6 @@ const indexedSteps = allSteps as IndexedChunkedStep[];
 
 console.log("(test) Linked Steps:", linked);
 
-/**
- * Transforms an array of GeneralSteps into a linked DAG structure.
- * 
- * @param steps Array of steps to process
- * @returns Array of all the linked steps with indices
- */
-
 export const linkStepTree = (steps: GeneralStep[]): LinkedStep[] => {
     // First chunk the steps
     const chunkedSteps = chunkSteps(steps);
@@ -251,10 +244,4 @@ export const printLinkedDebug = (linkedSteps: LinkedStep[]) => {
     });
 }
 // console.log("Set from Linked Step:", getSetFromLinkedStep(linked));
-
-
-// We should assign to each GeneralStep:
-// "last" being the recentmost upper step
-// "next" being the next lower step in the dag
-
 

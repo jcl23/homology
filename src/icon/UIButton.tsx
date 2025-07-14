@@ -23,26 +23,6 @@ const UIButton: React.FC<UIButtonProps> = ({ onClick, selected, children, name, 
             onMouseDown={onClick}
             className={`${styles.button} ${selected ? styles.selected : styles.unselected}`}
       
-            // style={{
-            //     fontWeight: 'bold',
-            //     width: '55px', // Square button dimensions
-            //     height: '55px',
-            //     textTransform: 'none',
-            //     minWidth: '0',
-            //     margin: '5px',
-            //     marginBottom: '5px',
-            //     padding: '0px',
-            //     border: `2px solid #0004`,
-            //     bottomRightCornerRadius: "0px",
-            //     position: 'relative', // Enable overlaying icons
-            //     display: 'flex',
-            //     flexDirection: 'column',
-            //     alignItems: 'center',
-            //     justifyContent: 'center',
-            //     color: `var(--${selected ? 'selected-fg' : 'unselected-fg'})`,
-            //     backgroundColor,
-                
-            // }}
 
             style={{
                 ...style,
