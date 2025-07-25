@@ -7,10 +7,13 @@
     color: var(--unselected-fg) !important;
     font-size: 14px;
     font-weight: bold;
+    
     padding: 8px !important;
     min-width: 200px;
 }
-
+.__floater, .__floater__open {
+    /* transition-property: none!important; */
+}
 .react-joyride__tooltip__container {
     text-align: left !important;
 }

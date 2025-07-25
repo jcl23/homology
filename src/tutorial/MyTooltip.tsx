@@ -13,7 +13,7 @@ const MyTooltip: React.FC<TooltipRenderProps> = ({
   isLastStep,
   index,
 }) => {
-  const { stepIndex, setStepIndex } = useTutorial();
+  const { stepIndex, goToStep, back } = useTutorial();
   if (!("next" in step_)) return <div>Invalid step configuration</div>;
   const step = step_ as LinkedStep;
   let bodyStyle = {};
@@ -22,6 +22,7 @@ const MyTooltip: React.FC<TooltipRenderProps> = ({
     bodyStyle = {
       fontSize: "large",
       textAlign: "center",
+      transitionProperty: "none!important",
     };
     buttonHolderStyle = {
       display: "flex",
@@ -46,7 +47,7 @@ const MyTooltip: React.FC<TooltipRenderProps> = ({
       <div className="react-joyride__tooltip__container">
         <div className="react-joyride__tooltip__edge">
             {index > 0 && (
-                <button className="react-joyride__tooltip__header button" {...backProps}>
+                <button className="react-joyride__tooltip__header button" onClick={back}>
                     Back
                 </button>
             )}
@@ -69,7 +70,7 @@ const MyTooltip: React.FC<TooltipRenderProps> = ({
               key={nextStep.index}
               className="react-joyride__tooltip__edge button"
               onClick={() => {
-                setStepIndex(nextStep.index);
+                goToStep(nextStep.index);
               }}
             >
               {nextStep.title || "Next"}

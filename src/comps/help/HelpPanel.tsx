@@ -9,6 +9,8 @@ import { tutorialSteps } from '../../tutorial/tutorialSteps';
 
 export const HelpPanel = () => {
     const { stepIndex, handleJoyrideCallback } = useTutorial();
+    const stepIsModal = stepIndex >= 0 && stepIndex < tutorialSteps.length && tutorialSteps[stepIndex].modal;
+    const floaterProps = stepIsModal ? { transitionProperty: "none!important" } : {};
     return (
         <div className={styles.panel}>
             {/* <FAQModal /> */}
@@ -19,6 +21,7 @@ export const HelpPanel = () => {
               tooltipComponent={MyTooltip}
               steps={tutorialSteps}
               run={true}
+              floaterProps={{disableAnimation: true, style: floaterProps}}
               continuous={true}
               stepIndex={stepIndex}
               callback={handleJoyrideCallback}
