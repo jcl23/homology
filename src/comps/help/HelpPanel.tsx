@@ -5,6 +5,7 @@ import Joyride from 'react-joyride';
 import { steps1} from '../../tutorial/steps';
 import { useTutorial } from '../../tutorial/TutorialContext';
 import MyTooltip from '../../tutorial/MyTooltip';
+import MyBeacon from '../../tutorial/MyBeacon';
 import { tutorialSteps } from '../../tutorial/tutorialSteps';
 
 export const HelpPanel = () => {
@@ -19,6 +20,7 @@ export const HelpPanel = () => {
             </h2>
             <Joyride
               tooltipComponent={MyTooltip}
+              beaconComponent={MyBeacon}
               steps={tutorialSteps}
               run={true}
               floaterProps={{disableAnimation: true, style: floaterProps}}

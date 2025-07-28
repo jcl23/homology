@@ -53,6 +53,8 @@ export default [
   },
   {
     title: "Next",
+    modal: true,
+    target: ".modalHolder",
     content: (
       <>
         <p>
@@ -61,15 +63,38 @@ export default [
         <p>
           {parabolas}
           <p>
-            We may want to compress this data by fitting it to a smooth function, so that we can treat each point as a point on a line, instead of in 2D space, so that it can be descibed with just 1 number. However, the two above plots show that the shape of data affects our ability to do this.
+            To make predictions about data, we always want to find correlations between the variables. In particular, it is useful for one variable to be a smooth function of another. The shape of the data can tell us whether or not we can find such a function.
           </p>
         </p>
       </>
     ),
   },
+ 
   {
-    target: "body",
-    content: "Click next to continue.",
+    modal: true,
+
+    content:<div>
+    Consider one of the earliest motivations for topology: <a href="https://en.wikipedia.org/wiki/Seven_Bridges_of_K%C3%B6nigsberg">the Königsberg bridges problem</a>. 
+    <br />
+    The mathematician Leonhard Euler wondered whether or not it is possible to walk through the city of Königsberg and cross each of its seven bridges exactly once. 
+     <p>
+        <a href="https://commons.wikimedia.org/wiki/File:Konigsberg_bridges.png">
+          <img 
+            src="https://upload.wikimedia.org/wikipedia/commons/5/5d/Konigsberg_bridges.png" 
+            alt="Konigsberg bridges" 
+            height="238" 
+            width="302" 
+          />
+        </a>
+        <br />
+        <div className={styles.desc}>
+          By Bogdan Giuşcă - Public domain (PD), 
+          <a href="http://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>, 
+          <a href="https://commons.wikimedia.org/w/index.php?curid=112920">Link</a>
+        </div>
+      </p>
+    </div>
+  
   },
 ];
 //

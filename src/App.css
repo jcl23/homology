@@ -7,9 +7,10 @@
   --unselected-bg: rgb(0, 4, 255);
   --unselected-fg: rgb(0, 0, 0);
   --unselected-mid: rgb(0, 115, 255) */
-  --selected-bg: red;
+  --selected-bg: rgb(255, 61, 87);
+  /* --selected-bg: red; */
   --selected-fg: white;
-  --unselected-bg: white;
+  --unselected-bg: rgb(242, 247, 250);
   --unselected-fg: rgb(0, 0, 0);
   --unselected-mid: #888;
 }

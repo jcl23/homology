@@ -1,6 +1,7 @@
 import { GeneralStep, linkStepTree, printLinkedDebug } from "./steps";
 import branchA from "./branches/branchBeginner"
-import branchB from "./branches/branchTechnical";
+import branchB from "./branches/branchHomology";
+import branchC from "./branches/branchTechnical";
 let self = "react-joyride__tooltip";
 export const tutorialStepArray: GeneralStep[] = [
     {
@@ -11,7 +12,7 @@ export const tutorialStepArray: GeneralStep[] = [
     
         title: 'Welcome to the Δ-complex editor!',
         branches: [
-            branchA, branchB
+            branchA, branchB, branchC
         ]
     },
     {
