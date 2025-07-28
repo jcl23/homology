@@ -1,0 +1,75 @@
+.board {
+
+}
+
+.panelHolder {
+    width: min-content;
+    display: flex;
+    margin: 15px;
+    flex-direction: column;
+}
+
+
+.keybinds {
+    
+}
+.keybinds > div {
+    border-width: 1px 0px;
+    border-color: rgb(173, 173, 173);
+    border-style: solid;
+    margin: 5px;
+    padding: 0px 5px;
+}
+.upperPanel {
+
+    /* Should be arranged horizontally */
+    height: calc(100vh - 300px - 50px);
+    z-index: 1;
+    right: 0;
+}
+
+.lowerPanel {
+    height: 200px;
+    margin: left auto;
+    box-shadow: 0px 0px 0px 1px #888;
+    padding: 10px;
+}
+
+.keybindLabel {
+    font-weight: bold;
+    color: grey;
+    border: none;
+    box-shadow: none;
+    border-width: 1px 0px 0px 1px!important;
+}
+.keybinds {
+    display: flex;
+    justify-content: center;
+    display: flex;
+    justify-content: space-between;
+    width: 700px;
+    margin: 0 auto;
+    border: 1px 0px 1px 0px solid black!important;
+}
+.button {
+    transition-property: box-shadow, transform, background-color;
+    transition-duration: 0.1s;
+    font-weight: bold;
+
+    text-transform: none;
+    box-shadow: 0px 2px 2px 0px #0004;
+    min-width: 40px;
+    margin: 6px 0px;
+    border: 2px solid #0004;
+    border-bottom-right-radius: 0px;
+    position: relative; /* Enable overlaying icons */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--unselected-fg); /* Default color */
+    background-color: var(--background-color); /* Default background color */ 
+}
+.centerHolder {
+    
+}

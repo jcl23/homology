@@ -1,0 +1,90 @@
+.panel {
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    width: 250px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    margin: 5px 0px;
+}
+.panel  td {
+    text-align: left;
+}
+
+.table thead>tr>th:nth-child(1) {
+    width: 100px;
+}
+
+.table thead>tr>th:last-child {
+    min-width: 120px;
+}
+
+
+
+table.simplexPanel {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.verticesPanel {
+    background: #f33d0060;
+}
+
+.edgesPanel {
+    background: #00f30060;
+}
+
+.facesPanel {
+    background: #fbfbff60;
+}
+
+.ballsPanel {
+    background: #ff008460;
+}
+.selected {
+    background-color: var(--selected-bg)!important;
+    color: white;
+}
+
+
+/* CellData.module.css */
+.cellData {
+    max-height: 0; /* Fully collapsed */
+    overflow: hidden; /* Hide content when collapsed */
+    transition: max-height 0.1s ease; /* Smooth transition for height */
+}
+
+.cellHeader {
+    display: flex;
+    width: 100%;
+}
+.cellHeader > div:last-child {
+    /* inside the flex, align to right */
+    margin-left: auto;
+}
+.datumOuter {
+    width: 100%;
+    text-align: left;
+}
+.expandButton {
+    background: transparent;
+    border: none;
+}
+
+
+
+.selected {
+    background-color: var(--selected-bg) !important;
+    color: white;
+}
+
+
+fontW
+.dimName {
+    text-align: center;
+    align-items: center;
+    align-content: center;
+    
+}
+
+.cellRow {
+    background-color: rgb(240, 240, 240);
+}
