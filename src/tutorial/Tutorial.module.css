@@ -1,3 +1,37 @@
+@font-face {
+    font-family: "Helvetica Neue";
+    src: url('../assets/fonts/HelveticaNeue-Bold.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Helvetica Neue";
+    src: url('../assets/fonts/HelveticaNeue-Light.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Helvetica Neue";
+    src: url('../assets/fonts/HelveticaNeue-Medium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Helvetica Neue";
+    src: url('../assets/fonts/HelveticaNeue-Roman.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Helvetica Neue";
+    src: url('../assets/fonts/HelveticaNeue-Thin.otf') format('opentype');
+    font-weight: 100;
+    font-style: normal;
+}
+
 .desc {
     font-size: 0.8em;
     margin: 0.5em 0;
@@ -9,6 +43,16 @@
 
 .beacon {
     border: 2px solid red;
-    min-width: 100px;
-    min-height: 100px;
+    background: rgba(255, 157, 157, 0.5);
+    position: absolute;
+    left: -83px;
+    font-family: "Helvetica Neue";
+    text-rendering: geometricPrecision;
+    font-size: large;
+    color: rgb(110, 11, 11);
+
+    font-weight: bold;
+    top: 36px;
+    min-width: 443px;
+    min-height: 40px;
 }

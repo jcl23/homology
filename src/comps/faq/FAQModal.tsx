@@ -10,8 +10,8 @@ export const FAQModal = function() {
     const questionHtml = (questions as FAQ).map(({title, content}) => {
         return (
                 <div>
-                    <h3>{question}</h3>
-                    <p>{answer}</p>
+                    <h3>{title}</h3>
+                    <p>{content}</p>
                 </div>
             )
     });

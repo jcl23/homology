@@ -75,7 +75,12 @@ function App() {
   // }, [selectedState]);
   return (
     <ThemeProvider theme={theme}>
-      <TutorialProvider>
+      <TutorialProvider
+        editOptions={editOptions}
+        viewOptions={viewOptions}
+        complexEditor={complexEditor}
+        editorState={editorState}
+      >
 
       <CssBaseline />
       <NotificationManager />
@@ -86,7 +91,8 @@ function App() {
           </div>
           <div className={styles.panelHolder}>
             <HelpPanel />
-              <button className={styles.button} style={{height: "40px", color: "#555"}} onClick={() => setAllowEditing(!allowEditing) } >{allowEditing ? "toggle demo mode" : "View"}</button>
+             <div style={{height: "50px"}}></div>
+              {/* <button className={styles.button} style={{height: "40px", color: "#555"}} onClick={() => setAllowEditing(!allowEditing) } >{allowEditing ? "toggle demo mode" : "View"}</button> */}
             <div className={styles.upperPanel} style={{ display: 'flex', flexDirection: 'row' }}>
               {/* <DebugComplex complex={complex} /> */}
               <LoadComplex setPreset={setPreset} />
@@ -107,7 +113,7 @@ function App() {
                 unselectRep={complexEditor.toggleRepSelection}
               />
             </div>
-              <div className={styles.lowerPanel} key={"COMPLEX"}>
+              <div className={`${styles.lowerPanel} lowerPanel`} key={"COMPLEX"}>
                   <HomologyPanel complex={complex}  />
               </div>
         </div>

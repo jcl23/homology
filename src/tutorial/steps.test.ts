@@ -57,17 +57,7 @@ describe('chunkSteps', () => {
         expect(chunked[1].length).toEqual(3);
         // console.log("Chunk 2.3");
         expect("branches" in chunked[1][2]).toBeTruthy();
-        for (let branchedChunks of chunked[1][2].branches) {
-            // console.log("Branch!:");
-            // console.log(branchedChunks);
-           for (let chunk of branchedChunks) {
-                console.log(`Chunk length: ${chunk.length}`);    
-                for (let step of chunk) {
-                    
-                    console.log(`Step: ${step.content}`);
-                }
-            }
-        }
+
         
     })
 })

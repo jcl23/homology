@@ -66,7 +66,6 @@ const parab1 = generateParabolaAnimationPath(
   200, 200,     // width, height
   50,           // steps
   2,            // duration
-  t => Math.sqrt(t)  // scale function
 );
 
 console.log(parab1);

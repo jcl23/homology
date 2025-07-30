@@ -3,6 +3,7 @@ import { CWComplex, copyStep, getBoundary, getBoundaryOfCell, getVertices, madeW
 import { AbstractCell, Cell, Edge,Vertex } from "../math/classes/cells";
 import { CWComplexEditStep  } from "../logic/steps";
 import { MAX_DIMENSION, MAX_VERTEX_SELECT} from "../data/configuration";
+import { ThermostatOutlined } from "@mui/icons-material";
 
 type CellIdentifier = {
     id: string; // all unique
@@ -73,6 +74,8 @@ export class CWComplexStateEditor  {
         this.collapse = this.collapse.bind(this);
         this.addCell = this.addCell.bind(this);
         this.identify = this.identify.bind(this);
+        this.undo = this.undo.bind(this);
+        this.reset = this.reset.bind(this);
     }
     
     // get complex(): CWComplex {

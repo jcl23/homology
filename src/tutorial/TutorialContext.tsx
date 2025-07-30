@@ -1,18 +1,31 @@
 import React, { createContext, useContext, useState } from 'react';
 import { CallBackProps } from 'react-joyride';
+import { EditOptions, ViewOptions } from '../App';
+import { CWComplexStateEditor, EditorState } from '../hooks/useCWComplexEditor';
 
-type TutorialContextType = {
+export type TutorialContextType = {
   isTutorialActive: boolean;
   setTutorialActive: (active: boolean) => void;
   stepIndex: number;
   goToStep: (index: number) => void; 
   back: () => void;
   handleJoyrideCallback?: (data: CallBackProps) => void;
+  
+  tutorialStepConditionProps?: TutorialStepConditionProps;  
 };
-
+export type TutorialStepConditionProps = {
+  editOptions: EditOptions;
+  editorState: EditorState;
+  complexEditor: CWComplexStateEditor;
+  viewOptions: ViewOptions;
+}
+type TutorialProviderProps = TutorialStepConditionProps & {
+  children: React.ReactNode;
+};
 const TutorialContext = createContext<TutorialContextType | undefined>(undefined);
 
-export function TutorialProvider({ children }: { children: React.ReactNode }) {
+export function TutorialProvider(props: TutorialProviderProps) {
+  const { children, ...tutorialStepConditionProps } = props;
   const [isTutorialActive, setTutorialActive] = useState(false);
   const [stepIndices, setStepIndices] = useState([0]);
 
@@ -48,7 +61,7 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
   };
   const stepIndex = stepIndices[stepIndices.length - 1];
     return (
-        <TutorialContext.Provider value={{ isTutorialActive, setTutorialActive, stepIndex, back, goToStep, handleJoyrideCallback }}>
+        <TutorialContext.Provider value={{ isTutorialActive, setTutorialActive, stepIndex, back, goToStep, handleJoyrideCallback, tutorialStepConditionProps }}>
             {children}
         </TutorialContext.Provider>
     );

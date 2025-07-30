@@ -12,50 +12,48 @@ export const tutorialStepArray: GeneralStep[] = [
     
         title: 'Welcome to the Δ-complex editor!',
         branches: [
-            branchA, branchB, branchC
+             branchC, branchA, branchB,
         ]
     },
-    {
-        target: '.canvas',
-        content: 'This is the main area where you can visualize and interact with your space.',
-    },
-    {
-        target: '.tour_mode_buttons',
-        content: <div>'Select from four modes to manipulate the space: Add, Select, Move, and Remove.'</div>,
-    },
-    {
-        target: 'body',
-        content: "Choose from the following paths",
-        branches: [
-            [
-                {
-                    title: 'Path 1',
-                    target: 'body',
-                    content: 'Path 1: Basic Operations',
-                },
-                {
-                    target: 'body',
-                    content: 'Path 1.1: Advanced Features',
-                }
-            ],
-            [
-                {
-                    title: 'Path 2',
 
-                    target: 'body',
-                    content: 'Path 2: Customization Options',
-                },
-                {
-                    target: 'body',
-                    content: 'Path 2.1: Help and Support',
-                }
-            ]
-        ]
-    },
     {
-        target: 'body',
-        content: <div>'Thank you!'</div>,
+        target: '.modalHolder',
+        modal: true,
+        content: <div>To be continued... last update 7/28/2025</div>,
     },
+    // {
+    //     target: 'body',
+    //     content: "Choose from the following paths",
+    //     branches: [
+    //         [
+    //             {
+    //                 title: 'Path 1',
+    //                 target: 'body',
+    //                 content: 'Path 1: Basic Operations',
+    //             },
+    //             {
+    //                 target: 'body',
+    //                 content: 'Path 1.1: Advanced Features',
+    //             }
+    //         ],
+    //         [
+    //             {
+    //                 title: 'Path 2',
+
+    //                 target: 'body',
+    //                 content: 'Path 2: Customization Options',
+    //             },
+    //             {
+    //                 target: 'body',
+    //                 content: 'Path 2.1: Help and Support',
+    //             }
+    //         ]
+    //     ]
+    // },
+    // {
+    //     target: 'body',
+    //     content: <div>'Thank you!'</div>,
+    // },
 ]
 console.log("TutorialArray steps!")
 
@@ -84,8 +82,8 @@ addDefaultTargets(tutorialStepArray);
 
 
 export const tutorialSteps = linkStepTree(tutorialStepArray);
-tutorialStepArray.forEach((step, index) => {
-    console.log(`(${index} / ${step.index})`);
-});
+// tutorialStepArray.forEach((step, index) => {
+//     console.log(`(${index} / ${step.index})`);
+// });
 console.log("End ")
 printLinkedDebug(tutorialSteps);

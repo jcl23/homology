@@ -21,7 +21,7 @@ const UIButton: React.FC<UIButtonProps> = ({ onClick, selected, children, name, 
         <button
    
             onMouseDown={onClick}
-            className={`${styles.button} ${selected ? styles.selected : styles.unselected}`}
+            className={`${styles.button} ${selected ? styles.selected : styles.unselected} button-${name}` }
       
 
             style={{

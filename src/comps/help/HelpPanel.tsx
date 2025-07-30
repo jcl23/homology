@@ -21,7 +21,7 @@ export const HelpPanel = () => {
             <Joyride
               tooltipComponent={MyTooltip}
               beaconComponent={MyBeacon}
-              steps={tutorialSteps}
+              steps={tutorialSteps as any}
               run={true}
               floaterProps={{disableAnimation: true, style: floaterProps}}
               continuous={true}

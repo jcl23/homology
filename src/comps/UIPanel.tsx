@@ -165,7 +165,7 @@ const UIPanel = (props: UIPanelProps) => {
     ]
 
     return (
-        <div className={styles.panel}>
+        <div className={styles.panel + " ui-panel"}>
             <div className={styles.buttonColumn}>
                 <div 
                     style={{

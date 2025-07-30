@@ -1,6 +1,7 @@
 import { create } from "@mui/material/styles/createTransitions";
 import { Step } from "react-joyride";
 import { all, step } from "three/webgpu";
+import { TutorialStepConditionProps } from "./TutorialContext";
 
 // type StepNode = {
 //     step: Step;
@@ -12,7 +13,10 @@ import { all, step } from "three/webgpu";
 export type CustomStep = {
     content: string | React.ReactNode;
     target?: string;
+    box?: string;
+    pass?: (tutorialStepConditionProps: Partial<TutorialStepConditionProps>) => boolean;
     title?: string;
+    button?: string;
     modal?: boolean;
 }
 export type BranchStep = CustomStep & { branches: GeneralStep[][]; }
@@ -40,7 +44,7 @@ export const minimalStartStep: LinkedStep = {
     spotlightClicks: true,
     index: 0,
     next: [],
-};
+} as LinkedStep;
 
 export const chunkSteps = (steps: GeneralStep[]): GeneralChunkedSteps[][] => {
     let chunks: GeneralChunkedSteps[][] = [];

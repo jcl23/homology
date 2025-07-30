@@ -138,7 +138,7 @@ export const DimensionLayer = ({dimension, ...groups}: DimensionLayerProps) => {
                 {/* Containing Z */}
                 <ShadowRect x={pad_w} y={pad_h + textHeight} width={box2Width} height={box2Height} fill={boxFill} stroke={boxStroke} strokeWidth={strokeWidth}/>
                 {/* <text x={pad_w * 1.5} y={textHeight * 2+ pad_h / 2} fill="black">{`Z${lower(dimension)} = ${printGroup(groups.Z.group)}`}</text> */}
-                <foreignObject x={0} y={0} width={box1Width} height={textHeight}>
+                <foreignObject className={`c-group-${dimension}`} x={0} y={0} width={box1Width} height={textHeight}>
                     <Group group={groups.C}  name={`C_${dimension}`}/>
                 </foreignObject>
               
@@ -167,7 +167,7 @@ export const DimensionLayer = ({dimension, ...groups}: DimensionLayerProps) => {
                 {/* Containing H */}
                 <ShadowRect x={2 * pad_w} y={3 * pad_h + 2 * textHeight - zeroHeight} width={box3Width} height={box3Height} fill={boxFill} stroke={hStroke} strokeWidth={strokeWidth}/>
                 {/* <text x={pad_w * 2.5} y={textHeight * 3 + pad_h} fill="black">{`B${lower(dimension)} = ${printGroup(groups.B.group)}`}</text> */}
-                <foreignObject x={0} y={textHeight + pad_h} width={box1Width} height={textHeight}>
+                <foreignObject className={`z-group-${dimension}`} x={0} y={textHeight + pad_h} width={box1Width} height={textHeight}>
                     <Group group={groups.Z.group}  name={`Z_${dimension}`}/>
                 </foreignObject>
                
@@ -179,10 +179,10 @@ export const DimensionLayer = ({dimension, ...groups}: DimensionLayerProps) => {
     
                 {/* <text x={pad_w * 2.5} y={textHeight * 4 + pad_h * 2} fill="black">{`H${lower(dimension)} = ${printGroup(groups.H)}`}</text>
                  */}
-                <foreignObject x={0} y={2*(textHeight + pad_h)} width={box1Width} height={textHeight}>
+                <foreignObject  className={`h-group-${dimension}`} x={0} y={2*(textHeight + pad_h)} width={box1Width} height={textHeight}>
                     <Group group={groups.H}  name={`H_${dimension}`}/>
                 </foreignObject>
-                <foreignObject x={0} y={3*(textHeight + pad_h)} width={box1Width} height={textHeight}>
+                <foreignObject  className={`b-group-${dimension}`} x={0} y={3*(textHeight + pad_h)} width={box1Width} height={textHeight}>
                     <Group group={groups.B.group}  name={`B_${dimension}`}/>
                 </foreignObject>
 
