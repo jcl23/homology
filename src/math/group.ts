@@ -32,7 +32,7 @@ export const printGroup = (group: AbelianGroup): string => {
     return returnStr;
 }
 
-const SERIF_MODE = false;
+const SERIF_MODE = true;
 export const printGroupForLatex = (group: AbelianGroup, name: string): string => {
     if (SERIF_MODE) {
         return printGroupSerifs(group, name);
@@ -43,11 +43,11 @@ export const printGroupForLatex = (group: AbelianGroup, name: string): string =>
 export const printGroupSerifs = (group: AbelianGroup, name: string): string => {
     const terms = [];
     if (group.order == 1) {
-        terms.push('\\Bbb{Z}');
+        terms.push('\\mathbb{Z}');
     } else if (group.order > 1) {
-        terms.push(`\\Bbb{Z}^${group.order}`)
+        terms.push(`\\mathbb{Z}^${group.order}`)
     }
-    terms.push(...group.torsion.map(t => `\\Z/${t}\\Bbb{Z}`));
+    terms.push(...group.torsion.map(t => `\\Z_${t}`));
     if (terms.length == 0) {
         return `${name} =  0`;
     }
@@ -69,7 +69,7 @@ const printGroupSansSerifs = (group: AbelianGroup, name: string): string => {
     } else if (group.order > 1) {
         terms.push(`Z^${group.order}`)
     }
-    terms.push(...group.torsion.map(t => `Z/${t}Z`));
+    terms.push(...group.torsion.map(t => `Z_${t}Z`));
 
     for (let i = 0; i < terms.length; i++) {
         terms[i] = `${terms[i]}`;

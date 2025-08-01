@@ -60,7 +60,7 @@ export default  [
             // Once the triangle is made
             return editorState.complex.cells[2].length === 1;
         },
-        content: "Press fill (or press F) to fill in the edges between the selected vertices.",  
+        content: "Press fill (or press F) to fill in a triangle (2-simplex) between the selected edges.",  
     },
     {
         target: '.h-group-1,.canvas',
@@ -105,7 +105,7 @@ export default  [
         // Check if any vertex has been raised (z coordinate > 0)
         return editorState.complex.cells[0].some((vertex: AbstractVertex) => vertex.point[1] > 0.01);
     },
-    content: 'Click on a vertex to raise it above the plane.',
+    content: 'Select the new vertex. Press the up arrow or key to raise it above the plane.',
 },
 {
     target: '.canvas,.ui-panel',

@@ -267,7 +267,6 @@ export class CWComplexStateEditor  {
                     const verticesListMap = new Map<string, AbstractCell>();
                     includedHigherCells.forEach(f => verticesListMap.set(f.vertexSummary, f));
                     
-                    
                     const verticesSummarySet = new Set(verticesListMap.keys());
                     // for each point -> for eah face. if the face is not there, add it
                     const higherCells = iterateChoice(allVertices, i + 2).map((chosen, j) => {

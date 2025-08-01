@@ -4,6 +4,7 @@ import { getChainGroups } from "./homology";
 import { AbstractBall, AbstractCell, AbstractEdge, AbstractFace, AbstractVertex, Ball, Cell, Edge, Face, Vertex } from "./classes/cells";
 import { CWComplexEditStep } from "../logic/steps";
 import {MAX_DIMENSION} from "../data/configuration";
+import { reindexCheck } from "./reindexCheck";
 export type Key = `${number} ${number}`;
 
 
@@ -178,8 +179,16 @@ const deleteCellFromBoundaries = (cell: AbstractCell): void => {
         cob.attachingMap = cob.attachingMap.filter(att => att !== cell);
     });
 }
+
+export const deleteAllCoboundaries = (complex: CWComplex, cell: AbstractCell): void => {
+    const cob = cell.cob;
+    cob.forEach(outer => {
+        deleteCell(complex, outer);
+    })
+}
 export const deleteCell = (complex: CWComplex, cell: AbstractCell): void => {
     deleteCellFromBoundaries(cell);
+    deleteAllCoboundaries(complex, cell);
     complex.cells[cell.dimension] = complex.cells[cell.dimension].filter(c => c !== cell);
     resetIndices(complex);
     resetIds(complex);
@@ -414,7 +423,15 @@ export const getBoundary = function (complex: CWComplex, chain: Chain): Chain {
     
     for (const { index, dimension, sign: outerSign } of chain) {
         const cell = getAnyCell(complex, dimension, index) as Cell;
-        const boundary = getBoundaryOfCell(cell);
+        const boundary = (() => {
+            try {
+                return getBoundaryOfCell(cell)
+            } catch (e) {
+                debugger;
+                console.error("Error getting boundary of cell", cell, e)    
+                return getBoundaryOfCell(cell)
+            }
+        })();
         for (const { sign, dimension, index } of boundary) {
             const signProduct = sign * outerSign;
             const key = dimension + ", " + index;
@@ -485,7 +502,13 @@ export const getBoundaryOfCell = (cell: AbstractCell): Chain => {
     // }
 
     const allVertices = getVertices(cell);
-    allVertices.sort((a, b) => a.id - b.id);
+
+    try {
+        allVertices.sort((a, b) => a.id - b.id);
+    } catch (e) {
+        const allVertices_ = getVertices(cell);
+        allVertices_.sort((a, b) => a.id - b.id);
+    }
     // const inverseMap = allVertices.reduce((acc, vertex, index) => {
     //     acc[vertex.index] = index;
     //     return acc;
@@ -692,6 +715,9 @@ export const printChain = (complex: CWComplex, chain: Chain) => {
 
 
 const toLabeledMatrix = function(complex: CWComplex, cells: AbstractCell[]): LabeledMatrix {
+    if (!reindexCheck(complex)) {
+        throw new Error("Complex is not reindexed properly");
+    }
 
     if (cells.length === 0 ) {
         return {
@@ -819,8 +845,10 @@ export const addFace = (complex: CWComplex, edges: AbstractEdge[], name?: string
 
 export const addBall = (complex: CWComplex, faces: AbstractFace[], name?: string): Ball => {
     const b = new Ball(faces, complex.cells[3].length, complex.cells[3].length, name);
-    if (isCycle(complex, [...faces].map(f => ({ sign: 1, index: f.index, dimension: 2 })))) {
+    const isCycle = formsCycle(complex, faces);
+    if (isCycle) {
         complex.cells[3].push(b);
+        faces.forEach(f => { f.cob.push(b); })
     }
     return b;
 }

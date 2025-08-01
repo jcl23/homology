@@ -62,7 +62,8 @@ const MyTooltip: React.FC<TooltipRenderProps> = ({
     const overlay = document.querySelector('.react-joyride__overlay') as HTMLElement;
     if (targetEls && overlay) {
       // https://stackoverflow.com/questions/48737295/create-a-reverse-clip-path-css-or-svg
-      const strings = [...targetEls].map(el => elToShapePercents(el as HTMLElement));
+      const strings = [...targetEls as any].map(el => elToShapePercents(el));
+
       const temp = "30% 30%, 70% 30%, 70% 70%, 30% 70%, 30% 30%, 10% 10%, 20% 10%, 20% 20%, 10% 20%, 10% 10%, 30% 30%";
       overlay.style.setProperty('--shape',  temp);
       // get first point of first string

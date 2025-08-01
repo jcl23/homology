@@ -1,5 +1,5 @@
 import styles from "../../Tutorial.module.css";
-import { generateParabolaAnimationPath } from "../../../math/parabolaAnimate";
+import { generateParabolaAnimationPath } from "../../../math/parabolaAnimate.tsx";
 const path1 = generateParabolaAnimationPath(
   [
     [0.01, 80, 110],    // End parabola (curved)

@@ -6,6 +6,7 @@ import { ComplexFaces } from "./ComplexFaces";
 import { ComplexEdges } from "./ComplexEdges";
 import { ComplexVertices } from "./ComplexVertices";
 import { MAX_DIMENSION } from "../../data/configuration";
+import { ComplexBalls } from "./ComplexBalls";
 export type DragSelectData = {
     isMouseDown: boolean;
     dimSelected: number;
@@ -88,6 +89,8 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, selected
     const selectedEdges = complex.cells[1].filter(e => edgeKeys.includes(e.id));
     const faceKeys = [...selectedReps].filter(s => s[0] == "2").map(s => parseInt(s.slice(2)));
     const selectedFaces = complex.cells[2].filter(f => faceKeys.includes(f.id));
+    const ballKeys = [...selectedReps].filter(s => s[0] == "3").map(s => parseInt(s.slice(2)));
+    const selectedBalls = complex.cells[3].filter(b => ballKeys.includes(b.id));
 
     
     const empty = dragSelectData.dimSelected === -1;
@@ -119,7 +122,13 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, selected
         
         return (
             <>
-                
+                <ComplexBalls
+                    mode={editOptions.mode}
+                    showName={viewOptions.nameState[3]} 
+                    balls={complex.cells[3]} 
+                    selectedReps={selectedBalls} toggleRepSelection={vertexToggleRep} 
+                    dragSelectData={dragSelectData} setDragSelectData={setDragSelectData}
+                />
                 <ComplexFaces
                     mode={editOptions.mode}
                     showName={viewOptions.nameState[2]} 

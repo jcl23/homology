@@ -5,6 +5,7 @@
     height: 50px;
     display: flex;
     flex-direction: row;
+    font-family: "Helvetica Neue";
   }
   
   .historyOuter > div {

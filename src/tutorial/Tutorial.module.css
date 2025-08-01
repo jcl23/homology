@@ -2,6 +2,7 @@
     font-family: "Helvetica Neue";
     src: url('../assets/fonts/HelveticaNeue-Bold.otf') format('opentype');
     font-weight: bold;
+    text-rendering: geometricPrecision;
     font-style: normal;
 }
 @font-face {
@@ -9,6 +10,8 @@
     src: url('../assets/fonts/HelveticaNeue-Light.otf') format('opentype');
     font-weight: 300;
     font-style: normal;
+    text-rendering: geometricPrecision;
+
 }
 
 @font-face {
@@ -16,6 +19,8 @@
     src: url('../assets/fonts/HelveticaNeue-Medium.otf') format('opentype');
     font-weight: 500;
     font-style: normal;
+    text-rendering: geometricPrecision;
+
 }
 
 @font-face {
@@ -23,6 +28,8 @@
     src: url('../assets/fonts/HelveticaNeue-Roman.otf') format('opentype');
     font-weight: normal;
     font-style: normal;
+    text-rendering: geometricPrecision;
+
 }
 
 @font-face {
@@ -30,6 +37,7 @@
     src: url('../assets/fonts/HelveticaNeue-Thin.otf') format('opentype');
     font-weight: 100;
     font-style: normal;
+    text-rendering: geometricPrecision;
 }
 
 .desc {

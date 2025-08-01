@@ -91,7 +91,7 @@ function App() {
           </div>
           <div className={styles.panelHolder}>
             <HelpPanel />
-             <div style={{height: "50px"}}></div>
+             <div style={{minHeight: "50px"}}></div>
               {/* <button className={styles.button} style={{height: "40px", color: "#555"}} onClick={() => setAllowEditing(!allowEditing) } >{allowEditing ? "toggle demo mode" : "View"}</button> */}
             <div className={styles.upperPanel} style={{ display: 'flex', flexDirection: 'row' }}>
               {/* <DebugComplex complex={complex} /> */}

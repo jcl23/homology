@@ -60,8 +60,8 @@ const Group: React.FC<GroupProps> = ({ group, name }) => {
             fontWeight: 'bold',
             
         }}>
-            {stylizeGroupName(`${name} = ${printGroup(group)}`)}
-            {/* <Latex >{`$${printGroupForLatex(group, name)}$`}</Latex>     */}
+            {/* {stylizeGroupName(`${name} = ${printGroup(group)}`)} */}
+            <Latex >{`$${printGroupForLatex(group, name)}$`}</Latex>    
         </div>
     );
 };

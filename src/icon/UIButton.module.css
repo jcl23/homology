@@ -28,4 +28,6 @@ svg.icon {
     justify-content: center;
     color: var(--unselected-fg); /* Default color */
     background-color: var(--background-color); /* Default background color */
+    font-family: Helvetica Neue;
+    font-weight: normal;;
 }
