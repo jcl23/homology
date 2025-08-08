@@ -1,18 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AbstractCell } from "../../../math/classes/cells";
 import { CWComplex, getBoundary, printChain } from "../../../math/CWComplex";
 import SimplexData from "./SimplexData";
 import styles from './SimplicesPanel.module.css';
+import { CWComplexStateEditor } from "../../../hooks/useCWComplexEditor";
 type SimplicesPanelProps = {
-    complex: CWComplex;
+    // complex: CWComplex;
+    complexEditor: CWComplexStateEditor;
     selectionKey: "index" | "id";
     //selectedCells: Set<number>[];
-    selectedKeys: Set<string>;
+    // selectedKeys: Set<string>;
     //selectCell: (dim: number, index: number) => void;
-    selectRep: (key: string) => void
+    // selectRep: (key: string) => void
     //unselectCell: (dim: number, index: number) => void;
     //unselectCell: (dim: number, index: number) => void;
-    unselectRep: (key: string) => void
+    // unselectRep: (key: string) => void
 }
 
 // A list of cells that can be selected. The currently selected cells are highlighted. It's
@@ -21,30 +23,33 @@ type SimplicesPanelProps = {
 
 
 const SimplicesPanel = ({ 
-        complex, 
-        //selectedCells, selectCell, unselectCell,
-        selectedKeys, selectRep, unselectRep,
-        selectionKey
+     complexEditor, selectionKey
     }: SimplicesPanelProps) => {
-    const cells = [...complex.cells[0], ...complex.cells[1], ...complex.cells[2], ...complex.cells[3]];
-    const [vertices, edges, faces, balls] = [0, 1, 2, 3].map(dim => {
-        const allCells = complex.cells[dim];
-        // return unique by index
-        return allCells.filter((cell, i, arr) => arr.findIndex(c => c.index === cell.index) === i);
-    });
+        // debugger;
+    //const { complex, selectedKeys, selectRep, unselectRep } = complexEditor;
+    const [vertices, edges, faces, balls] = complexEditor.cells;
+    // const cells = [...complex.cells[0], ...complex.cells[1], ...complex.cells[2], ...complex.cells[3]];
+    // const [vertices, edges, faces, balls] = [0, 1, 2, 3].map(dim => {
+    //     const allCells = complex.cells[dim];
+    //     // return unique by index
+    //     return allCells.filter((cell, i, arr) => arr.findIndex(c => c.index === cell.index) === i);
+    // });
     // no buttons, just click the rows
-    
+    useEffect(() => {
+        console.log("again")
+    }, [complexEditor.selected, complexEditor.currentComplex]);
     const toggleCellSelection = (cell: AbstractCell) => {
-
-        const cellIsSelected = selectedKeys.has(cell.key);
+        console.log("Currently selected cells: ", complexEditor);
+        const cellIsSelected = complexEditor.selected.has(cell);
 
         // remember that you cant test for having directly, so test for presence in a better way
         // don't use .has because it compared by identity not contents
         if (cellIsSelected) {
             console.notify("Unselecting")
-            unselectRep(cell.key);
+            complexEditor.deselectRep(cell);
+            // unselectRep(cell.key);
         } else {
-            selectRep(cell.key);
+            complexEditor.selectRep(cell.key);
         }
     }
    
@@ -70,7 +75,7 @@ const SimplicesPanel = ({
                         ))}
                         </div>
                         {[vertices, edges, faces, balls][selectedDim].map((cell, i) => (
-                            <SimplexData key={cell.id + cell.positionKey} cell={cell} selected={selectedKeys.has(cell.key)} toggleCellSelection={toggleCellSelection} />
+                            <SimplexData key={cell.id + cell.positionKey} cell={cell} selected={complexEditor.selected.has(cell)} toggleCellSelection={toggleCellSelection} />
                         ))}
                     </> 
                     : Object.entries({vertices: vertices, edges: edges, faces: faces, balls: balls}).flatMap(([name, cells], i) => (
@@ -80,7 +85,7 @@ const SimplicesPanel = ({
                                 <div className={styles.dimName} style={{textAlign: "center", fontWeight: "bold"}}>{name}</div>
                             </div>,
                             (cells.map((cell, j) => (
-                                <SimplexData key={cell.id} cell={cell} selected={selectedKeys.has(cell.key)} toggleCellSelection={toggleCellSelection} />
+                                <SimplexData key={cell.id} cell={cell} selected={complexEditor.selected.has(cell)} toggleCellSelection={toggleCellSelection} />
                             )))
                         ]
                     ))}

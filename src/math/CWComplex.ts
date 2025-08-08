@@ -6,6 +6,12 @@ import { CWComplexEditStep } from "../logic/steps";
 import {MAX_DIMENSION} from "../data/configuration";
 import { reindexCheck } from "./reindexCheck";
 export type Key = `${number} ${number}`;
+export type ComplexMeta = {
+    name: string;
+    description?: string;
+    author?: string;
+    date?: string;
+}
 
 
 export class CWComplex {
@@ -86,7 +92,7 @@ export class CWComplex {
     }
 
     addFaceByNames(edgeNames: string[], name?: string): Face {
-        const edges =  edgeNames.map(name => getRepsByName(this, name, 1))[0] as AbstractEdge[];
+        const edges =  edgeNames.map(name => getRepsByName(this, name, 1)).flat() as AbstractEdge[];
         return addFace(this, edges, name);
     }
 
@@ -834,7 +840,9 @@ export const addEdge =  (complex: CWComplex, vertices: AbstractVertex[], name?: 
 
 export const addFace = (complex: CWComplex, edges: AbstractEdge[], name?: string): Face => {
     if (edges.some(e => e.dimension !== 1)) throw new Error("Must add face with exactly three edges");
-    if (edges.length !== 3) throw new Error("Must add face with exactly three edges");
+    if (edges.length !== 3) {
+        throw new Error("Must add face with exactly three edges");
+    }
     const f = new Face(edges, complex.cells[2].length, complex.cells[2].length, name);
     if (formsCycle(complex, edges)) {
         complex.cells[2].push(f);

@@ -38,7 +38,6 @@ export type UIPanelProps = {
     setViewOptions: (viewOptions: ViewOptions) => void;
     viewOptions: ViewOptions;
     complexEditor: CWComplexStateEditor;
-    editorState: EditorState;
 }
 
 // type UIEditorState = {
@@ -46,7 +45,7 @@ export type UIPanelProps = {
 // }
 
 const SelectButtons = (props: UIPanelProps) => {
-    const { setEditOptions, editOptions, setViewOptions, viewOptions, complexEditor, editorState } = props;
+    const { setEditOptions, editOptions, setViewOptions, viewOptions, complexEditor } = props;
     // const selectedState: SelectedState = classifySelected(editorState.selectedKeys);
     // const { selectionKey } = editOptions;
     const setEditMode = (mode: EditOptions["mode"]) => {
@@ -148,7 +147,7 @@ const LeftMoveButtons = (props: UIPanelProps) => {
 
 
 const UIPanel = (props: UIPanelProps) => {
-    const { setEditOptions, editOptions, setViewOptions, viewOptions, complexEditor, editorState } = props;
+    const { setEditOptions, editOptions, setViewOptions, viewOptions, complexEditor } = props;
     const { nameState } = viewOptions;
     const { mode: editMode } = editOptions;
 

@@ -1,4 +1,4 @@
-import { CWComplexStateEditor } from "../hooks/useCWComplexEditor";
+import { CWComplexStateEditor, EditorState } from "../hooks/useCWComplexEditor";
 import { CWComplexEditStep } from "../logic/steps";
 import { CWComplex } from "../math/CWComplex";
 
@@ -33,11 +33,11 @@ const RP2 = function() {
     return complex;
 }
 
-export type EditorState = {
-    history: CWComplexEditStep[];
-    complex: CWComplex;
-    selectedKeys: Set<string>;
-}
+// export type EditorState = {
+//     history: CWComplexEditStep[];
+//     complex: CWComplex;
+//     selectedKeys: Set<string>;
+// }
 
 type LikeDispatch = EditorState | ((state: EditorState) => EditorState);
 const Test1 = function(editor: CWComplexStateEditor): void {
@@ -62,8 +62,8 @@ const KleinBottle_pre_quotient = function(): CWComplex {
         KB.addVertex([1, 0, 1], "d");
         KB.addEdgeByNames(["a", "b"], "ab");
         KB.addEdgeByNames(["b", "d"], "bd");
-        KB.addEdgeByNames(["d", "c"], "cd");
-        KB.addEdgeByNames(["c", "a"], "ac");
+        KB.addEdgeByNames(["c", "d"], "cd");
+        KB.addEdgeByNames(["a", "c"], "ac");
         KB.addEdgeByNames(["b", "c"], "bc");
         KB.addFaceByNames(["ab", "ac", "bc"], "abc");
         KB.addFaceByNames(["bd", "bc", "cd"], "bcd");

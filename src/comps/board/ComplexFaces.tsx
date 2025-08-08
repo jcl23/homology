@@ -1,5 +1,5 @@
 import { useControls } from "leva";
-import { DoubleSide } from "three";
+import { AddEquation, CustomBlending, DoubleSide, MultiplyBlending, NoBlending, NormalBlending, SubtractiveBlending } from "three";
 import { AbstractFace, AbstractVertex } from "../../math/classes/cells";
 import { CellsProps } from "./cellProps";
 import { useMemo } from "react";
@@ -9,6 +9,7 @@ type ComplexFacesProps = CellsProps & {
 };
 
 import { Vector3 } from "three";
+import { ThreeDRotation } from "@mui/icons-material";
 
 /**
  * Returns a new triangle inset from the original by a fixed border width.
@@ -45,7 +46,7 @@ export function shrinkTriangle(a: Vector3, b: Vector3, c: Vector3, border: numbe
 }
 
 export const ComplexFaces = ({ faces, selectedReps, toggleRepSelection, setDragSelectData, dragSelectData: { isMouseDown, dimSelected} }: ComplexFacesProps) => {
-    const {faceOpacity} = useControls({ faceOpacity: { value: 0.5, min: 0, max: 1 } });
+const {faceOpacity} = useControls({ faceOpacity: { value: 0.5, min: 0, max: 1 } });
     const g = useMemo(() => (
         <group renderOrder={0}>
             {faces.map((face) => {
@@ -80,8 +81,11 @@ export const ComplexFaces = ({ faces, selectedReps, toggleRepSelection, setDragS
                            // e.simplicesEncountered ??= [] as AbstractCell[];
                            // e.simplicesEncountered.push(face);
                            // console.log("click", e.simplicesEncountered);
-                           console.notify("Click", face);
-                            toggleRepSelection(face.key); 
+                    
+                            // toggleRepSelection(face.key); 
+                        }}
+                        userData={{
+                            object: face
                         }}
                     >
                         <bufferGeometry>
@@ -93,7 +97,17 @@ export const ComplexFaces = ({ faces, selectedReps, toggleRepSelection, setDragS
                                needsUpdate={true}
                             />
                         </bufferGeometry>
-                        <meshStandardMaterial  depthTest={false} color={color} side={DoubleSide} opacity={faceOpacity} transparent={faceOpacity < 1} needsUpdate={true}/>
+                        <meshStandardMaterial 
+                            color={color} 
+                            side={DoubleSide} 
+                            opacity={faceOpacity} 
+                            transparent={true}
+                            depthTest={true}
+                            depthWrite={false}
+                            alphaTest={0.01}
+                            blending={NormalBlending}
+                            needsUpdate={true}
+                        />
                         {/* <bufferGeometry>
                             <bufferAttribute
                                 attach="attributes-position"

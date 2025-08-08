@@ -21,7 +21,7 @@ const computedStyles = getComputedStyle(document.documentElement);
 const unselectedFg = computedStyles.getPropertyValue("--unselected-fg").trim();
 const selectedFg = computedStyles.getPropertyValue("--selected-fg").trim();
 const selectedBg = computedStyles.getPropertyValue("--selected-bg").trim();
-export const Scene = ({ editComplex, viewOptions, complex, editOptions, selectedReps, setDragSelectData, dragSelectData, allowEditing }: SceneProps) => {
+export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragSelectData, dragSelectData, allowEditing }: SceneProps) => {
     console.notify("Scene");
     
     // const complex = history[history.length - 1].complex;
@@ -83,14 +83,18 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, selected
         }
     };
 
-    const vertexKeys = [...selectedReps].filter(s => s[0] == "0").map(s => parseInt(s.slice(2)));
-    const selectedVertices = complex.cells[0].filter(v => vertexKeys.includes(v.id));
-    const edgeKeys = [...selectedReps].filter(s => s[0] == "1").map(s => parseInt(s.slice(2)));
-    const selectedEdges = complex.cells[1].filter(e => edgeKeys.includes(e.id));
-    const faceKeys = [...selectedReps].filter(s => s[0] == "2").map(s => parseInt(s.slice(2)));
-    const selectedFaces = complex.cells[2].filter(f => faceKeys.includes(f.id));
-    const ballKeys = [...selectedReps].filter(s => s[0] == "3").map(s => parseInt(s.slice(2)));
-    const selectedBalls = complex.cells[3].filter(b => ballKeys.includes(b.id));
+    const selectedVertices =  [...editComplex.selected].filter(s => s.dimension === 0);
+    const selectedEdges = [...editComplex.selected].filter(s => s.dimension === 1);
+    const selectedFaces = [...editComplex.selected].filter(s => s.dimension === 2);
+    const selectedBalls = [...editComplex.selected].filter(s => s.dimension === 3);
+    const selectedReps = [...selectedVertices, ...selectedEdges, ...selectedFaces, ...selectedBalls];
+    // const vertexKeys = [...editComplex.selected].filter(s => s.dimension === 0).map(s => s.key);
+    // const edgeKeys = [...selectedReps].filter(s => s[0] == "1").map(s => parseInt(s.slice(2)));
+    // const selectedEdges = complex.cells[1].filter(e => edgeKeys.includes(e.id));
+    // const faceKeys = [...selectedReps].filter(s => s[0] == "2").map(s => parseInt(s.slice(2)));
+    // const selectedFaces = complex.cells[2].filter(f => faceKeys.includes(f.id));
+    // const ballKeys = [...selectedReps].filter(s => s[0] == "3").map(s => parseInt(s.slice(2)));
+    // const selectedBalls = complex.cells[3].filter(b => ballKeys.includes(b.id));
 
     
     const empty = dragSelectData.dimSelected === -1;
@@ -152,7 +156,7 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, selected
                 />
             </>
         )
-    }, [complex.cells[0].length, complex.cells[1].length, complex.cells[2].length, selectedReps.size, dragSelectData.dimSelected, complex.cells]);
+    }, [complex.cells[0].length, complex.cells[1].length, complex.cells[2].length, selectedReps.length, dragSelectData.dimSelected, complex.cells]);
 
 
     // console.notify("center", complex.center);

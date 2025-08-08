@@ -60,8 +60,10 @@ export const ComplexVertices = ({ vertices, selectedReps, toggleRepSelection, sh
                                 setDragSelectData(data => ({ 
                                     ...data, dimSelected: vertex.dimension 
                                 }));
-                                toggleRepSelection(vertex.key);
-                                e.stopPropagation();
+                                // toggleRepSelection(vertex.key);
+                            }}
+                            userData={{
+                                object: vertex
                             }}
                             onPointerOver={(e) => {
                                 console.notify("pointer enter", vertex.dimension);

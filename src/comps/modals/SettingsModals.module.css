@@ -1,0 +1,151 @@
+.button:active {
+    box-shadow: none;
+    transform: translateY(2px);
+}
+.button {
+    transition-property: box-shadow, transform, background-color;
+    transition-duration: 0.1s;
+    font-weight: bold;
+
+    text-transform: none;
+    box-shadow: 0px 2px 2px 0px #0004;
+    min-width: 40px;
+    margin: 6px 0px;
+    border: 2px solid #0004;
+    border-bottom-right-radius: 0px;
+    position: relative; /* Enable overlaying icons */
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--unselected-fg); /* Default color */
+    background-color: var(--background-color); /* Default background color */
+}
+.button div {
+    display: flex;
+    flex-direction: column;
+    /* an inside text div that is rotated 90 deg and centerred */
+}
+.background {
+    left: -40px;
+    top: -40px;
+    width: calc(100% + 80px);
+    height: calc(100% + 80px);
+    position: absolute;
+    z-index: 10000000000;
+    background: rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+}
+
+.modalWindow {
+    width: 600px;
+    height: 400px;
+    position: absolute;
+    top: calc(50% - 200px);
+    left: calc(50% - 300px);
+    background-color: var(--unselected-bg) !important;
+    border-radius: 0px !important;
+    border: 2px solid rgba(0, 0, 0, 0.26) !important;
+    box-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.26) !important;
+    font-family: Helvetica Neue;
+    color: var(--unselected-fg) !important;
+    padding: 8px !important;
+
+}
+
+.react-joyride__tooltip {
+    background-color: var(--unselected-bg) !important;
+
+    font-size: 14px;
+    font-weight: normal !important;
+    max-width: 500px;
+    min-width: 200px;
+}
+
+.modalHeader {
+    height: 50px;
+    
+}
+.close {
+    top: 0px;
+    right: 0px;
+    position: absolute;
+    font-size: large;
+    width: 50px!important;
+    /* height: 50px; */
+
+    background-color: none;
+    border: none!important;
+    font-size: x-large;
+    margin: 10px!important;
+    margin-right: 15px!important;
+    padding: 0!important;
+    box-shadow: none!important;
+    color: var(--unselected-fg) !important;
+    width: min-content!important;
+    aspect-ratio: 1!important;
+}
+.closeModal {
+    position: absolute;
+    right: 30px;
+    top: 30px;
+}
+
+.list {
+    width: calc(100% - 0px);
+}
+.list li:hover {
+    background-color: var(--unselected-bg);
+    transform: translateY(-1px);
+    transition: background-color 0..05s, color 0.05s, transform 0.05s;
+    user-select: none;
+}
+.list li:active {
+    background-color: var(--selected-bg);
+    color: var(--selected-fg);
+    transform: translateY(1px);
+    transition: background-color 0.05s, transform 0.05s
+}
+.list tr {
+    text-align: left;
+}
+.list td {
+    width: min-content;
+}
+.list td:last-child {
+    width: 100%
+}
+.list table {
+    width: calc(100% - 5px);
+}
+
+.list input {
+    border: 2px solid var(--unselected-mid);
+    outline: none; 
+    width: 100%;
+    background: transparent;
+    color: var(--unselected-fg);
+    font-family: Helvetica Neue;
+    font-size: inherit;
+    margin-left: 5px;
+}
+.list input:focus {
+    border: 2px solid var(--selected-bg);
+}
+.list > input {
+    border: none;
+
+}
+
+.loadComplex {
+    height: 100%;
+    /* border: 1px solid red; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between
+}
+.loadComplex > div {
+    /* border: 1px solid blue; */
+}

@@ -1,5 +1,5 @@
 import react, { useState } from "react";
-import styles from "./LoadComplex.module.css"
+import styles from "./SettingsModals.module.css"
 
 import { defaultComplex, complexes, Preset } from "../../data/presets";
 
@@ -38,7 +38,7 @@ export const LoadComplex = function({
                 <ul className={styles.list}>
                     {
                         Object.values(complexes).map((preset) => (
-                            <li onClick={() => { setPreset(preset); }}>
+                            <li onClick={() => { setPreset(() => preset); }}>
                                 {preset.name}
                             </li>
                         ))

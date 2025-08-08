@@ -41,12 +41,12 @@ const HistoryGroup = ({ group }: { group: HistoryGroup }) => {
         </div>
     )
 }
-const History = ({ editorState, complexEditor }: HistoryProps) => {
+const History = ({ complexEditor }: HistoryProps) => {
     type StepBlock = {
         type: EditType;
         steps: CWComplexEditStep[];
     }
-    const groupedHistory = groupHistory(editorState);
+    const groupedHistory = groupHistory(complexEditor.editorState);
     return (
         <div className={styles.historyOuter}>
             {groupedHistory.map((group, i) => (

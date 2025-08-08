@@ -15,7 +15,7 @@ export type TutorialContextType = {
 };
 export type TutorialStepConditionProps = {
   editOptions: EditOptions;
-  editorState: EditorState;
+  // editorState: EditorState;
   complexEditor: CWComplexStateEditor;
   viewOptions: ViewOptions;
 }

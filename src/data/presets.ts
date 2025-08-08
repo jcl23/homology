@@ -1,22 +1,27 @@
-import { CWComplexStateEditor } from "../hooks/useCWComplexEditor";
+import { CWComplexStateEditor, EditorState } from "../hooks/useCWComplexEditor";
 import { CWComplexEditStep } from "../logic/steps";
 import { CWComplex, getStartStep  } from "../math/CWComplex";
 import { KleinBottle, RP2, Sphere, Test1 } from "./defaultComplexes";
 
 
-export type Preset = {
-    name: string;
-    history: CWComplexEditStep[];
-}
+export type Preset = (editor: CWComplexStateEditor) => void;
+// const defaultPreset: Preset = () => ({
+//     history: [],
+//     complex: new CWComplex,
+//     selectedKeys: undefined,
+//     lastSelect: {
+//         lastClickedDepth: 0,
+//         cellList: ""
+//     },
+//     meta: {
+//         name: "New Complex",
+//         description: "",
+//         author: "",
+//         date: ""
+//     }
+// });
 
 
-const square = () => {
-    const c = new CWComplex();
-    c.addVertex([0, 0, 0], "a");
-    c.addVertex([1, 0, 0], "b");
-    c.addVertex([0, 0, 1], "c");
-    c.addVertex([1, 0, 1], "d");
-}
 
 // const T2: () => CWComplex = () => {
 //     const v1 = { id: "v1", name: "v1", dimension: 0, index: 0, point: [0, 0, 0], attachingMap: [] };
@@ -44,25 +49,17 @@ const square = () => {
 // }
 
 
-// const TestComplex: () => CWComplex = () => {
-//     // Three vertices total, with an edge connecting two of them.
-
-//     const v1 = { id: 1, name: "v1", dimension: 0, index: 0, attachingMap: [] };
-//     const v2 = { id: 2, name: "v2", dimension: 0, index: 1, attachingMap: [] };
-//     const v3 = { id: 3, name: "v3", dimension: 0, index: 2, attachingMap: [] };
-//     const e1 = { id: 1, name: "e1", dimension: 1, index: 0, attachingMap: [v2, v1]};
-    
-//     return {
-//         cells: {
-//             0: [v1, v2, v3],
-//             1: [e1],
-//             2: [],
-//             3: []
-//         }
-//     };
-// }
-
-
+const Tetra: Preset = (editor: CWComplexStateEditor) => {
+    editor.addVertex
+    editor.addVertex([0, 0, 0], "a");
+    editor.addVertex([1, 0, 0], "b");
+    editor.addVertex([0, 1, 0], "c");s
+    editor.addVertex([0, 0, 1], "d");
+    editor.selectAll();
+    editor.addCell();
+    editor.addCell();
+}
+  
 export const complexes = {
     // K: {
     //     name: "K",
@@ -85,19 +82,17 @@ export const complexes = {
     //     name: "Square",
     //     complex: square()
     // },
-    Empty: {
-        name: "Empty",
-        history: [getStartStep()]
-    },
+    Empty: () => {},
+    Tetra: Tetra,
     // RP2: {
     //     name: "RP2",
     //     complex: RP2()
     // },
-    Test1: {
-        name: "Test1",
-        history: [getStartStep()]
+    // Test1: {
+    //     name: "Test1",
+    //     history: [getStartStep()]
 
-    },
+    // },
 // RP2_pre_quotient: {
     //     name: "RP2_pq",
     //     complex: RP2()

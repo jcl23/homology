@@ -103,7 +103,7 @@ export const ComplexBalls = ({ balls, selectedReps, toggleRepSelection, setDragS
                         key={ball.id + ball.positionKey}
                         onPointerDown={(e) => { 
                            console.notify("Click", balls);
-                            toggleRepSelection(ball.key); 
+                            // toggleRepSelection(ball.key); 
                         }}
                     >
                         <bufferGeometry>

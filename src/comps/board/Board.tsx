@@ -9,7 +9,7 @@ import { computeOrthocenter3D  } from '../../math/shrink';
 import { EditOptions, ViewOptions } from '../../App';
 import { CWComplexStateEditor } from '../../hooks/useCWComplexEditor';
 // import { ErrorBoundary } from '@react-three/fiber/dist/declarations/src/core/utils';
-import { AbstractCell, AbstractVertex, AbstractEdge, AbstractFace } from '../../math/classes/cells';
+import { AbstractCell, AbstractVertex, AbstractEdge, AbstractFace, Cell } from '../../math/classes/cells';
 import { CWComplex } from '../../math/CWComplex';
 import { ErrorBoundary } from '../ErrorBoundary';
 import { DragSelectData, Scene } from './Scene';
@@ -17,6 +17,8 @@ import { DragSelectData, Scene } from './Scene';
 
 import { Stats }from '@react-three/drei';
 import { MAX_DIMENSION } from '../../data/configuration';
+import Latex from 'react-latex-next';
+import ClickSphere from './ClickSphere';
 
 
 export type BoardProps = {
@@ -24,7 +26,7 @@ export type BoardProps = {
     editOptions: EditOptions;
     complex: CWComplex;
     //setComplex: (c: CWComplex) => void;
-    selectedReps: Set<string>;
+    // selectedReps: Set<string>;
     allowEditing: boolean;
 
     // toggleRepSelection: (cell: AbstractCell) => void;
@@ -69,7 +71,7 @@ const BoardStateDebug = ({ dragSelectData }: { dragSelectData: DragSelectData })
 }
 
 
-const Board = ({ viewOptions, editOptions, complex, editComplex, selectedReps, allowEditing  }: BoardProps) => {
+const Board = ({ viewOptions, editOptions, complex, editComplex, allowEditing  }: BoardProps) => {
     //const { history } = editComplex;
     const { nameState } = viewOptions;
     //const complex = history[history.length - 1].complex;
@@ -80,8 +82,13 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, selectedReps, a
     
     return (
         <ErrorBoundary>
-            
+            <div>
+                <div className="boardTitle">
+                    {nameState ? <Latex>{ editComplex.meta.name  ?? "CW Complex with no name that's not good..."}</Latex> : ""}
+                </div>
+            </div>
         <Leva collapsed hidden />
+        <BoardStateDebug dragSelectData={dragSelectData} />
             <Canvas
                 className="canvas"
                 style={{
@@ -92,23 +99,28 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, selectedReps, a
                     zIndex: 0,
                     userSelect: 'none',
                     boxShadow: "2px 2px 2px 0px #0004 inset;"
-
+    
                 }}
                 // onMouseMove={(e) => {
                 //     console.notify("Mouse move", e.relatedTarget);
                 //     setUpdateHoverKey(Math.random());
                 // }}
-                camera={{ position: [0, 10, 0],  rotation: new Euler(Math.PI / 4, Math.PI / 4, 2),fov: 40 }} // Adjust camera position
+                camera={{ position: [0, 10, 0], near: 0.001, rotation: new Euler(Math.PI / 4, Math.PI / 4, 2),fov: 40 }} // Adjust camera position
                 onPointerUp={() => setDragSelectData(data => ({ ...data, isMouseDown: false}))}    
-                onPointerDown={() => setDragSelectData(data => ({ ...data, isMouseDown: true}))}  
+                onPointerDown={(e) => {
+                    // console.log("Scene", e.intersections);
+                    setDragSelectData(data => ({ ...data, isMouseDown: true}));
+                }}  
             >
                 {/* <Stats /> */}
                 <ambientLight intensity={2} />
-
+                <pointLight position={[10, 10, 10]} intensity={1.5} />
+                <directionalLight position={[0, 10, 0]} intensity={1} />
+                <ClickSphere editor={editComplex} />
                 <Scene
                     setDragSelectData={setDragSelectData}
                     dragSelectData={dragSelectData}
-                    selectedReps={selectedReps}
+    
                     complex={complex}
                     editComplex={editComplex}
                     viewOptions={viewOptions}

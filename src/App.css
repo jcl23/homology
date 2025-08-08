@@ -12,7 +12,9 @@
   --selected-fg: white;
   --unselected-bg: rgb(242, 247, 250);
   --unselected-fg: rgb(0, 0, 0);
-  --unselected-mid: #888;
+  --unselected-mid: #ddd;
+  --selected-mid: #ccc;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 a {
@@ -79,15 +81,6 @@ h1, h2, h3, h4, h5, h6, td, th, tr, table {
   z-index: 1;
   background: #ffffff10
 }
-.centerHolder { 
-
-  display: flex;
-  width: 100%;
-  padding: 15px;
-  flex-direction: column;
-  background: #ffffff10;
-  height: calc(100%)
-}
 
 
 .logo {
@@ -131,3 +124,15 @@ h1, h2, h3, h4, h5, h6, td, th, tr, table {
   height: 100%;
   display: flex;
 }
+
+.centerHolder { 
+  display: flex;
+  /* width: calc(100% - 400px); */
+  width: 100%;
+  max-width: calc(100% - 460px);
+  padding: 15px;
+  flex-direction: column;
+  background: #ffffff10;
+  height: calc(100%)
+}
+

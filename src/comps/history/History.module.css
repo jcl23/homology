@@ -2,10 +2,12 @@
     width: 100%;
     border: 1px solid grey;
     margin-bottom: 15px;
-    height: 50px;
+    height: 70px;
     display: flex;
     flex-direction: row;
     font-family: "Helvetica Neue";
+    overflow-x: scroll;
+    overflow-y: hidden;
   }
   
   .historyOuter > div {

@@ -23,7 +23,8 @@
 .upperPanel {
 
     /* Should be arranged horizontally */
-    height: calc(100vh - 300px - 50px);
+    height: calc(100vh - 380px);
+    max-height: calc(100vh - 380px);
     z-index: 1;
     right: 0;
 }
@@ -47,7 +48,6 @@
     justify-content: center;
     display: flex;
     justify-content: space-between;
-    width: 700px;
     margin: 0 auto;
     border: 1px 0px 1px 0px solid black!important;
 }
@@ -70,6 +70,12 @@
     color: var(--unselected-fg); /* Default color */
     background-color: var(--background-color); /* Default background color */ 
 }
-.centerHolder {
-    
+
+
+.filePanel {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 10px;
+    overflow: hidden;
 }

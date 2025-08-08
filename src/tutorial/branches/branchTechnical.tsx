@@ -13,7 +13,7 @@ export default  [
     },
     {
         target: '.button-add',
-        pass: ({ editOptions, editorState }: TutorialStepConditionProps) => {
+        pass: ({ editOptions }: TutorialStepConditionProps) => {
             return editOptions.mode === "add";
         },
         content: 'Enable the "Add" mode to begin placing some vertices. ',
@@ -21,8 +21,8 @@ export default  [
     {   
         target: '.canvas',
         content: 'Add three vertices to the space.',
-        pass: ({ editorState }: TutorialStepConditionProps) => {
-            return editorState.complex.cells[0].length == 3;
+        pass: ({ complexEditor }: TutorialStepConditionProps) => {
+            return complexEditor.editorState.complex.cells[0].length == 3;
         }
     },
     {
@@ -35,16 +35,16 @@ export default  [
     {
         // select all the points
         target: '.canvas',
-        pass: ({ editorState }: TutorialStepConditionProps) => {
-            return editorState.selectedKeys.size === 3;
+        pass: ({ complexEditor }: TutorialStepConditionProps) => {
+            return complexEditor.editorState.selectedKeys.size === 3;
         },
         content: "Click (or use Ctrl+A) select the vertices you just added.",
     },
     {
         target: '.button-fill, .canvas',
-        pass: ({ editorState }: TutorialStepConditionProps) => {
+        pass: ({ complexEditor }: TutorialStepConditionProps) => {
             // Once the triangle is made
-            return editorState.complex.cells[1].length === 3;
+            return complexEditor.editorState.complex.cells[1].length === 3;
         },
         content: "Press fill (or press F) to fill in the edges between the selected vertices.",  
     },
@@ -56,9 +56,9 @@ export default  [
     },
     {
         target: '.button-fill, .canvas',
-        pass: ({ editorState }: TutorialStepConditionProps) => {
+        pass: ({ complexEditor }: TutorialStepConditionProps) => {
             // Once the triangle is made
-            return editorState.complex.cells[2].length === 1;
+            return complexEditor.editorState.complex.cells[2].length === 1;
         },
         content: "Press fill (or press F) to fill in a triangle (2-simplex) between the selected edges.",  
     },
@@ -70,15 +70,15 @@ export default  [
     },
     {
         target: '.button-undo, .canvas',
-        pass: ({ editorState }: TutorialStepConditionProps) => {
-            return editorState.complex.cells[2].length === 0;
+        pass: ({ complexEditor }: TutorialStepConditionProps) => {
+            return complexEditor.editorState.complex.cells[2].length === 0;
         },
         content: 'Press undo (or Ctrl + Z) to undo the most recent step, removing the face.',
     },
     {
         target: '.button-add, .canvas',
-        pass: ({  editorState }: TutorialStepConditionProps) => {
-            
+        pass: ({  complexEditor }: TutorialStepConditionProps) => {
+            const { editorState } = complexEditor;
             if (editorState.complex.cells[0].length <= 3) return false;
             
             // original triangle
@@ -91,48 +91,66 @@ export default  [
         },
         content: 'Add a new vertex inside the triangle you created.',
     },
-{
-    target: '.button-move,.canvas',
-    pass: ({ editOptions }: TutorialStepConditionProps) => {
-        return editOptions.mode === "move";
+    {
+        target: '.button-move,.canvas',
+        pass: ({ editOptions }: TutorialStepConditionProps) => {
+            return editOptions.mode === "move";
+        },
+        content: 'Switch to "Move" mode to reposition vertices.',
     },
-    content: 'Switch to "Move" mode to reposition vertices.',
-},
 
-{
-    target: '.button-up, .canvas',
-    pass: ({ editorState }: TutorialStepConditionProps) => {
-        // Check if any vertex has been raised (z coordinate > 0)
-        return editorState.complex.cells[0].some((vertex: AbstractVertex) => vertex.point[1] > 0.01);
+    {
+        target: '.button-up, .canvas',
+        pass: ({ complexEditor }: TutorialStepConditionProps) => {
+            // Check if any vertex has been raised (z coordinate > 0)
+            return complexEditor.editorState.complex.cells[0].some((vertex: AbstractVertex) => vertex.point[1] > 0.01);
+        },
+        content: 'Select the new vertex. Press the up arrow or key to raise it above the plane.',
     },
-    content: 'Select the new vertex. Press the up arrow or key to raise it above the plane.',
-},
-{
-    target: '.canvas,.ui-panel',
-    box: '',
-    pass: ({ editorState }: TutorialStepConditionProps) => {
-        // Assuming the UI is considered "selected" when all vertices are selected
-        return editorState.selectedKeys.size === 7;
+    {
+        target: '.canvas,.ui-panel',
+        box: '',
+        pass: ({ complexEditor }: TutorialStepConditionProps) => {
+            // Assuming the UI is considered "selected" when all vertices are selected
+            return complexEditor.editorState.selectedKeys.size === 7;
+        },
+        content: 'Return to select mode and select all vertices. Alternatively, you can use Ctrl+A to select all.',
     },
-    content: 'Return to select mode and select all vertices. Alternatively, you can use Ctrl+A to select all.',
-},
-{
-    target: '.canvas,.button-fill',
-    box: '',
-    pass: ({ editorState }: TutorialStepConditionProps) => {
-        // Assuming the UI is considered "selected" when all vertices are selected
-        return editorState.complex.cells[1].length === 6;
+    {
+        target: '.canvas,.button-fill',
+        box: '',
+        pass: ({ complexEditor }: TutorialStepConditionProps) => {
+            // Assuming the UI is considered "selected" when all vertices are selected
+            return complexEditor.editorState.complex.cells[1].length === 6;
+        },
+        content: 'Pressing fill will add in new cells of the lowest "missing" dimension in the selection.',
     },
-    content: 'Pressing fill will add in new cells of the lowest "missing" dimension in the selection.',
-},
-{
-    target: '.canvas, .button-fill',
-    box: '.h-group-2',
-    content: <><>Since there were missing edges between vertices, all pairs of points that didn't have an edge between them, got one.<br /> Press fill again to add 2-simplices.</></>,
-    pass: ({ editorState }: TutorialStepConditionProps) => {
-        return editorState.complex.cells[2].length === 4;
-    }
-}
-
+    {
+        target: '.canvas, .button-fill',
+        content: <><>In dimension 2, <br /> Press fill again to add 2-simplices.</></>,
+        // content: <><>Since there were missing edges between vertices, all pairs of points that didn't have an edge between them, got one.<br /> Press fill again to add 2-simplices.</></>,
+        pass: ({ complexEditor }: TutorialStepConditionProps) => {
+            return complexEditor.editorState.complex.cells[2].length === 4;
+        }
+    },
+    {
+        target: '.h-group-2,.canvas',
+        content: <><>In dimension two, homology computes the number of voids in the space.</><br /><> Our space has one, corresponding to a single copy of Z.</></>,
+        
+    },
+    {
+        target: '.button-fill, .canvas',
+        pass: ({ complexEditor }: TutorialStepConditionProps) => {
+            // Once the tetrahedron is made
+            return complexEditor.editorState.complex.cells[3].length === 1;
+        },
+        content: "Press fill (or press F) to fill in a tetrahedron (3-simplex) between the selected faces.",  
+    },
+    {
+        target: '.h-group-2,.canvas',
+        box: '.h-group-2',
+        content: <><>Since the void has been filled, there is no longer a void.</><br /><>The 2nd homology group becomes trivial.</></>,
+        
+    },
 ]
 

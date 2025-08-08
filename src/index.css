@@ -11,6 +11,7 @@ body {
   margin: 0;
   display: flex;
   place-items: center;
+  overflow: hidden;
 }
 
 html, body {
@@ -21,7 +22,32 @@ html, body {
 h1 {
 
 }
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
 
+/* Track */
+::-webkit-scrollbar-track {
+  background: white; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--unselected-mid); 
+  /* border-color: var(--unselected-mid); */
+  /* border-style: solid; */
+  /* border-width: 2px 0px; */
+}
+/* Handle */
+::-webkit-scrollbar-thumb:active {
+  background: var(--selected-mid); 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--selected-mid); 
+}
 button {
 
 }

@@ -96,7 +96,7 @@ const SimplexSettingsModal = ({ cell, updateCell, showModal, setShowModal }: { c
             className={styles.modal} 
             onClick={(e) => e.stopPropagation()}
             onKeyDown={(e) => e.stopPropagation()}
-            tabIndex={-1} // Makes the div focusable
+            tabIndex={-2} // Makes the div focusable
         >
             <div className={styles.modalContent}>
                 <div className={styles.modalHeader}>

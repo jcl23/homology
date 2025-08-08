@@ -4,7 +4,7 @@ import "./comps/Joyride.css";
 import UIPanel from "./comps/UIPanel";
 import Board from "./comps/board/Board";
 import SimplicesPanel from "./comps/board/simplicesPanel/SimplicesPanel";
-import { defaultComplex } from "./data/presets";
+import { defaultComplex, Preset } from "./data/presets";
 import { HomologyPanel } from "./comps/HomologyPanel";
 import { LoadComplex } from "./comps/modals/LoadComplex";
 import { ThemeProvider } from "@mui/material/styles";
@@ -19,6 +19,7 @@ import { defaultPreset } from "./data/defaultComplexes";
 import { HelpPanel } from "./comps/help/HelpPanel";
 import { useKeybindings } from "./keybinding.ts";
 import { TutorialProvider } from "./tutorial/TutorialContext.tsx";
+import { ComplexSettings } from "./comps/modals/ComplexSettings..tsx";
 
 const MAX_DIM = 3;
 
@@ -51,19 +52,20 @@ function App() {
     nameState: [true, true, true, true],
   });
 
-  const [preset, setPreset] = useState(defaultComplex);
+  const [preset, setPreset] = useState<Preset>(() => defaultComplex);
   
-  const [editorState, complexEditor] = useEditComplex();
+  const complexEditor = useEditComplex();
   
   useEffect(() => {
     complexEditor.reset();
-    defaultPreset(complexEditor);
-  }, [defaultPreset]);
+    preset(complexEditor);
+  }, [preset]);
   
   const { mode, selectionKey } = editOptions
   const { nameState } = viewOptions;
 
-  const { selectedKeys, complex} = editorState;
+  const selectedKeys = complexEditor.selected;
+  // const { selectedKeys, complex} = complexEditor.editorState;
 
   useKeybindings(setEditOptions, setViewOptions, complexEditor, allowEditing);
 
@@ -76,10 +78,11 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <TutorialProvider
+      // complexEditor={complexEditor}
+        // editorState={complexEditor}
         editOptions={editOptions}
         viewOptions={viewOptions}
         complexEditor={complexEditor}
-        editorState={editorState}
       >
 
       <CssBaseline />
@@ -92,41 +95,43 @@ function App() {
           <div className={styles.panelHolder}>
             <HelpPanel />
              <div style={{minHeight: "50px"}}></div>
-              {/* <button className={styles.button} style={{height: "40px", color: "#555"}} onClick={() => setAllowEditing(!allowEditing) } >{allowEditing ? "toggle demo mode" : "View"}</button> */}
             <div className={styles.upperPanel} style={{ display: 'flex', flexDirection: 'row' }}>
               {/* <DebugComplex complex={complex} /> */}
-              <LoadComplex setPreset={setPreset} />
+              <div className={styles.filePanel}>
+                <LoadComplex setPreset={setPreset} />
+                <ComplexSettings complexEditor={complexEditor} setAllowEditing={setAllowEditing} />
+
+              </div>
               <UIPanel
                 complexEditor={complexEditor}
                 setEditOptions={setEditOptions}
                 editOptions={editOptions}
                 setViewOptions={setViewOptions}
                 viewOptions={{ nameState }}
-                editorState={editorState}
               />
               {/* <PresetPanel setComplex={setStartingComplex} /> */}
               <SimplicesPanel 
                 selectionKey={selectionKey}
-                complex={complex}
-                selectedKeys={selectedKeys} 
-                selectRep={complexEditor.selectRep} 
-                unselectRep={complexEditor.toggleRepSelection}
+                complexEditor={complexEditor}
+                // selectedKeys={selectedKeys} 
+                // selectRep={complexEditor.selectRep} 
+                // unselectRep={complexEditor.toggleRepSelection}
               />
             </div>
               <div className={`${styles.lowerPanel} lowerPanel`} key={"COMPLEX"}>
-                  <HomologyPanel complex={complex}  />
+                  <HomologyPanel complex={complexEditor.currentComplex}  />
               </div>
         </div>
       
       <div className="centerHolder">
-        <History complexEditor={complexEditor} editorState={editorState}/>
+        <History complexEditor={complexEditor} editorState={complexEditor.editorState} />
         <Board
           allowEditing={allowEditing} 
           viewOptions={viewOptions} 
           editOptions={editOptions} 
           editComplex={complexEditor}
-          complex={complex}
-          selectedReps={selectedKeys}
+          complex={complexEditor.currentComplex}
+          // selectedReps={complexEditor.selected}
         />
         <div className={styles.keybinds}>
       <div className={styles.keybindLabel}> a: add cell </div>
