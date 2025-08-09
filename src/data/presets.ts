@@ -52,9 +52,9 @@ export type Preset = (editor: CWComplexStateEditor) => void;
 const Tetra: Preset = (editor: CWComplexStateEditor) => {
     editor.addVertex
     editor.addVertex([0, 0, 0], "a");
-    editor.addVertex([1, 0, 0], "b");
-    editor.addVertex([0, 1, 0], "c");s
-    editor.addVertex([0, 0, 1], "d");
+    editor.addVertex([2, 0, 0], "b");
+    editor.addVertex([0, 2, 0], "c");
+    editor.addVertex([0, 0, 2], "d");
     editor.selectAll();
     editor.addCell();
     editor.addCell();

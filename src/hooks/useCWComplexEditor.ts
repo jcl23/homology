@@ -56,7 +56,7 @@ const transferSelected = function(complex: CWComplex, selected: Set<string>): Se
 }
 
 
-type LastSelect = {
+export type LastSelect = {
     lastClickedDepth: number;
     cellList: string;
 }
@@ -85,6 +85,10 @@ export class CWComplexStateEditor  {
         this.reset = this.reset.bind(this);
     }
     
+    get recentlySelected(): LastSelect | null {
+        return this.lastSelect;
+    }
+        
     get currentComplex(): CWComplex {
         return this.editorState.complex;
     }
@@ -98,6 +102,9 @@ export class CWComplexStateEditor  {
     }
 
     getCell(key: string): AbstractCell | undefined {
+        if (!key) {
+            return undefined;
+        }
         const [dimension, id] = key.split(" ");
         const dim = +dimension;
         const id_ = +id;
@@ -421,17 +428,62 @@ export class CWComplexStateEditor  {
         });
     }
     toggleRepsSelection(cells: AbstractCell[]): void {
+        if (cells.length === 0) {
+            console.notify("No cells to toggle selection");
+            return;
+        } else if (cells.length === 1) {}
         const newCellList = cells.map(c => c.key).join(", ");
-        if (this.lastSelect && this.lastSelect.cellList === newCellList) {
-            const depth = ++this.lastSelect.lastClickedDepth;
-            this.toggleRepSelection(cells[depth].key)
-        } else {
-            this.lastSelect = {
-                lastClickedDepth: 0,
-                cellList: newCellList
-            };
-            this.toggleRepSelection(cells[0].key);
-        }
+        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
+            
+
+
+
+            let keyToToggle: string;
+            let keyToUnToggle: string;
+            let newLastSelect: LastSelect;
+            const intersectionCount = newCellList.split(", ").length;
+            if (lastSelect && intersectionCount > 1 && lastSelect.cellList === newCellList) {
+                const depth = lastSelect.lastClickedDepth + 1;
+                // this.toggleRepSelection(cells[depth].key)
+                if (cells[depth] === undefined || cells[depth - 1] === undefined) {
+                    debugger;
+                }
+                keyToToggle = cells[depth].key;
+                keyToUnToggle = cells[depth - 1].key;
+                newLastSelect = {
+                    lastClickedDepth: depth,
+                    cellList: newCellList
+                };
+
+                if (selectedKeys.has(keyToUnToggle)) {
+                    selectedKeys.delete(keyToUnToggle);
+                } else {
+                    selectedKeys.add(keyToUnToggle);
+                }
+            } else {
+                newLastSelect = {
+                    lastClickedDepth: -1,
+                    cellList: newCellList
+                };
+                // this.toggleRepSelection(cells[0].key);
+                keyToToggle = cells[0].key;
+            }
+            const newSelected = new Set(selectedKeys);
+            if (newSelected.has(keyToToggle)) {
+                newSelected.delete(keyToToggle);
+            } else {
+                newSelected.add(keyToToggle);
+            }
+         
+            // this.selected_ = transferSelected(complex, newSelected);
+            return {
+                history: history,
+                complex: complex,
+                selectedKeys: newSelected,
+                meta,
+                lastSelect: newLastSelect
+            }
+        });
     }
     toggleRepSelection(key: string): void { 
         this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {

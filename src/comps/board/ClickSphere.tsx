@@ -4,15 +4,18 @@ import { Cell } from '../../math/classes/cells';
 import { CWComplexStateEditor } from '../../hooks/useCWComplexEditor';
 type ClickSphereProps = {
     editor: CWComplexStateEditor;
+    editMode: string
 }
 
 export default function ClickSphere({ 
-    editor
+    editor, editMode
 }: ClickSphereProps) {
     return (  
     <mesh 
         userData={{object: "Outside"}}
         onPointerDown={(e) => {
+
+            if (editMode !== "select") return; // Prevent editing if not allowed
             // Prevent event propagation to ensure the Scene doesn't receive this click
             e.stopPropagation();
             // Reset selection when clicking on empty space

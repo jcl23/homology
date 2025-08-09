@@ -7,7 +7,7 @@ import { Plane, Sphere, Line, OrbitControls, Html, Edges, Cone, TransformControl
 
 import { computeOrthocenter3D  } from '../../math/shrink';
 import { EditOptions, ViewOptions } from '../../App';
-import { CWComplexStateEditor } from '../../hooks/useCWComplexEditor';
+import { CWComplexStateEditor, LastSelect } from '../../hooks/useCWComplexEditor';
 // import { ErrorBoundary } from '@react-three/fiber/dist/declarations/src/core/utils';
 import { AbstractCell, AbstractVertex, AbstractEdge, AbstractFace, Cell } from '../../math/classes/cells';
 import { CWComplex } from '../../math/CWComplex';
@@ -55,16 +55,24 @@ export type BoardProps = {
         
     */
 
-const BoardStateDebug = ({ dragSelectData }: { dragSelectData: DragSelectData }) => {
+type BoardStateDebugProps = {
+    dragSelectData: DragSelectData;
+    recentlySelected: LastSelect | null;
+}
+
+const BoardStateDebug = ({ dragSelectData, recentlySelected }: BoardStateDebugProps) => {
     // <Html>
     const color1 = dragSelectData.isMouseDown ? 'lime' : 'white';
     const color2 = ["green", "blue", "yellow"][dragSelectData.dimSelected] ?? "white";
     const color3 = dragSelectData.deselecting ? 'red' : 'white';
+    const color4 = recentlySelected ? 'orange' : 'white';
+
     return (
         <div style={{ display: "flex" }}>
             <div style={{backgroundColor: color1}}>isMouseDown: {dragSelectData.isMouseDown ? 'true' : 'false'}</div>
             <div style={{backgroundColor: color2}}>dimSelected: {dragSelectData.dimSelected}</div>
             <div style={{backgroundColor: color3}}>deselecting: {dragSelectData.deselecting ? 'true' : 'false'}</div>
+            <div style={{backgroundColor: color4}}>recentlySelected: {recentlySelected?.cellList ? recentlySelected.cellList : "null"}</div>
         </div>
     );
     {/* </Html> */}
@@ -88,7 +96,7 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, allowEditing  }
                 </div>
             </div>
         <Leva collapsed hidden />
-        <BoardStateDebug dragSelectData={dragSelectData} />
+        <BoardStateDebug dragSelectData={dragSelectData} recentlySelected={editComplex.recentlySelected} />
             <Canvas
                 className="canvas"
                 style={{
@@ -116,7 +124,7 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, allowEditing  }
                 <ambientLight intensity={2} />
                 <pointLight position={[10, 10, 10]} intensity={1.5} />
                 <directionalLight position={[0, 10, 0]} intensity={1} />
-                <ClickSphere editor={editComplex} />
+                <ClickSphere editor={editComplex} editMode={editOptions.mode} />
                 <Scene
                     setDragSelectData={setDragSelectData}
                     dragSelectData={dragSelectData}
