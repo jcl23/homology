@@ -40,7 +40,7 @@ export class Cell implements AbstractCell {
     constructor(id: number, index: number, name?: string) {
         this.id = id;
         this.index = index;
-        this.name = name ?? "c" + this.id;
+        this.name = name ?? "c_" + this.id;
         this.attachingMap = [];
         this.cob = [];
         this.dimension = -1;
@@ -159,7 +159,7 @@ export class Edge extends Cell implements AbstractEdge {
 
 
     constructor(v1: AbstractVertex, v2: AbstractVertex, id: number, index: number, name?: string) {
-        super(id, index, name ?? "e" + id);
+        super(id, index, name ?? "e_" + id);
         this.attachingMap = [v1, v2];
         this.cob = [];
         this.vertices_ = [v1, v2];
@@ -180,7 +180,7 @@ export class Face extends Cell implements AbstractFace {
 
 
     constructor(edges: AbstractEdge[], id: number, index: number, name?: string) {
-        super(id, index, name ?? "f" + id);
+        super(id, index, name ?? "f_" + id);
         this.attachingMap = [...edges];
         this.cob = [];
         this.vertices_ = [...new Set(edges.flatMap(e => e.vertices))];
@@ -201,7 +201,7 @@ export class Ball extends Cell implements AbstractBall {
         super(id, index, name);
         this.id = id ?? 0;
         this.index = index ?? 0;
-        this.name = "b" + this.id;
+        this.name = "B_" + this.id;
         this.attachingMap = [...faces];
         this.vertices_  = [...new Set(faces.flatMap(f => f.vertices))];
         this.vertices_.sort((a, b) => a.id - b.id);

@@ -4,13 +4,13 @@ import "./comps/Joyride.css";
 import UIPanel from "./comps/UIPanel";
 import Board from "./comps/board/Board";
 import SimplicesPanel from "./comps/board/simplicesPanel/SimplicesPanel";
-import { defaultComplex, Preset } from "./data/presets";
+import { complexes, defaultComplex, Preset } from "./data/presets";
 import { HomologyPanel } from "./comps/HomologyPanel";
 import { LoadComplex } from "./comps/modals/LoadComplex";
 import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import theme from "./style/theme";
-import { useEditComplex } from "./hooks/useCWComplexEditor";
+import { CWComplexStateEditor, useEditComplex } from "./hooks/useCWComplexEditor";
 import { ErrorBoundary } from "./comps/ErrorBoundary";
 import NotificationManager from "./comps/notifs/NotificationManager";
 import History from "./comps/history/History.tsx";
@@ -20,6 +20,7 @@ import { HelpPanel } from "./comps/help/HelpPanel";
 import { useKeybindings } from "./keybinding.ts";
 import { TutorialProvider } from "./tutorial/TutorialContext.tsx";
 import { ComplexSettings } from "./comps/modals/ComplexSettings..tsx";
+import { useThree } from "@react-three/fiber";
 
 const MAX_DIM = 3;
 
@@ -39,6 +40,7 @@ export type SetViewOptions = React.Dispatch<React.SetStateAction<ViewOptions>>;
 
 
 function App() {
+  
   
   const [allowEditing, setAllowEditing] = useState(true);
   const [ editOptions, setEditOptions] = useState<EditOptions>({
@@ -60,21 +62,15 @@ function App() {
     complexEditor.reset();
     preset(complexEditor);
   }, [preset]);
+
   
   const { mode, selectionKey } = editOptions
   const { nameState } = viewOptions;
 
   const selectedKeys = complexEditor.selected;
-  // const { selectedKeys, complex} = complexEditor.editorState;
 
   useKeybindings(setEditOptions, setViewOptions, complexEditor, allowEditing);
 
-  // useEffect(() => {
-  //   // If the mode is delete, delete the selected cells
-  //   if (mode === "remove") {
-  //     // performActionOnSelectedReps((cell) => {throw new Error("Pluh")});
-  //   }
-  // }, [selectedState]);
   return (
     <ThemeProvider theme={theme}>
       <TutorialProvider

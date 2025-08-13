@@ -53,6 +53,16 @@
     outline: none !important;
 }
 
+.react-joyride__tooltip__edge button:disabled:hover {
+    box-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.26) !important;
+    transform: none !important;
+    background-color: var(--unselected-bg) !important;
+    color: var(--unselected-fg) !important;
+}
+.react-joyride__tooltip__edge button:disabled {
+    cursor: not-allowed !important;
+    opacity: 0.5 !important;
+}
 /* Button hover state */
 .react-joyride__tooltip__edge button:hover {
     box-shadow: 3px 3px 3px 0px rgba(0, 0, 0, 0.26) !important;

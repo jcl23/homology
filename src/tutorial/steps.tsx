@@ -12,6 +12,7 @@ import { TutorialStepConditionProps } from "./TutorialContext";
 
 export type CustomStep = {
     content: string | React.ReactNode;
+    disable?: boolean;
     target?: string;
     box?: string;
     pass?: (tutorialStepConditionProps: Partial<TutorialStepConditionProps>) => boolean;

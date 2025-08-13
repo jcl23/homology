@@ -62,10 +62,12 @@ export const ComplexEdges = ({ mode, edges, selectedReps, toggleRepSelection, sh
 
 
                 return (
-                    <group key={edge.id + "AbstractEdge" + edge.name} renderOrder={-20} >
-                        <primitive object={mesh}
-                                         userData={{ object: edge }} 
-                        onPointerDown={function(e) { 
+                    <group key={edge.id + "AbstractEdge" + edge.name} renderOrder={-20} 
+                    >
+                        <primitive 
+                            userData={{ object: edge }} 
+                            object={mesh}
+                            onPointerDown={function(e) { 
                             if (mode !== 'select') return;
                 
                             // setDragSelectData(data => ({ 
@@ -110,7 +112,15 @@ export const ComplexEdges = ({ mode, edges, selectedReps, toggleRepSelection, sh
                         <primitive object={copy} visible={true} />
 
                         <primitive object={arrow} />
-                        { showName && <Label position={middle.toArray()} text={edge.name} /> }
+                        { showName && (
+                            <Label 
+                                position={middle.toArray()} 
+                                text={edge.name} 
+                                type={"edge"} 
+                                selected={isSelected}
+                                cell={edge}
+                            /> 
+                        ) }
                     </group>
                 );
             })}

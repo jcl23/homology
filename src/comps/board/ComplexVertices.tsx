@@ -4,6 +4,7 @@ import { AbstractVertex, Vertex } from "../../math/classes/cells";
 import { useControls } from "leva";
 import { useState } from "react";
 import Label from "./Label";
+import { NormalBlending } from "three";
 
 
 
@@ -45,7 +46,7 @@ export const ComplexVertices = ({ vertices, selectedReps, toggleRepSelection, sh
                             args={[0.1, 32, 32]}
                             castShadow
                         >
-                            <meshStandardMaterial color={color} opacity={vertexOpacity}  transparent={vertexOpacity < 1}/>
+                            <meshStandardMaterial color={color} opacity={vertexOpacity}  transparent={vertexOpacity < 1} />
                         </Sphere>
                         <Sphere
                             args={[0.04, 32, 32]}
@@ -98,7 +99,13 @@ export const ComplexVertices = ({ vertices, selectedReps, toggleRepSelection, sh
                                 toggleRepSelection(vertex); 
                             }}
                         /> */}
-                        { showName && <Label position={[0, 0, 0]} text={vertex.name}/>
+                        { showName && <Label 
+                            position={[0, 0, 0]} 
+                            text={vertex.name} 
+                            type="vertex" 
+                            selected={isSelected}
+                            cell={vertex}
+                            />
                         }
                     </group>
                 );

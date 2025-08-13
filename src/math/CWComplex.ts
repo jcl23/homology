@@ -119,6 +119,10 @@ export class CWComplex {
     get numCells(): number {
         return this.cells[0].length + this.cells[1].length + this.cells[2].length + this.cells[3].length;
     }
+    get numCellsQuotient(): number {
+
+    }
+        
     copy(): CWComplex {
         /*
        I dont even need this probably should remove cause distracting

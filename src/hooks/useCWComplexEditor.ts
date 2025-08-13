@@ -60,15 +60,12 @@ export type LastSelect = {
     lastClickedDepth: number;
     cellList: string;
 }
+
 export class CWComplexStateEditor  {
-    // private selected - update on every change
-    // private selected_: Set<AbstractCell> = new Set();
-    // private lastSelect: LastSelect | null = null;
     constructor(
         // private history_: CWComplexEditStep[], 
         private setEditorState: ComplexHistorySetter,
         public editorState: EditorState,
-        private lastSelect: LastSelect | null = null,
         // private history: CWComplexEditStep[],
         
     ) { 
@@ -85,8 +82,8 @@ export class CWComplexStateEditor  {
         this.reset = this.reset.bind(this);
     }
     
-    get recentlySelected(): LastSelect | null {
-        return this.lastSelect;
+    get recentlySelected(): LastSelect{
+        return this.editorState.lastSelect;
     }
         
     get currentComplex(): CWComplex {
@@ -431,57 +428,51 @@ export class CWComplexStateEditor  {
         if (cells.length === 0) {
             console.notify("No cells to toggle selection");
             return;
-        } else if (cells.length === 1) {}
-        const newCellList = cells.map(c => c.key).join(", ");
+        } else if (cells.length === 1) {
+            this.toggleRepSelection(cells[0].key);
+            return;
+        }
+        const cellList = cells.map(c => c.key).join(", ");
         this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
-            
-
-
-
-            let keyToToggle: string;
-            let keyToUnToggle: string;
-            let newLastSelect: LastSelect;
-            const intersectionCount = newCellList.split(", ").length;
-            if (lastSelect && intersectionCount > 1 && lastSelect.cellList === newCellList) {
-                const depth = lastSelect.lastClickedDepth + 1;
-                // this.toggleRepSelection(cells[depth].key)
-                if (cells[depth] === undefined || cells[depth - 1] === undefined) {
-                    debugger;
-                }
-                keyToToggle = cells[depth].key;
-                keyToUnToggle = cells[depth - 1].key;
-                newLastSelect = {
-                    lastClickedDepth: depth,
-                    cellList: newCellList
-                };
-
-                if (selectedKeys.has(keyToUnToggle)) {
-                    selectedKeys.delete(keyToUnToggle);
-                } else {
-                    selectedKeys.add(keyToUnToggle);
-                }
-            } else {
-                newLastSelect = {
-                    lastClickedDepth: -1,
-                    cellList: newCellList
-                };
-                // this.toggleRepSelection(cells[0].key);
-                keyToToggle = cells[0].key;
-            }
+            const {lastClickedDepth, cellList: lastCellList } = lastSelect;
             const newSelected = new Set(selectedKeys);
-            if (newSelected.has(keyToToggle)) {
-                newSelected.delete(keyToToggle);
-            } else {
-                newSelected.add(keyToToggle);
+            const toggle = (key: string) => {
+                if (key == null) {
+                    throw new Error("Tried to flip null cell");
+                }
+                if (newSelected.has(key)) {
+                    newSelected.delete(key);
+                } else {
+                    newSelected.add(key);
+                }
             }
-         
-            // this.selected_ = transferSelected(complex, newSelected);
-            return {
-                history: history,
-                complex: complex,
-                selectedKeys: newSelected,
-                meta,
-                lastSelect: newLastSelect
+            // If this is the same set of cells we saw before, rotate.
+            // If not, then set it to the one on top, set new lastSelect set.
+            if (cellList === lastCellList) {
+                const nextIndex = (lastClickedDepth + 1) % cells.length;
+                if (lastClickedDepth >= 0) toggle(cells[lastClickedDepth].key);
+                toggle(cells[nextIndex].key);
+
+                return {
+                    history,
+                    selectedKeys: newSelected,
+                    complex, meta,
+                    lastSelect: {
+                        lastClickedDepth: nextIndex,
+                        cellList
+                    }
+                }
+            } else {
+                toggle(cells[0].key);
+                return {
+                    history,
+                    selectedKeys: newSelected,
+                    complex, meta,
+                    lastSelect: {
+                        lastClickedDepth: 0,
+                        cellList,
+                    }
+                }
             }
         });
     }
@@ -507,10 +498,12 @@ export class CWComplexStateEditor  {
     deselectAll(): void {
         this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
             return {
-                history: history,
-                complex: complex,
+                history, complex, meta,
                 selectedKeys: new Set(),
-                meta, lastSelect
+                lastSelect: {
+                    lastClickedDepth: -1,
+                    cellList: "",
+                }
             }
         });
     }
@@ -571,6 +564,7 @@ export class CWComplexStateEditor  {
     }
 
     shiftSelection(dx: number, dy: number, dz: number): void {
+        if (this.editorState.selectedKeys.size == 0) return;
         this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
             const newSelected = new Set(selectedKeys);
             const cells = retrieveCellsFromSelectedKeys(complex, selectedKeys);
@@ -631,7 +625,10 @@ export const makeDefault = (): EditorState => {
     const defaultMeta: ComplexMeta = makeDefaultMeta();
 
     return {
-        lastSelect: null,
+        lastSelect: {
+            lastClickedDepth: -1,
+            cellList: ""
+        },
         history: defaultHistory,
         complex: defaultComplex,
         selectedKeys: new Set(),

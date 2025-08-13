@@ -6,6 +6,7 @@ export default [
     title: "What is homology?",
     target: ".modalHolder",
     modal: true,
+    disable: true,
     content: (
       <>
         Mathematicians like to be able to tell shapes apart.

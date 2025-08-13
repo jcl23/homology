@@ -54,18 +54,7 @@ const History = ({ complexEditor }: HistoryProps) => {
             ))}
         </div>
     );
-    return (
-        <div className={styles.historyOuter}>
-            {editorState.history.map((step, i) => {
-                const { type } = step;
-                return (
-                    <div onClick={() => complexEditor.jumpToStep(i)} className={styles.historyItem}>
-                        {type}
-                    </div>
-                )
-            })}
-      </div>
-    );
+
 };
 
 export default History;

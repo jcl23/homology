@@ -131,6 +131,7 @@ const MyTooltip: React.FC<TooltipRenderProps> = ({
             <button
               key={nextStep.index}
               className="react-joyride__tooltip__edge button"
+              disabled={nextStep.disable}
               onClick={() => {
                 goToStep(nextStep.index);
               }}

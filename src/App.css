@@ -14,6 +14,9 @@
   --unselected-fg: rgb(0, 0, 0);
   --unselected-mid: #ddd;
   --selected-mid: #ccc;
+  /* Board */
+  --board-color: white;
+  --board-opacity: 0.5;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 

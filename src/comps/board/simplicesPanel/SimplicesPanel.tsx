@@ -27,13 +27,13 @@ const SimplicesPanel = ({
     }: SimplicesPanelProps) => {
         // debugger;
     //const { complex, selectedKeys, selectRep, unselectRep } = complexEditor;
-    const [vertices, edges, faces, balls] = complexEditor.cells;
+    // const [vertices, edges, faces, balls] = complexEditor.cells;
     // const cells = [...complex.cells[0], ...complex.cells[1], ...complex.cells[2], ...complex.cells[3]];
-    // const [vertices, edges, faces, balls] = [0, 1, 2, 3].map(dim => {
-    //     const allCells = complex.cells[dim];
-    //     // return unique by index
-    //     return allCells.filter((cell, i, arr) => arr.findIndex(c => c.index === cell.index) === i);
-    // });
+    const [vertices, edges, faces, balls] = [0, 1, 2, 3].map(dim => {
+        const allCells = complexEditor.cells[dim];
+        // return unique by index
+        return allCells.filter((cell, i, arr) => arr.findIndex(c => c.index === cell.index) === i);
+    });
     // no buttons, just click the rows
     useEffect(() => {
         console.log("again")

@@ -3,3 +3,6 @@ canvas.board {
     height: 100%;
 }
 
+.boardTitle {
+    font-weight: bold;
+}

@@ -19,6 +19,7 @@ export default function ClickSphere({
             // Prevent event propagation to ensure the Scene doesn't receive this click
             e.stopPropagation();
             // Reset selection when clicking on empty space
+            console.log("Intersections: ", e.intersections);
             const myData = e.intersections.map(i => i.object.userData);
             const cells = e.intersections.map(i => i.object.userData.object).filter((obj: any) => obj instanceof Cell);
             const lowestDim = Math.min(...cells.map(c => c.dimension));

@@ -1,0 +1,40 @@
+/*
+style={{ color: 'black', fontFamily: "Helvetica Neue", fontSize: '16px', background: '#FFFC', boxShadow:"0px 0px 5px 0px black", padding: '2px',pointerEvents: 'none' }}>
+*/
+
+.label {
+    color: var(--unselected-fg);
+    font-family: 'Helvetica Neue';
+    font-size: 16px;
+    pointer-events: none;
+    padding: 2px;
+    pointer-events: none;
+    /* transform: translate(-50%, -50%); */
+    /* transition: background-color 0.2s ease, color 0.2s ease; */
+
+}
+.label-edge {
+    background-color: #fcfcfcc0;
+    background-blend-mode: overlay;
+    box-shadow: 0px 0px 5px 0px rgb(255, 255, 255);
+    /* transform: translate(510px, 5px); */
+    height: 23px;
+    padding-top: 0px;
+    
+    
+}
+.label-vertex {
+    background-color: #0006;
+    mix-blend-mode: luminosity;
+    color: white;
+    height: 26px;
+    aspect-ratio: 1;
+    position: relative;
+    mix-blend-mode: overlay;
+    margin: -13px -12px;
+    border-radius: 50%;
+}
+.label-vertex-on {
+    background-color: var(--selected-bg);
+    color: white;
+}

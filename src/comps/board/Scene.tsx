@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Plane, Sphere, Line, OrbitControls } from '@react-three/drei';
 import { BoardProps } from "./Board";
 import { DoubleSide, Vector3 } from "three";
@@ -7,6 +7,7 @@ import { ComplexEdges } from "./ComplexEdges";
 import { ComplexVertices } from "./ComplexVertices";
 import { MAX_DIMENSION } from "../../data/configuration";
 import { ComplexBalls } from "./ComplexBalls";
+import { useThree } from "@react-three/fiber";
 export type DragSelectData = {
     isMouseDown: boolean;
     dimSelected: number;
@@ -28,7 +29,7 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
     const planeRef = useRef(null);
     const previewRef = useRef(null);
     const gridSize = 1; // Grid cell size
-    const gridExtent = 10; // Grid size from center to edge
+    const gridExtent = 5 // Grid size from center to edge
 
     const [previewPosition, setPreviewPosition] = useState<[number, number, number] | null>(null);
     
@@ -61,6 +62,10 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
         setPreviewPosition(null);
     };
 
+    const { invalidate } = useThree();
+    useEffect(() => {
+        invalidate();
+    }, [complex.numCells]);
 
     const handlePointerDown = (e) => {
         if (!allowEditing) return;
@@ -156,8 +161,10 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
                 />
             </>
         )
-    }, [complex.cells[0].length, complex.cells[1].length, complex.cells[2].length, selectedReps.length, dragSelectData.dimSelected, complex.cells]);
+    }, [complex.cells[0].length, complex.cells[1].length, complex.cells[2].length, selectedReps.length, dragSelectData.dimSelected, complex.cells, editComplex.recentlySelected.lastClickedDepth]);
 
+    const boardColor = computedStyles.getPropertyValue("--board-color").trim();
+    const boardOpacity = +computedStyles.getPropertyValue("--board-opacity").trim();
 
     // console.notify("center", complex.center);
     // plane should be transparent
@@ -172,7 +179,10 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
                         LEFT: 2
                     } : {} 
                 }
-                target={[0, 0, 4]}
+                dampingFactor={0.25}
+                target={[0, 0, 0]}
+                rotateSpeed={0.5}
+                
             // target={complex.center}
             />  
             <group>
@@ -181,17 +191,17 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
                     ref={planeRef}
                     renderOrder={-5}
                     args={[gridExtent * 2, gridExtent * 2]} // Size matching the grid
-                    position={new Vector3(0, editOptions.gridHeight, 0)}
+                    position={new Vector3(0, editOptions.gridHeight - 0.01, 0)}
                     rotation={[-Math.PI / 2, 0, 0]}
                     onPointerMove={handlePointerMove}
                     onPointerOut={handlePointerOut}
                     onPointerDown={handlePointerDown}
-                    visible={false}
+                    visible={true}
                 >
-                    <meshStandardMaterial color="#f5f5f5" transparent opacity={0.4} roughness={0.4} metalness={0.1} depthTest={true}  side={DoubleSide}/>
+                    <meshStandardMaterial color={boardColor} transparent opacity={boardOpacity} roughness={0.4} metalness={0.1} depthTest={true}  side={DoubleSide}/>
                 </Plane>
                    
-                <Plane
+                {/* <Plane
                     renderOrder={-5}
                     args={[gridExtent * 2, gridExtent * 2]} // Size matching the grid
                     position={new Vector3(0, editOptions.gridHeight - 0.2, 0)}
@@ -205,22 +215,28 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
                 >
                    
                     <meshStandardMaterial color="#f5f5f5" transparent opacity={0.4} roughness={0.4} metalness={0.1} depthTest={true}  side={DoubleSide}/>
-                </Plane>
+                </Plane> */}
             </group>
         
-            <ambientLight intensity={0.5} />
-                    <directionalLight position={[5, 5, 5]} intensity={0.5} />
-                    <spotLight position={[0, 10, 0]} angle={3} penumbra={10} intensity={100}  castShadow />
-                {previewPosition && (
-                    <Sphere
-                        ref={previewRef}
-                        position={previewPosition}
-                        args={[0.1, 32, 32]}
-                        visible={editOptions.mode === 'add'}
-                    >
-                        <meshStandardMaterial color={unselectedFg} opacity={0.5} transparent />
-                    </Sphere>
-                )}
+            {/* <ambientLight intensity={0.5} /> */}
+                {/* <directionalLight position={[5, 5, 5]} intensity={0.5} /> */}
+                {/* <spotLight position={[0, 50, 0]} angle={1.3} penumbra={20} intensity={0}  castShadow 
+                    decay={1} color={"red"} 
+                /> */}
+                {/* <spotLight position={[5, 8, 0]} angle={3} penumbra={10} intensity={100}  castShadow />
+                <spotLight position={[-7, -5, 0]} angle={3} penumbra={10} intensity={100}  castShadow /> */}
+                
+                
+            {previewPosition && (
+                <Sphere
+                    ref={previewRef}
+                    position={previewPosition}
+                    args={[0.1, 32, 32]}
+                    visible={editOptions.mode === 'add'}
+                >
+                    <meshStandardMaterial color={unselectedFg} opacity={0.5} transparent />
+                </Sphere>
+            )}
             {cells}
 
                     

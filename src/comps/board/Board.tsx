@@ -1,4 +1,4 @@
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import React, { useState, useRef, Component, ErrorInfo } from 'react';
 import { Leva, useControls } from 'leva';
 import { ArrowHelper, Color, CylinderGeometry, DoubleSide, Euler, MathUtils, Mesh, MeshStandardMaterial, Quaternion, Vector3 } from 'three';
@@ -13,7 +13,7 @@ import { AbstractCell, AbstractVertex, AbstractEdge, AbstractFace, Cell } from '
 import { CWComplex } from '../../math/CWComplex';
 import { ErrorBoundary } from '../ErrorBoundary';
 import { DragSelectData, Scene } from './Scene';
-
+import styles from './Board.module.css';
 
 import { Stats }from '@react-three/drei';
 import { MAX_DIMENSION } from '../../data/configuration';
@@ -57,7 +57,7 @@ export type BoardProps = {
 
 type BoardStateDebugProps = {
     dragSelectData: DragSelectData;
-    recentlySelected: LastSelect | null;
+    recentlySelected: LastSelect;
 }
 
 const BoardStateDebug = ({ dragSelectData, recentlySelected }: BoardStateDebugProps) => {
@@ -83,7 +83,7 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, allowEditing  }
     //const { history } = editComplex;
     const { nameState } = viewOptions;
     //const complex = history[history.length - 1].complex;
-
+    // const { invalidate } = useThree();
     const [dragSelectData, setDragSelectData] = useState<DragSelectData>({ isMouseDown: false, dimSelected: -1, deselecting: false  });
     
     // const [updateHoverKey, setUpdateHoverKey] = useState<number>(Math.random());
@@ -91,13 +91,14 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, allowEditing  }
     return (
         <ErrorBoundary>
             <div>
-                <div className="boardTitle">
+                <div className={styles.boardTitle}>
                     {nameState ? <Latex>{ editComplex.meta.name  ?? "CW Complex with no name that's not good..."}</Latex> : ""}
                 </div>
             </div>
-        <Leva collapsed hidden />
-        <BoardStateDebug dragSelectData={dragSelectData} recentlySelected={editComplex.recentlySelected} />
+            <Leva collapsed hidden />
+            {/* <BoardStateDebug dragSelectData={dragSelectData} recentlySelected={editComplex.recentlySelected} /> */}
             <Canvas
+                dpr={[1, 5]}
                 className="canvas"
                 style={{
                     border: '1px solid grey',
@@ -113,7 +114,7 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, allowEditing  }
                 //     console.notify("Mouse move", e.relatedTarget);
                 //     setUpdateHoverKey(Math.random());
                 // }}
-                camera={{ position: [0, 10, 0], near: 0.001, rotation: new Euler(Math.PI / 4, Math.PI / 4, 2),fov: 40 }} // Adjust camera position
+                camera={{ position: [4, 16, 0], near: 0.001, rotation: new Euler(0, 0, 0),fov: 40 }} // Adjust camera position
                 onPointerUp={() => setDragSelectData(data => ({ ...data, isMouseDown: false}))}    
                 onPointerDown={(e) => {
                     // console.log("Scene", e.intersections);
@@ -123,7 +124,9 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, allowEditing  }
                 {/* <Stats /> */}
                 <ambientLight intensity={2} />
                 <pointLight position={[10, 10, 10]} intensity={1.5} />
-                <directionalLight position={[0, 10, 0]} intensity={1} />
+                <directionalLight position={[10, 5, 0]} color="white" intensity={1} />
+                <directionalLight position={[-10, 5, 0]} color="white" intensity={1} />
+                <directionalLight position={[0, -5, 0]} color="white" intensity={1} />
                 <ClickSphere editor={editComplex} editMode={editOptions.mode} />
                 <Scene
                     setDragSelectData={setDragSelectData}

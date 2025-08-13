@@ -3,6 +3,7 @@ import parabolas from "./bits/parabolas";
 import threeshapes from "./bits/threeshapes";
 export default [
   {
+    disable: true,
     title: "What is topology?",
     target: ".modalHolder",
     modal: true,
