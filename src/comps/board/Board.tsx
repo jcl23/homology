@@ -19,6 +19,7 @@ import { Stats }from '@react-three/drei';
 import { MAX_DIMENSION } from '../../data/configuration';
 import Latex from 'react-latex-next';
 import ClickSphere from './ClickSphere';
+import { CAMERA_POSITION } from '../../cfg/board';
 
 
 export type BoardProps = {
@@ -87,7 +88,7 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, allowEditing  }
     const [dragSelectData, setDragSelectData] = useState<DragSelectData>({ isMouseDown: false, dimSelected: -1, deselecting: false  });
     
     // const [updateHoverKey, setUpdateHoverKey] = useState<number>(Math.random());
-    
+    console.log("Board render", complex.numReps, complex.numCells);
     return (
         <ErrorBoundary>
             <div>
@@ -114,7 +115,7 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, allowEditing  }
                 //     console.notify("Mouse move", e.relatedTarget);
                 //     setUpdateHoverKey(Math.random());
                 // }}
-                camera={{ position: [4, 16, 0], near: 0.001, rotation: new Euler(0, 0, 0),fov: 40 }} // Adjust camera position
+                camera={{ position: CAMERA_POSITION, near: 0.001, rotation: new Euler(0, 0, 0)}} // Adjust camera position
                 onPointerUp={() => setDragSelectData(data => ({ ...data, isMouseDown: false}))}    
                 onPointerDown={(e) => {
                     // console.log("Scene", e.intersections);

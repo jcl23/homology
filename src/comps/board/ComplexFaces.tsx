@@ -105,7 +105,6 @@ const {faceOpacity} = useControls({ faceOpacity: { value: 0.5, min: 0, max: 1 } 
                             depthTest={true}
                             depthWrite={false}
                             alphaTest={0.01}
-                            blending={NormalBlending}
                             needsUpdate={true}
                         />
                         {/* <bufferGeometry>

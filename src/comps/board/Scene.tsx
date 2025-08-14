@@ -8,6 +8,7 @@ import { ComplexVertices } from "./ComplexVertices";
 import { MAX_DIMENSION } from "../../data/configuration";
 import { ComplexBalls } from "./ComplexBalls";
 import { useThree } from "@react-three/fiber";
+import { DAMPING_FACTOR, LOOK_AT, ROTATE_SPEED } from "../../cfg/board";
 export type DragSelectData = {
     isMouseDown: boolean;
     dimSelected: number;
@@ -62,10 +63,10 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
         setPreviewPosition(null);
     };
 
-    const { invalidate } = useThree();
-    useEffect(() => {
-        invalidate();
-    }, [complex.numCells]);
+    // const { invalidate } = useThree();
+    // useEffect(() => {
+    //     invalidate();
+    // }, [complex.numCells]);
 
     const handlePointerDown = (e) => {
         if (!allowEditing) return;
@@ -161,7 +162,7 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
                 />
             </>
         )
-    }, [complex.cells[0].length, complex.cells[1].length, complex.cells[2].length, selectedReps.length, dragSelectData.dimSelected, complex.cells, editComplex.recentlySelected.lastClickedDepth]);
+    }, [complex.numCells, complex.numReps, selectedReps.length, dragSelectData.dimSelected, complex.cells, editComplex.recentlySelected.lastClickedDepth]);
 
     const boardColor = computedStyles.getPropertyValue("--board-color").trim();
     const boardOpacity = +computedStyles.getPropertyValue("--board-opacity").trim();
@@ -179,17 +180,17 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
                         LEFT: 2
                     } : {} 
                 }
-                dampingFactor={0.25}
-                target={[0, 0, 0]}
-                rotateSpeed={0.5}
+                dampingFactor={DAMPING_FACTOR}
+                target={LOOK_AT}
+                rotateSpeed={ROTATE_SPEED}
                 
             // target={complex.center}
             />  
             <group>
                 <CustomGrid gridHeight={editOptions.gridHeight} gridSize={gridSize} gridExtent={gridExtent} />
                 <Plane
+                    renderOrder={-20}
                     ref={planeRef}
-                    renderOrder={-5}
                     args={[gridExtent * 2, gridExtent * 2]} // Size matching the grid
                     position={new Vector3(0, editOptions.gridHeight - 0.01, 0)}
                     rotation={[-Math.PI / 2, 0, 0]}
@@ -198,7 +199,7 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
                     onPointerDown={handlePointerDown}
                     visible={true}
                 >
-                    <meshStandardMaterial color={boardColor} transparent opacity={boardOpacity} roughness={0.4} metalness={0.1} depthTest={true}  side={DoubleSide}/>
+                    <meshStandardMaterial color={boardColor} transparent  opacity={boardOpacity} roughness={0.4} metalness={0.1} depthTest={true}side={DoubleSide}/>
                 </Plane>
                    
                 {/* <Plane
@@ -267,7 +268,7 @@ const CustomGrid = ({ gridSize, gridExtent, gridHeight }: CustomGridProps) => {
     return (
         <>
             {lines.map((line, index) => (
-                <Line renderOrder={-1} key={index} points={line} color="#555" lineWidth={1} />
+                <Line renderOrder={-20000} key={index} points={line} color="#555" lineWidth={1} />
             ))}
         </>
     );

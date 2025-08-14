@@ -34,7 +34,7 @@ export const ComplexVertices = ({ vertices, selectedReps, toggleRepSelection, sh
     
     const debugStr = (vertices.length > 0) ? (vertices[0] as Vertex).point.map(n => n.toFixed(2)) : "No vertices";
     return (
-        <group renderOrder={-10}>
+        <group renderOrder={2000000000000000000000000000000000000000000000}>
             {vertices.map((vertex) => {
                 const isSelected = Array.from(selectedReps).some(cell =>
                     vertex === cell
@@ -46,7 +46,8 @@ export const ComplexVertices = ({ vertices, selectedReps, toggleRepSelection, sh
                             args={[0.1, 32, 32]}
                             castShadow
                         >
-                            <meshStandardMaterial color={color} opacity={vertexOpacity}  transparent={vertexOpacity < 1} />
+                            {/* Medium Ball */}
+                            <meshStandardMaterial color={color} opacity={0.5}  transparent={vertexOpacity < 1} />
                         </Sphere>
                         <Sphere
                             args={[0.04, 32, 32]}

@@ -22,14 +22,17 @@ export class CWComplex {
         3: AbstractBall[];
         [key: number]: AbstractCell[];
     };
-
+    cellCounts: number[];
     constructor() {
         const from = { cells: { 0: [], 1: [], 2: [], 3: []} };
         // create new
+        this.cellCounts = [0, 0, 0, 0];
         this.cells = { ...from.cells };
     }
 
-
+    get numCells(): number {
+        return this.cellCounts.reduce((acc, count) => acc + count, 0);
+    }
     assignFrom(from: CWComplex) {
         this.cells = { ...from.cells };
     }
@@ -41,6 +44,7 @@ export class CWComplex {
     }
     identifyEdges (cells: Set<AbstractCell>): void {
         identifyEdges(this, cells);
+        this.cellCounts[1] = (this.cellCounts[1] || 0) - (cells.size - 1);
     }
     identifyEdgesByName (edgeNames: string[]): void {
         const edges = edgeNames.map(name => (getRepsByName(this, name, 1) as AbstractEdge[])[0]);
@@ -116,12 +120,10 @@ export class CWComplex {
     get size(): string {
         return "(" + [0, 1, 2, 3].map(dim => this.cells[dim].length).join(", ");
     }
-    get numCells(): number {
+    get numReps(): number {
         return this.cells[0].length + this.cells[1].length + this.cells[2].length + this.cells[3].length;
     }
-    get numCellsQuotient(): number {
-
-    }
+    
         
     copy(): CWComplex {
         /*
@@ -200,6 +202,7 @@ export const deleteCell = (complex: CWComplex, cell: AbstractCell): void => {
     deleteCellFromBoundaries(cell);
     deleteAllCoboundaries(complex, cell);
     complex.cells[cell.dimension] = complex.cells[cell.dimension].filter(c => c !== cell);
+    complex.cellCounts[cell.dimension] = (complex.cellCounts[cell.dimension] || 0) - 1;
     resetIndices(complex);
     resetIds(complex);
 }
@@ -559,7 +562,6 @@ const isFiniteNumber = (value: number): value is FiniteNumber => {
 };
 export const identifyVertices = (complex: CWComplex, cells: Set<AbstractCell>): void => {
     // select a representative vertex.Create a new complex in which all the vertices are identified with the representative vertex.
-    
     const elements = [...cells];
     if (elements.length === 0) return;
     let leastIndex = Infinity;
@@ -575,12 +577,13 @@ export const identifyVertices = (complex: CWComplex, cells: Set<AbstractCell>): 
     const repIndex = rep.index;
     const repName = rep.name;
 
-    for (let i = 1; i < elements.length; i++) {
+    for (let i = 0; i < elements.length; i++) {
         const cell = elements[i];
         cell.index = repIndex;
         cell.name = repName;
     }
-
+    complex.cellCounts[0] = (complex.cellCounts[0] || 0) - (elements.length - 1);
+    // reindex the complex
     complex.reindex();
     // const representative = complex.cells[0].find(v => indices.has(v.index))!;
     // const index = representative.index;
@@ -636,8 +639,6 @@ export const madeWithGivenVertices = (face: AbstractCell, vertices: AbstractVert
 }
 
 export const identifyEdges = (complex: CWComplex, cells: Set<AbstractCell>, newName?: string): void => {
-    
-    debugger;
     const indices = Array.from(cells).map(c => c.index);
     const representative = complex.cells[1].find(e => indices.some(index => index == e.index))!;
     const [startIndex, endIndex] = representative.attachingMap.map(v => v.index);
@@ -805,6 +806,7 @@ const addCell = function(complex: CWComplex, cell: AbstractCell): void {
     // The above fails because the copying is shallow. We need to make a deep copy of the cells.
 
     complex.cells[cell.dimension].push(cell as any);
+    complex.cellCounts[cell.dimension] = (complex.cellCounts[cell.dimension] || 0) + 1;
 }
 
 const addCellByVertices = function(complex: CWComplex, vertices: AbstractVertex[]): void {

@@ -8,7 +8,8 @@ type LabelProps = {
     text: string;
     type: string;
     selected: boolean;
-    cell?: AbstractCell; // Optional, used for cells like vertices or edges
+    // cell?: AbstractCell; // Optional, used for cells like vertices or edges
+    toggle: () => void; // Function to toggle selection
 }
 const subscriptChars = "₀₁₂₃₄₅₆₇₈₉";
 export const numToSubscript = (num: number) => {
@@ -25,14 +26,16 @@ export const texToUnicode = (text: string) => {
         return numToSubscript(parseInt(num));
     });
 }
-const Label = ({ type, position, text, selected, cell }: LabelProps) => {
-    const userData = cell ? { object: cell } : {};
+const Label = ({ type, position, text, selected, toggle }: LabelProps) => {
+    // const userData = cell ? { object: cell } : {};
     return (
-        <Html position={position} zIndexRange={[100, 200]} pointerEvents="none" userData={userData}  style={{ pointerEvents: 'none' }}
+        <Html  position={position} zIndexRange={[100, 200]} 
                 className={`${styles.label} ${styles[`label-${type}`]} ${styles[`label-${type}-${selected ? 'on' : 'off'}`]}`}>
           
               {/* <Latex>$\sf {text}$</Latex>   */}
-              {texToUnicode(text)}
+             <div style={{ width: "100%", height: "100%" }} onMouseDown={toggle}>
+             {texToUnicode(text)}
+                </div>
 
         </Html>
     );

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { AbstractCell } from "../../../math/classes/cells";
 import styles from './SimplicesPanel.module.css';
 import Latex from "react-latex-next";
+import { texToUnicode } from "../Label";
 
 type SimplexDataProps = {
     selected?: boolean;
@@ -30,7 +31,7 @@ const SimplexData = ({ selected, cell, toggleCellSelection }: SimplexDataProps) 
         <div className={styles.datumOuter}>
             <SimplexSettingsModal updateCell={updateCell} cell={cell} showModal={showModal} setShowModal={setShowModal} />
             <div className={`${styles.cellHeader} ${styles[selected ? "selected" : "unselected"]}`} onClick={() => toggleCellSelection(cell)}>
-                <Latex>${cell.name}$</Latex>
+                {texToUnicode(cell.name)}
                 <div style={{display: "flex", alignItems: "center"}}>
                     <div>
                     {/* id={cell.id} */}

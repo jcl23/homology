@@ -6,23 +6,47 @@ style={{ color: 'black', fontFamily: "Helvetica Neue", fontSize: '16px', backgro
     color: var(--unselected-fg);
     font-family: 'Helvetica Neue';
     font-size: 16px;
-    pointer-events: none;
+
     padding: 2px;
-    pointer-events: none;
+
     /* transform: translate(-50%, -50%); */
     /* transition: background-color 0.2s ease, color 0.2s ease; */
 
 }
 .label-edge {
+    background-color: #888;
+    background-blend-mode: overlay;
+    margin-top: -10px;
+    margin-left: -8px;
+    /* box-shadow: 0px 0px 5px 0px #888; */
+    /* transform: translate(510px, 5px); */
+    mix-blend-mode: lighten!important;
+    max-height: 20px;
+    border-radius: 1px;
+    line-height: 12px!important;
+    border: 2px solid #aaa;   
+}
+.label-edge-on {
+    background-color: var(--selected-bg);
+    color: white;
+    mix-blend-mode: overlay;
+    /* box-shadow: 0px 0px 5px 0px #ccc; */
+    /* transform: translate(510px, 5px); */
+    max-height: 20px;
+    border-radius: 1px;
+    line-height: 12px!important;
+    border: 1px solid var(--selected-bg); 
+}
+/* .label-edge {
     background-color: #fcfcfcc0;
     background-blend-mode: overlay;
     box-shadow: 0px 0px 5px 0px rgb(255, 255, 255);
-    /* transform: translate(510px, 5px); */
     height: 23px;
     padding-top: 0px;
     
     
-}
+} */
+
 .label-vertex {
     background-color: #0006;
     mix-blend-mode: luminosity;

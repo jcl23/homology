@@ -5,6 +5,7 @@ import { CWComplexEditStep, EditType  } from "../logic/steps";
 import { MAX_DIMENSION, MAX_VERTEX_SELECT} from "../data/configuration";
 import { ThermostatOutlined, ThumbUpSharp } from "@mui/icons-material";
 import { Ray } from "three";
+import { InvalidIdentificationError, TransformationError } from "../errors/errors";
 
 type CellIdentifier = {
     id: string; // all unique
@@ -194,7 +195,7 @@ export class CWComplexStateEditor  {
                 editStep.step(complex, selectedKeys);
             } catch (e) {
                 console.notify("Invalid selection for identification");
-                throw e;
+                throw new InvalidIdentificationError(complex, e);
             }
             return {
                 history: [...history, editStep],
@@ -348,9 +349,9 @@ export class CWComplexStateEditor  {
                 console
                 return { history, complex, selectedKeys, meta, lastSelect };
             }
-            const totalCellCount = complex.numCells;
+            const totalCellCount = complex.numReps;
             step(complex, selectedKeys);
-            const newCellCount = complex.numCells;
+            const newCellCount = complex.numReps;
 
             // if no new cells, don't bother adding a step
             if (totalCellCount === newCellCount) {
