@@ -9,6 +9,8 @@ import { MAX_DIMENSION } from "../../data/configuration";
 import { ComplexBalls } from "./ComplexBalls";
 import { useThree } from "@react-three/fiber";
 import { DAMPING_FACTOR, LOOK_AT, ROTATE_SPEED } from "../../cfg/board";
+import TriangleGrid, { nearestTriangularLatticePoint } from "../grids/TriangleGrid";
+import { Hexagon } from "@mui/icons-material";
 export type DragSelectData = {
     isMouseDown: boolean;
     dimSelected: number;
@@ -23,7 +25,7 @@ const computedStyles = getComputedStyle(document.documentElement);
 const unselectedFg = computedStyles.getPropertyValue("--unselected-fg").trim();
 const selectedFg = computedStyles.getPropertyValue("--selected-fg").trim();
 const selectedBg = computedStyles.getPropertyValue("--selected-bg").trim();
-export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragSelectData, dragSelectData, allowEditing }: SceneProps) => {
+export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragSelectData, dragSelectData, allowEditing, gridStyle }: SceneProps) => {
     console.notify("Scene");
     
     // const complex = history[history.length - 1].complex;
@@ -42,11 +44,33 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
                 const intersectPoint = e.intersections[0].point;
                 
                 // Snap to grid
-                const snappedX = Math.round(intersectPoint.x / gridSize) * gridSize;
-                const snappedZ = Math.round(intersectPoint.z / gridSize) * gridSize;
-                
-                if (!previewPosition || previewPosition[0] !== snappedX || previewPosition[2] !== snappedZ) {
-                    setPreviewPosition([snappedX, intersectPoint.y, snappedZ]);
+                if (false) {
+                    const snappedX = Math.round(intersectPoint.x / gridSize) * gridSize;
+                    const snappedZ = Math.round(intersectPoint.z / gridSize) * gridSize;
+                    if (!previewPosition || previewPosition[0] !== snappedX || previewPosition[2] !== snappedZ) {
+                        setPreviewPosition([snappedX, intersectPoint.y, snappedZ]);
+                    }
+                } else {
+                    // if point is closer than 1/2 side length to a triangular lattice point, snap to that point
+                    debugger;
+                    const distToLast = Math.sqrt(
+                        Math.pow(intersectPoint.x - previewPosition?.[0] || 1000, 2) +
+                        Math.pow(intersectPoint.z - previewPosition?.[2] || 1000, 2)
+                    );
+                    if (distToLast < 0.2) {
+                        // console.notify("Snapping to triangular lattice point");
+                        return;
+                    }
+                    const { qx, qy } = nearestTriangularLatticePoint(intersectPoint.x, intersectPoint.z, gridSize, 5 );
+                    if (qx !== null && qy !== null) {
+                        const snappedX = qx;
+                        const snappedZ = qy;
+                        if (!previewPosition || previewPosition[0] !== snappedX || previewPosition[2] !== snappedZ) {
+                            setPreviewPosition([snappedX, intersectPoint.y, snappedZ]);
+                        }
+                    } else {
+                        setPreviewPosition(null);
+                    }
                 }
             } else if (editOptions.mode == "select") {
                 const isBoard = e.target.id === "board";
@@ -169,6 +193,11 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
 
     // console.notify("center", complex.center);
     // plane should be transparent
+    const sqrt3 = Math.sqrt(3);
+    const boardVertices = viewOptions.gridStyle === "triangular" ? // 6 points otherwise 4
+        [[5, 0, 0], [5 * sqrt3 / 2, 0, 2.5], [-5 * sqrt3 / 2, 0, 2.5], [-5, 0, 0], [-5 * sqrt3 / 2, 0, -2.5], [5 * sqrt3 / 2, 0, -2.5]]
+        : [[-10, 0, -10], [10, 0, -10], [10, 0, 10], [-10, 0, 20],  [10, 0, 1110], [-10, 0, 20]]
+    ;
     return (
         <>
             <OrbitControls 
@@ -187,7 +216,13 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
             // target={complex.center}
             />  
             <group>
-                <CustomGrid gridHeight={editOptions.gridHeight} gridSize={gridSize} gridExtent={gridExtent} />
+                {
+                    viewOptions.gridStyle === "triangular" ? (
+                        <TriangleGrid radius={5} sideLength={1} />
+                    ) : (
+                        <CustomGrid gridHeight={editOptions.gridHeight} gridSize={gridSize} gridExtent={gridExtent} />
+                    )
+                }
                 <Plane
                     renderOrder={-20}
                     ref={planeRef}
@@ -202,6 +237,7 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
                     <meshStandardMaterial color={boardColor} transparent  opacity={boardOpacity} roughness={0.4} metalness={0.1} depthTest={true}side={DoubleSide}/>
                 </Plane>
                    
+ 
                 {/* <Plane
                     renderOrder={-5}
                     args={[gridExtent * 2, gridExtent * 2]} // Size matching the grid

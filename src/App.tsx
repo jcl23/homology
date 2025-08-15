@@ -34,6 +34,7 @@ export type EditOptions = {
 export type SetEditOptions = React.Dispatch<React.SetStateAction<EditOptions>>;
 export type ViewOptions = {
   nameState: boolean[];
+  gridStyle: "triangular" | "square";
 }
 export type SetViewOptions = React.Dispatch<React.SetStateAction<ViewOptions>>;
 
@@ -51,7 +52,7 @@ function App() {
     dimSelected: -1
   });
   const [ viewOptions, setViewOptions] = useState<ViewOptions>({
-    nameState: [true, true, true, true],
+    nameState: [true, true, true, true], gridStyle:  "square"
   });
 
   const [preset, setPreset] = useState<Preset>(() => defaultComplex);
@@ -65,7 +66,7 @@ function App() {
 
   
   const { mode, selectionKey } = editOptions
-  const { nameState } = viewOptions;
+  const { nameState, gridStyle } = viewOptions;
 
   const selectedKeys = complexEditor.selected;
 
@@ -103,7 +104,7 @@ function App() {
                 setEditOptions={setEditOptions}
                 editOptions={editOptions}
                 setViewOptions={setViewOptions}
-                viewOptions={{ nameState }}
+                viewOptions={{ nameState, gridStyle }}
               />
               {/* <PresetPanel setComplex={setStartingComplex} /> */}
               <SimplicesPanel 

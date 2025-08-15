@@ -121,6 +121,15 @@ export const keybinds: Keybinds = {
         // select all
         e.selectAll();
     },  
+    Ctrlg: (_, __, setViewOptions) => {
+        // toggle grid style
+        setViewOptions(options => {
+            return {
+                ...options,
+                gridStyle: options.gridStyle === "triangular" ? "square" : "triangular"
+            }
+        });
+    },
     ArrowUp: (e, _, __) => {
         // move up
         e.shiftSelection(0, MOVE_STEP, 0);
