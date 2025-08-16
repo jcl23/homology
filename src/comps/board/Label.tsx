@@ -29,7 +29,7 @@ export const texToUnicode = (text: string) => {
 const Label = ({ type, position, text, selected, toggle }: LabelProps) => {
     // const userData = cell ? { object: cell } : {};
     return (
-        <Html style={{pointerEvents: (type == "vertex" ? "none" : "all") }} position={position} zIndexRange={[100, 200]} 
+        <Html renderOrder={0} style={{pointerEvents: (type == "vertex" ? "none" : "all") }} position={position} zIndexRange={[100, 200]} 
                 className={`${styles.label} ${styles[`label-${type}`]} ${styles[`label-${type}-${selected ? 'on' : 'off'}`]}`}>
           
               {/* <Latex>$\sf {text}$</Latex>   */}

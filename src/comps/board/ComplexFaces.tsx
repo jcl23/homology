@@ -10,6 +10,7 @@ type ComplexFacesProps = CellsProps & {
 
 import { Vector3 } from "three";
 import { ThreeDRotation } from "@mui/icons-material";
+import Label from "./Label";
 
 /**
  * Returns a new triangle inset from the original by a fixed border width.
@@ -71,7 +72,7 @@ const {faceOpacity} = useControls({ faceOpacity: { value: 0.5, min: 0, max: 1 } 
                //  console.log("orthocenter", computeOrthocenter3D(vertexPositions.map(pos => new Vector3(...pos))));
                const [p1, p2, p3] = vertexPositions;
             const [p1_, p2_, p3_] = shrinkTriangle(new Vector3(...p1), new Vector3(...p2), new Vector3(...p3),0.042);
-                
+                const centroid = new Vector3().add(new Vector3(...p1)).add(new Vector3(...p2)).add(new Vector3(...p3)).multiplyScalar(1 / 3);
                return (
                     <mesh
                         renderOrder={-1000}
@@ -107,6 +108,19 @@ const {faceOpacity} = useControls({ faceOpacity: { value: 0.5, min: 0, max: 1 } 
                             alphaTest={0.01}
                             needsUpdate={true}
                         />
+                         { true && (
+                            <Label 
+                                position={centroid.toArray()} 
+                                text={face.name} 
+                                type={"face"} 
+                                selected={isSelected}
+                                toggle={() => {
+                                    toggleRepSelection(face.key);
+                                    throw new Error("Toggle rep selection not implemented for faces");
+                                }
+                                }
+                            /> 
+                        ) }
                         {/* <bufferGeometry>
                             <bufferAttribute
                                 attach="attributes-position"

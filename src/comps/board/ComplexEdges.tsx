@@ -1,4 +1,3 @@
-
 import { useControls } from "leva";
 import { useState } from "react";
 import { Vector3, ArrowHelper, Color, CylinderGeometry, Mesh, MeshStandardMaterial } from "three";
@@ -31,7 +30,7 @@ export const ComplexEdges = ({ mode, edges, selectedReps, toggleRepSelection, sh
                 const color = isSelected ? selectedBg : unselectedFg;
                 const [start, end] = edge.attachingMap.map((vertex: Vertex) => new Vector3(...vertex.point));
 
-                const c = 0.66; // Adjust this value between 0 and 1 to control arrow position
+                const c = 0.60; // Adjust this value between 0 and 1 to control arrow position
                 const middle = (start.clone().multiplyScalar(1 - c).add(end.clone().multiplyScalar(c)));
                 const direction = new Vector3().subVectors(end, start).normalize();
                 const length = new Vector3().subVectors(end, start).length();
@@ -42,9 +41,7 @@ export const ComplexEdges = ({ mode, edges, selectedReps, toggleRepSelection, sh
                 // cylinder
                 const cylinder = new CylinderGeometry(2, 2, 1,30,4).translate(0, 0.5, 0).rotateX(Math.PI* 0.5);
                 
-                
-                const randomColor = "green";
-                //const outerOpacity = hovered === edge ? edgeOpacity / 2 : 0;
+    
                 const outerOpacity = edgeOpacity;
                 const mesh = new Mesh(cylinder, new MeshStandardMaterial({ color, opacity: outerOpacity, transparent: true }));
                 mesh.scale.set(0.025, 0.021, length);
@@ -65,22 +62,24 @@ export const ComplexEdges = ({ mode, edges, selectedReps, toggleRepSelection, sh
 
 
                 return (
-                    <group key={edge.id + "AbstractEdge" + edge.name} renderOrder={40} 
+                    <group key={edge.id + "AbstractEdge" + edge.name} renderOrder={0} 
                     >   
                         <EdgeArrow
                             start={start}
                             end={end}
                             scale={1}
                             selected={isSelected}
+                            object={mesh}
+
                         />
-                        {/* <primitive 
+                        <primitive 
                             depthTest={true}
-                            depthWrite={true}
-                            renderOrder={2000000}
+                            // depthWrite={true}
+                            renderOrder={-10}
                             alphaTest={1}
                             userData={{ object: edge }} 
                             object={mesh}
-                            
+                            visible={false}
                         onPointerEnter={(e) => {            
                             e.stopPropagation(); 
                             return;           
@@ -88,7 +87,7 @@ export const ComplexEdges = ({ mode, edges, selectedReps, toggleRepSelection, sh
                         onPointerLeave={(e) => {    
                             e.stopPropagation(); 
                         }}
-                    /> */}
+                    />
          
      
 

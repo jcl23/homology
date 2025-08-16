@@ -74,6 +74,7 @@ export interface EdgeArrowProps {
   scale?: number;
   selected?: boolean;
   camera?: THREE.Camera;
+  object: THREE.Mesh;
 }
 const computedStyles = getComputedStyle(document.documentElement);
 const unselectedFg = computedStyles.getPropertyValue("--unselected-fg").trim();
@@ -92,6 +93,7 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
   end,
   scale = 0.5,
   selected = false,
+  object
 }) => {
   const { camera } = useThree();
   const spriteRef = useRef<THREE.Sprite>(null);
@@ -173,9 +175,10 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
   return (
     <sprite
       geometry={makeArrowGeometry(1)}
-      renderOrder={-29000000}
+      renderOrder={-9000000}
       ref={spriteRef}
       scale={[scale, scale, 1]}
+      userData={{object}}
     >
       <spriteMaterial
         //   depthTest={true}

@@ -52,7 +52,7 @@ export const ComplexVertices = ({ vertices, selectedReps, toggleRepSelection, sh
                         <Sphere
                             args={[0.04, 32, 32]}
                             castShadow
-                        >
+                    >
                             <meshStandardMaterial color={"black"} opacity={vertexOpacity} transparent={vertexOpacity < 1}/>
                         </Sphere>
                         <Sphere
