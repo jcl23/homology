@@ -21,27 +21,15 @@ const makeArrowGeometry = (length, width = 0.6, height = 0.3, thickness = 0.07) 
   const missingApexY = missingApexX / arrowUpSlope;
   // console.log(`123:Missing apex Y: ${missingApexY}`);
   const c = 0;
-  const d = -0.3;
+  const d = -0.299;
   const iw = 0.05;
   shape.moveTo(c - length / 2, d + 0.5 * width + iw);
+  shape.lineTo(c - length / 2 - iw, d + 0.5 * width);
   shape.lineTo(c - length / 2, d + 0.5 * width - iw);
   shape.lineTo(c + length / 2, d + 0.5 * width - iw); 
+  shape.lineTo(c + length / 2 + iw, d + 0.5 * width);
   shape.lineTo(c + length / 2, d + 0.5 * width + iw); // Top point (swapped from 0.5 * width, 0)
-  // shape.lineTo(c + 0, d + 0.5 * width - iw); // Top point (swapped from 0.5 * width, 0)
-  // shape.lineTo(c + height - missingApexY, d + missingApexX);
-  // shape.lineTo(c + height, d + bottomPointX);
-  // shape.lineTo(c + 0.13, d + 0.3 - iw);
-  // shape.lineTo(c + 0, d + 0.5 * width - iw); // Top point (swapped from 0.5 * width, 0)
-
-  // shape.moveTo(c + 0, d + 0.5 * width + iw);
-  // shape.lineTo(c + 0.13, d + 0.3 + iw);
-
-  // shape.lineTo(c + height, d + width - bottomPointX);
-  // shape.lineTo(c + height - missingApexY, d + width - missingApexX);
-  // shape.lineTo(c + 0,                     d + 0.5 * width);      // Back to top
-  // Inner triangle (cut out)
-  // Back to inner top to close
-
+ 
   // shape.holes.push(hole);
 
   const geometry = new THREE.ShapeGeometry(shape);
@@ -146,7 +134,8 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
     //   projCenter.y,
     //   projCenter.z
     // );
-    const aspectRatio = 2;
+
+    const aspectRatio = 2.06;
     const dx = (endProj.x - startProj.x) * aspectRatio;
     const dy = endProj.y - startProj.y;
 
@@ -161,7 +150,7 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
     camera.getWorldDirection(v1);
     const v2 = camera.position.clone().sub(center);
     const angleDist = v1.angleTo(v2);
-    const scale = 760 / camera.zoom; // Adjust scale based on distance from camera
+    const scale = 684 / camera.zoom; // Adjust scale based on distance from camera
     sprite.geometry = makeArrowGeometry(lengthProj * scale);
 
     sprite.material.rotation = angle;
@@ -170,7 +159,12 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
 
   
   const vec2str = (v) => `(${v.x.toFixed(2)}, ${v.y.toFixed(2)}, ${v.z.toFixed(2)})`;
-  
+  /*
+    // render order
+    Board
+    Cells
+  */
+
   console.log("ProjLength", lengthProj, vec2str(startOnScreen), vec2str(startOnScreen), );
   return (
     <sprite

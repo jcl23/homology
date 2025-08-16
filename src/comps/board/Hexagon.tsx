@@ -39,7 +39,7 @@ const Hexagon = function({ radius = 5, sideLength = 1, gridHeight, onPointerMove
             position={[0, gridHeight, 0]}
         >
             <shapeGeometry args={[hexShape]} />
-            <meshStandardMaterial color={boardColor} transparent  opacity={boardOpacity} roughness={0.4} metalness={0.1} depthTest={true}side={DoubleSide}/>
+            <meshStandardMaterial color={boardColor} transparent  opacity={0} roughness={0.4} metalness={0.1} depthTest={true}side={DoubleSide}/>
 
             {/* <meshStandardMaterial color="lightblue" side={DoubleSide} /> */}
         </mesh>
