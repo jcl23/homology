@@ -72,10 +72,11 @@ import { Vector3 } from "three";
 type TriangleGridProps = {
     radius: number;
     sideLength: number;
+    gridHeight?: number;
 };
 
 
-const TriangleGrid = ({ radius, sideLength }: TriangleGridProps) => {
+const TriangleGrid = ({ radius, sideLength, gridHeight }: TriangleGridProps) => {
     const lines = [];
     const sqrt3 = Math.sqrt(3);
     // hex
@@ -98,23 +99,23 @@ const TriangleGrid = ({ radius, sideLength }: TriangleGridProps) => {
         for (let i = 0; i < radius; i++) {
             const x = from[0] + (to[0] - from[0]) * (i / radius);
             const y = from[1] + (to[1] - from[1]) * (i / radius);
-            outerPoints.push([x, 0, y]);
+            outerPoints.push([x, gridHeight, y]);
         }
     }
 
     for (let i = 0; i < 6; i++) {
         const startStart = radius  * i;
         const startEnd = (radius  * (i + 1)) % ps;
-        for (let i = 0; i <radius + 1; i++) {
+        for (let i = 0; i < radius + 1; i++) {
             lines.push([
-                outerPoints[(startStart - i) % ps],
+                outerPoints[(ps + startStart - i) % ps],
                 outerPoints[(startEnd + i) % ps]
             ])
         }
     }
     return (
         <>
-            <Line key="1" points={[[5, 0, -radius * Math.sqrt(3) / 2 * sideLength],[-5, 0, -radius * Math.sqrt(3) / 2 * sideLength]]} color="red" lineWidth={5} />
+            {/* <Line key="1" points={[[5, 0, -radius * Math.sqrt(3) / 2 * sideLength],[-5, 0, -radius * Math.sqrt(3) / 2 * sideLength]]} color="red" lineWidth={5} /> */}
             {lines.map((line, index) => (
                 <Line key={index} points={line} color="lightgray" lineWidth={1} />
             ))}

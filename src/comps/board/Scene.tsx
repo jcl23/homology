@@ -10,7 +10,9 @@ import { ComplexBalls } from "./ComplexBalls";
 import { useThree } from "@react-three/fiber";
 import { DAMPING_FACTOR, LOOK_AT, ROTATE_SPEED } from "../../cfg/board";
 import TriangleGrid, { nearestTriangularLatticePoint } from "../grids/TriangleGrid";
-import { Hexagon } from "@mui/icons-material";
+// import { Hexagon } from "@mui/icons-material";
+import Hexagon from "./Hexagon";
+// import { HexagonGeometry } from "./Hexagon";
 export type DragSelectData = {
     isMouseDown: boolean;
     dimSelected: number;
@@ -30,6 +32,7 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
     
     // const complex = history[history.length - 1].complex;
     const planeRef = useRef(null);
+    const hexRef = useRef(null);
     const previewRef = useRef(null);
     const gridSize = 1; // Grid cell size
     const gridExtent = 5 // Grid size from center to edge
@@ -39,12 +42,12 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
     const handlePointerMove = (e) => {
         if (!allowEditing) return;
         try {
-
-            if (editOptions.mode === 'add' && e.intersections.length > 0 && e.intersections[0].object === planeRef.current) {
+            // const currentObj = viewOptions.gridStyle === "triangular" ? hexRef.current : planeRef.current;
+            if (editOptions.mode === 'add' && e.intersections.length > 0) {
                 const intersectPoint = e.intersections[0].point;
                 
                 // Snap to grid
-                if (false) {
+                if (viewOptions.gridStyle === "square") {
                     const snappedX = Math.round(intersectPoint.x / gridSize) * gridSize;
                     const snappedZ = Math.round(intersectPoint.z / gridSize) * gridSize;
                     if (!previewPosition || previewPosition[0] !== snappedX || previewPosition[2] !== snappedZ) {
@@ -52,7 +55,6 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
                     }
                 } else {
                     // if point is closer than 1/2 side length to a triangular lattice point, snap to that point
-                    debugger;
                     const distToLast = Math.sqrt(
                         Math.pow(intersectPoint.x - previewPosition?.[0] || 1000, 2) +
                         Math.pow(intersectPoint.z - previewPosition?.[2] || 1000, 2)
@@ -118,13 +120,6 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
     const selectedFaces = [...editComplex.selected].filter(s => s.dimension === 2);
     const selectedBalls = [...editComplex.selected].filter(s => s.dimension === 3);
     const selectedReps = [...selectedVertices, ...selectedEdges, ...selectedFaces, ...selectedBalls];
-    // const vertexKeys = [...editComplex.selected].filter(s => s.dimension === 0).map(s => s.key);
-    // const edgeKeys = [...selectedReps].filter(s => s[0] == "1").map(s => parseInt(s.slice(2)));
-    // const selectedEdges = complex.cells[1].filter(e => edgeKeys.includes(e.id));
-    // const faceKeys = [...selectedReps].filter(s => s[0] == "2").map(s => parseInt(s.slice(2)));
-    // const selectedFaces = complex.cells[2].filter(f => faceKeys.includes(f.id));
-    // const ballKeys = [...selectedReps].filter(s => s[0] == "3").map(s => parseInt(s.slice(2)));
-    // const selectedBalls = complex.cells[3].filter(b => ballKeys.includes(b.id));
 
     
     const empty = dragSelectData.dimSelected === -1;
@@ -133,27 +128,15 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
         edgeToggleRep, 
         faceToggleRep, 
     ] = [0, 1, 2].map(dim => {
-        // return (cell: string) => {
-        //     console.notify("Test", dim, dragSelectData.dimSelected, dim == dragSelectData.dimSelected);
-        // }
         return function(key: string) {
             const cellType = ["Vertex", "Edge", "Face"][dim];
-            // aconsole.notify(`Toggling ${cellType} ${key}`);
             editComplex.toggleRepSelection(key);
         } 
-        if (empty) return editComplex.toggleRepSelection;
-        if (dim == dragSelectData.dimSelected) {
-            console.notify("dragSelectData", dragSelectData.dimSelected, dim);
-            return editComplex.toggleRepSelection;
-        }
-        return () => {};
+    
     });
     
     // memoize the rendered cells so that they dont refresh on previewPosition change
     const cells = useMemo(() => {
-        
-        
-        
         return (
             <>
                 <ComplexBalls
@@ -194,10 +177,15 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
     // console.notify("center", complex.center);
     // plane should be transparent
     const sqrt3 = Math.sqrt(3);
-    const boardVertices = viewOptions.gridStyle === "triangular" ? // 6 points otherwise 4
-        [[5, 0, 0], [5 * sqrt3 / 2, 0, 2.5], [-5 * sqrt3 / 2, 0, 2.5], [-5, 0, 0], [-5 * sqrt3 / 2, 0, -2.5], [5 * sqrt3 / 2, 0, -2.5]]
-        : [[-10, 0, -10], [10, 0, -10], [10, 0, 10], [-10, 0, 20],  [10, 0, 1110], [-10, 0, 20]]
-    ;
+
+
+    // compute average of all vertex positions
+    // const center = useMemo(() => {
+    //     if (complex.numCells === 0) return new Vector3(0, 0, 0);
+    //     const sum = complex.cells[0].reduce((acc, v) => acc.add(new Vector3(...v.point)), new Vector3(0, 0, 0));
+    //     return sum.divideScalar(complex.numCells);
+    // }, [complex.numCells, complex.cells[0]]);
+
     return (
         <>
             <OrbitControls 
@@ -217,26 +205,37 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
             />  
             <group>
                 {
-                    viewOptions.gridStyle === "triangular" ? (
-                        <TriangleGrid radius={5} sideLength={1} />
+                    viewOptions.gridStyle === "triangular" ? (<>
+                        <TriangleGrid radius={5} sideLength={1} gridHeight={editOptions.gridHeight} />
+                          <Hexagon 
+                            gridHeight={editOptions.gridHeight}
+                            ref={hexRef} 
+                            onPointerDown={handlePointerDown}
+                            onPointerMove={handlePointerMove}
+                            onPointerOut={handlePointerOut}
+                            />
+                        </>
                     ) : (
+                        <>
                         <CustomGrid gridHeight={editOptions.gridHeight} gridSize={gridSize} gridExtent={gridExtent} />
-                    )
-                }
-                <Plane
-                    renderOrder={-20}
-                    ref={planeRef}
-                    args={[gridExtent * 2, gridExtent * 2]} // Size matching the grid
-                    position={new Vector3(0, editOptions.gridHeight - 0.01, 0)}
-                    rotation={[-Math.PI / 2, 0, 0]}
-                    onPointerMove={handlePointerMove}
-                    onPointerOut={handlePointerOut}
-                    onPointerDown={handlePointerDown}
-                    visible={true}
-                >
+                        <Plane
+                            renderOrder={-20}
+                            args={[gridExtent * 2, gridExtent * 2]} // Size matching the grid
+                            position={new Vector3(0, editOptions.gridHeight - 0.01, 0)}
+                            rotation={[-Math.PI / 2, 0, 0]}
+                            ref={planeRef}
+                            onPointerMove={handlePointerMove}
+                            onPointerOut={handlePointerOut}
+                            onPointerDown={handlePointerDown}
+                            visible={true}
+                        >
                     <meshStandardMaterial color={boardColor} transparent  opacity={boardOpacity} roughness={0.4} metalness={0.1} depthTest={true}side={DoubleSide}/>
                 </Plane>
-                   
+                </>
+                    )
+                }
+              
+              
  
                 {/* <Plane
                     renderOrder={-5}
@@ -304,7 +303,7 @@ const CustomGrid = ({ gridSize, gridExtent, gridHeight }: CustomGridProps) => {
     return (
         <>
             {lines.map((line, index) => (
-                <Line renderOrder={-20000} key={index} points={line} color="#555" lineWidth={1} />
+                <Line renderOrder={200} key={index} points={line} color="lightgray" lineWidth={1} />
             ))}
         </>
     );

@@ -65,7 +65,7 @@ export const ComplexEdges = ({ mode, edges, selectedReps, toggleRepSelection, sh
 
 
                 return (
-                    <group key={edge.id + "AbstractEdge" + edge.name} renderOrder={-20} 
+                    <group key={edge.id + "AbstractEdge" + edge.name} renderOrder={40} 
                     >   
                         <EdgeArrow
                             start={start}
@@ -73,7 +73,7 @@ export const ComplexEdges = ({ mode, edges, selectedReps, toggleRepSelection, sh
                             scale={1}
                             selected={isSelected}
                         />
-                        <primitive 
+                        {/* <primitive 
                             depthTest={true}
                             depthWrite={true}
                             renderOrder={2000000}
@@ -88,7 +88,7 @@ export const ComplexEdges = ({ mode, edges, selectedReps, toggleRepSelection, sh
                         onPointerLeave={(e) => {    
                             e.stopPropagation(); 
                         }}
-                    />
+                    /> */}
          
      
 

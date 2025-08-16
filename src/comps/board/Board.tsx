@@ -111,11 +111,12 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, allowEditing  }
                     boxShadow: "2px 2px 2px 0px #0004 inset;"
     
                 }}
+                orthographic
                 // onMouseMove={(e) => {
                 //     console.notify("Mouse move", e.relatedTarget);
                 //     setUpdateHoverKey(Math.random());
                 // }}
-                camera={{ position: CAMERA_POSITION, near: 0.001, rotation: new Euler(0, 0, 0)}} // Adjust camera position
+                camera={{ zoom: 50, isOrthographicCamera: true, position: CAMERA_POSITION, near: 0.01, rotation: new Euler(0, 0, 0)}} // Adjust camera position
                 onPointerUp={() => setDragSelectData(data => ({ ...data, isMouseDown: false}))}    
                 onPointerDown={(e) => {
                     // console.log("Scene", e.intersections);
