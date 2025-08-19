@@ -150,7 +150,7 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
     camera.getWorldDirection(v1);
     const v2 = camera.position.clone().sub(center);
     const angleDist = v1.angleTo(v2);
-    const scale = 684 / camera.zoom; // Adjust scale based on distance from camera
+    const scale = 660 / camera.zoom; // Adjust scale based on distance from camera
     sprite.geometry = makeArrowGeometry(lengthProj * scale);
 
     sprite.material.rotation = angle;
@@ -169,7 +169,6 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
   return (
     <sprite
       geometry={makeArrowGeometry(1)}
-      renderOrder={-9000000}
       ref={spriteRef}
       scale={[scale, scale, 1]}
       userData={{object}}

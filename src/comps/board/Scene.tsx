@@ -219,7 +219,7 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
                         <>
                         <CustomGrid gridHeight={editOptions.gridHeight} gridSize={gridSize} gridExtent={gridExtent} />
                         <Plane
-                            renderOrder={-20}
+                            renderOrder={-200000000000000}
                             args={[gridExtent * 2, gridExtent * 2]} // Size matching the grid
                             position={new Vector3(0, editOptions.gridHeight - 0.01, 0)}
                             rotation={[-Math.PI / 2, 0, 0]}
@@ -228,8 +228,11 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
                             onPointerOut={handlePointerOut}
                             onPointerDown={handlePointerDown}
                             visible={true}
+                            layers={0}
+                            
+                            
                         >
-                    <meshStandardMaterial color={boardColor} transparent  opacity={boardOpacity} roughness={0.4} metalness={0.1} depthTest={true}side={DoubleSide}/>
+                    <meshStandardMaterial depthWrite={false} color={boardColor} transparent  opacity={boardOpacity} roughness={0.4} metalness={0.1} depthTest={true}side={DoubleSide}/>
                 </Plane>
                 </>
                     )
@@ -303,7 +306,7 @@ const CustomGrid = ({ gridSize, gridExtent, gridHeight }: CustomGridProps) => {
     return (
         <>
             {lines.map((line, index) => (
-                <Line renderOrder={200} key={index} points={line} color="lightgray" lineWidth={1} />
+                <Line renderOrder={-10000} key={index} points={line} color="lightgray" lineWidth={1} />
             ))}
         </>
     );

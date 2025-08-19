@@ -34,7 +34,7 @@ export const ComplexVertices = ({ vertices, selectedReps, toggleRepSelection, sh
     
     const debugStr = (vertices.length > 0) ? (vertices[0] as Vertex).point.map(n => n.toFixed(2)) : "No vertices";
     return (
-        <group renderOrder={100000000000000000}>
+        <group renderOrder={1000000000000}>
             {vertices.map((vertex) => {
                 const isSelected = Array.from(selectedReps).some(cell =>
                     vertex === cell

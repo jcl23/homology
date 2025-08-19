@@ -94,7 +94,7 @@ export const ComplexBalls = ({ balls, selectedReps, toggleRepSelection, setDragS
                 const vertexPositions = vertices.map(v => v.point);
                //  console.log("orthocenter", computeOrthocenter3D(vertexPositions.map(pos => new Vector3(...pos))));
                const [p1_, p2_, p3_, p4_] = vertexPositions;
-               const [p1, p2, p3, p4] = shrinkTetrahedron(new Vector3(...p1_), new Vector3(...p2_), new Vector3(...p3_), new Vector3(...p4_), 0.042);
+               const [p1, p2, p3, p4] = shrinkTetrahedron(new Vector3(...p1_), new Vector3(...p2_), new Vector3(...p3_), new Vector3(...p4_), 0.1);
             // const [p1_, p2_, p3_, p4_] = shrinkTriangle(new Vector3(...p1), new Vector3(...p2), new Vector3(...p3),0.042);
                 
                return (
@@ -123,7 +123,7 @@ export const ComplexBalls = ({ balls, selectedReps, toggleRepSelection, setDragS
                             color={color} 
                             side={DoubleSide} 
                             opacity={ballOpacity} 
-                            // transparent={ballOpacity < 1}
+                            transparent={ballOpacity < 1}
                             wireframe={false}
                         />
                     </mesh>

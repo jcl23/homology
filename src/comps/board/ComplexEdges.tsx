@@ -74,19 +74,18 @@ export const ComplexEdges = ({ mode, edges, selectedReps, toggleRepSelection, sh
                         />
                         <primitive 
                             depthTest={true}
-                            // depthWrite={true}
-                            renderOrder={-10}
+                            depthWrite={true}
                             alphaTest={1}
                             userData={{ object: edge }} 
                             object={mesh}
                             visible={false}
-                        onPointerEnter={(e) => {            
-                            e.stopPropagation(); 
-                            return;           
-                        }}
-                        onPointerLeave={(e) => {    
-                            e.stopPropagation(); 
-                        }}
+                            onPointerEnter={(e) => {            
+                                e.stopPropagation(); 
+                                return;           
+                            }}
+                            onPointerLeave={(e) => {    
+                                e.stopPropagation(); 
+                            }}
                     />
          
      

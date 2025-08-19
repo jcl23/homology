@@ -183,7 +183,7 @@ const UIPanel = (props: UIPanelProps) => {
 
                 <MoveButton selected={editMode == "move"} onClick={() => { complexEditor.deselectAll(); setEditMode("move")} }/>
 
-                <TrashButton selected={editMode == "remove"} onClick={() => { complexEditor.deselectAll(); setEditMode("remove")} }/>
+                <TrashButton selected={editMode == "remove"} onClick={() => { complexEditor.deleteCells();} }/>
 
             
                 

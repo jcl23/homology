@@ -61,6 +61,6 @@
 
     font-weight: bold;
     top: 36px;
-    min-width: 443px;
+    min-width: calc(443px / 2 - 10px);
     min-height: 40px;
 }

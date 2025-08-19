@@ -143,7 +143,7 @@ function App() {
       <div className={styles.keybindLabel}> ctrl-z: undo </div>
       <div className={styles.keybindLabel}> ctrl-a: select all </div>
       <div className={styles.keybindLabel}> ctrl-d: deselect all </div>
-      <div className={styles.keybindLabel}> c: select none</div>
+      <div className={styles.keybindLabel}> c: clear selection</div>
     </div>
       </div>
     </div>
