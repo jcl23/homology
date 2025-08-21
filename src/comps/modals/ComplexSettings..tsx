@@ -43,9 +43,7 @@ export const ComplexSettings = function({
     const save = () => {
         complexEditor.setMeta({ ...complexEditor.meta, name: meta.name });
     }
-    const settingsList = useMemo(() => {
-        return Object.entries(makeDefaultMeta());
-    }, [makeDefaultMeta]);
+    const settingsList = Object.entries(complexEditor?.meta);
 
     const divRef = useRef<HTMLDivElement>(null);
     const wholeModal = (
@@ -119,7 +117,7 @@ export const ComplexSettings = function({
                             Reset Complex
                         </button>
                     </div>
-                    Debug: { JSON.stringify(meta)} 
+                    Debug: { JSON.stringify(complexEditor.meta)} 
                 </div>
             </div>
         </div>

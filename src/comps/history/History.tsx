@@ -25,7 +25,7 @@ const groupHistory = (editorState: EditorState): HistoryGroup[] => {
     history.push(currentGroup);
     return history;
 }
-const HistoryGroup = ({ group }: { group: HistoryGroup }) => {
+const HistoryGroup = ({ group, index }: { group: HistoryGroup, index: number }) => {
     // display the type, and ONLY if more than 1 in group, "x{num}"
     if (group.steps.length === 1) {
         return (
@@ -35,7 +35,7 @@ const HistoryGroup = ({ group }: { group: HistoryGroup }) => {
         )
     }
     return (
-        <div className={styles.historyItem}>
+        <div className={styles.historyItem} key={`history-group-${index}`}>
             {group.type} x{group.steps.length}
             
         </div>
@@ -50,7 +50,7 @@ const History = ({ complexEditor }: HistoryProps) => {
     return (
         <div className={styles.historyOuter}>
             {groupedHistory.map((group, i) => (
-                <HistoryGroup group={group} />
+                <HistoryGroup group={group} index={i} />
             ))}
         </div>
     );

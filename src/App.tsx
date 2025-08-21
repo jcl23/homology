@@ -69,7 +69,6 @@ function App() {
   const { mode, selectionKey } = editOptions
   const { nameState, gridStyle } = viewOptions;
 
-  const selectedKeys = complexEditor.selected;
 
   useKeybindings(setEditOptions, setViewOptions, complexEditor, allowEditing);
 

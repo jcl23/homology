@@ -23,7 +23,7 @@ const CustomGrid = ({ gridSize, gridExtent }: CustomGridProps) => {
     return (
       <>
         {lines.map((line, index) => (
-          <Line key={index} points={line} color="lightgray" lineWidth={1} depthWrite={false} />
+          <Line key={index} points={line} color="lightgray" lineWidth={1} depthWrite={false} renderOrder={1} />
         ))}
       </>
     );

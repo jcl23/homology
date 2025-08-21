@@ -72,13 +72,13 @@ export const shrinkTetrahedron = (a: Vector3, b: Vector3, c: Vector3, d: Vector3
 export const ComplexBalls = ({ balls, selectedReps, toggleRepSelection, setDragSelectData, dragSelectData: { isMouseDown, dimSelected} }: ComplexBallsProps) => {
     const {ballOpacity} = useControls({ ballOpacity: { value: 0.5, min: 0, max: 1 } });
     const g = useMemo(() => (
-        <group renderOrder={0}>
+        <group renderOrder={100000000000000000000000000000000000}>
             {balls.map((ball) => {
                 // Determine if the face is selected
                 const isSelected = Array.from(selectedReps).some((cell) =>
                     ball === cell
                 );
-                const color = isSelected ? 'purple' : 'yellow';
+                const color = isSelected ? 'red' : 'blue';
 
                 // Get the vertices from the attaching map
                 let vertices: AbstractVertex[];
@@ -99,13 +99,13 @@ export const ComplexBalls = ({ balls, selectedReps, toggleRepSelection, setDragS
                 
                return (
                     <mesh
-                        renderOrder={-1000}
+                        renderOrder={10000000000}
                         key={ball.id + ball.positionKey}
                         onPointerDown={(e) => { 
                            console.notify("Click", balls);
                             // toggleRepSelection(ball.key); 
                         }}
-                    >
+                        >
                         <bufferGeometry>
                             <bufferAttribute
                                 attach="attributes-position"
@@ -117,13 +117,16 @@ export const ComplexBalls = ({ balls, selectedReps, toggleRepSelection, setDragS
                                 ])}
                                 count={12}
                                 itemSize={3}
-                            />
+                                />
                         </bufferGeometry>
                         <meshStandardMaterial 
+                                depthTest={true}
+                                depthWrite={false}
                             color={color} 
                             side={DoubleSide} 
-                            opacity={ballOpacity} 
-                            transparent={ballOpacity < 1}
+                            transparent={false}
+                            // opacity={ballOpacity} 
+                            // transparent={ballOpacity < 1}
                             wireframe={false}
                         />
                     </mesh>

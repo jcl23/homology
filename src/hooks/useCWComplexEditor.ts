@@ -69,6 +69,7 @@ export class CWComplexStateEditor  {
         private setEditorState: ComplexHistorySetter,
         public editorState: EditorState,
         private nameMode: "letter" | "number" = "letter",
+        
         // private history: CWComplexEditStep[],
         
     ) { 
@@ -187,9 +188,11 @@ export class CWComplexStateEditor  {
     // get history(): CWComplexEditStep[] {
     //     return this.history_.map(copyStep);
     // }
-    setMeta(meta: ComplexMeta): void {
+    setMeta(newMeta: ComplexMeta): void {
         // no edit step, just update the meta
-        this.setEditorState(({history, selectedKeys, complex, lastSelect}: EditorState) => {
+        this.setEditorState(({history, selectedKeys, complex, lastSelect, meta: oldMeta}: EditorState) => {
+            // apply props of meta argument to existing
+            const meta = { ...oldMeta, ...newMeta };
             return {
                 history,
                 complex,

@@ -294,6 +294,9 @@ type CustomGridProps = {
     gridExtent: number;
     gridHeight: number;
 };
+
+const boardOpacity = +computedStyles.getPropertyValue("--board-opacity").trim();
+
 const CustomGrid = ({ gridSize, gridExtent, gridHeight }: CustomGridProps) => {
     const lines = [];
     for (let i = -gridExtent; i <= gridExtent; i += gridSize) {
@@ -310,7 +313,7 @@ const CustomGrid = ({ gridSize, gridExtent, gridHeight }: CustomGridProps) => {
     return (
         <>
             {lines.map((line, index) => (
-                <Line renderOrder={-10000} key={index} points={line} color={
+                <Line renderOrder={-10000} transparent opacity={0.5}key={index} points={line} color={
                     (line[0][0] === 0 || line[0][2] === 0) ? "#aaa" : "lightgray"
                 } lineWidth={1} />
             ))}

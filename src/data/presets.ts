@@ -51,7 +51,10 @@ const angled = (a: number, r: number): [number, number, number] => {
     return [r * Math.cos(Math.PI * 2 * a), 0, r * Math.sin(Math.PI * 2 * a)];
 }
 export const Tetra: Preset = (editor: CWComplexStateEditor) => {
-
+    editor.setMeta({ 
+        name: "Sphere ($S^2 \\cong \\delta\\Delta^3$)",
+        // description: "A sphere by the boundary of a tetrahedron ($\Delta^3$).",
+    });
     editor.addVertex(angled(0,  2), "a");
     editor.addVertex(angled(1 / 3, 2), "b");
     editor.addVertex(angled(2 / 3, 2), "c");
@@ -64,9 +67,13 @@ export const Tetra: Preset = (editor: CWComplexStateEditor) => {
     editor.rename("bcd", "A");
     editor.rename("abd", "C");
     editor.rename("abc", "D");
+    editor.deselectAll();
+
 }
   
 export const KleinBottle: Preset = (editor: CWComplexStateEditor) => {
+    editor.setMeta({ name: "Klein Bottle ($K \\cong \\Delta^1 \\times \\Delta^1 / \\sim$)" });
+
     editor.addVertex([-2, 0, 0], "a");
     editor.addVertex([0, 0, -2], "b");
     editor.addVertex([2, 0, 0], "c");
@@ -84,6 +91,8 @@ export const KleinBottle: Preset = (editor: CWComplexStateEditor) => {
     editor.rename("ac", "h");
     editor.rename("acd", "A");
     editor.rename("abc", "B");
+    editor.deselectAll();
+
     // editor.identify();
     // editor.deselectAll();
     // editor.selectRep("1 2");
@@ -94,6 +103,7 @@ export const KleinBottle: Preset = (editor: CWComplexStateEditor) => {
 }
 
 export const RP2: Preset = (editor: CWComplexStateEditor) => {
+    editor.setMeta({ name: "Real Projective Plane ($\\mathbb{RP}^2 \\cong \\Delta^1 \\times \\Delta^1 / \\sim$)" });
     editor.addVertex([-2, 0, 0], "a");
     editor.addVertex([2, 0, 0], "a_");
     editor.addVertex([0, 0, -2], "b");
@@ -122,6 +132,8 @@ export const RP2: Preset = (editor: CWComplexStateEditor) => {
 }
 
 export const Sphere: Preset = (editor: CWComplexStateEditor) => {
+    editor.setMeta({ name: "Sphere ($S^2 \\cong \\Delta^1 \\times \\Delta^1 / \\sim$)" });
+
     editor.addVertex([0, 0, -2], "a");
     editor.addVertex([-2, 0, 0], "b");
     editor.addVertex([2, 0, 0], "b_");
@@ -140,16 +152,20 @@ export const Sphere: Preset = (editor: CWComplexStateEditor) => {
     editor.selectRep("1 3");
     editor.selectRep("1 4");
     editor.identify();  
-    // editor.deselectAll();
+    editor.deselectAll();
 }
 
 export const KleinBottle2: Preset = (editor: CWComplexStateEditor) => {
     editor.reset();
     Tetra(editor);
+        editor.setMeta({ name: "Klein Bottle ($K= \\Delta^3/\\sim$)" });
+
 
     editor.deselectAll();
     editor.identifyNamedCells(["ab", "bd"]);
     editor.identifyNamedCells(["ac", "cd"]);
+    editor.deselectAll();
+
 }
 export const complexes = {
     // K: {
