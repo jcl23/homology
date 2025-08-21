@@ -1,4 +1,4 @@
-import { GeneralStep, linkStepTree, printLinkedDebug } from "./steps";
+import { GeneralStep, LinkedStep, linkStepTree, printLinkedDebug } from "./steps";
 import branchA from "./branches/branchBeginner"
 import branchB from "./branches/branchHomology";
 import branchC from "./branches/branchTechnical";
@@ -76,12 +76,36 @@ function addDefaultTargets(steps: GeneralStep[]): GeneralStep[] {
         return step;
     });
 }
+const reindexTutorial = function(steps: LinkedStep[], by: number): LinkedStep[] {
+    // reindex all steps by adding 'by', use recursion to get all nested steps
+    return steps.map((step, index) => {
+        const newIndex = index + by;
+        const newStep: LinkedStep = {
+            ...step,
+            index: newIndex,
+            next: step.next.map(nextStep => ({
+                ...nextStep,
+                index: nextStep.index + by
+            }))
+        };
+        if ("branches" in step) {
+            newStep.branches = step.branches.map(branch => reindexTutorial(branch, by));
+        }
+        return newStep;
+    });
+}
 
+
+// function combineTutorial(tutorials: LinkedStep[][], maxSize: number = 100): GeneralStep[] {
+//     // Create one array of steps, where the indicies of are increased in order to guarantee uniqueness.
+
+// }
 addDefaultTargets(tutorialStepArray);
 
 
 
-export const tutorialSteps = linkStepTree(tutorialStepArray);
+export const tutorialSteps = linkStepTree(tutorialStepArray, 0);
+// export const tutorialSteps = reindexTutorial(tutorialSteps_, 100);
 // tutorialStepArray.forEach((step, index) => {
 //     console.log(`(${index} / ${step.index})`);
 // });

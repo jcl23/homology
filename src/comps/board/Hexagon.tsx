@@ -6,22 +6,23 @@ const boardOpacity = +computedStyles.getPropertyValue("--board-opacity").trim();
 
 type HexagnProps = {
     radius?: number;
-    sideLength?: number;
+    altitudeLength?: number;
     ref: React.RefObject<Mesh>;
     onPointerMove?: (event: any) => void;
     onPointerOut?: (event: any) => void;
     onPointerDown?: (event: any) => void;
     gridHeight?: number;
 };
-const Hexagon = function({ radius = 5, sideLength = 1, gridHeight, onPointerMove, onPointerOut, onPointerDown, ref }: HexagnProps) {  
+const Hexagon = function({ radius = 5, altitudeLength = 1, gridHeight, onPointerMove, onPointerOut, onPointerDown, ref }: HexagnProps) {  
+    const sideLength = altitudeLength * 2 / Math.sqrt(3);
     const r = radius * sideLength;
     const sqrt3 = Math.sqrt(3);
     const hexShape = new Shape();
 
     for (let i = 0; i < 6; i++) {
         const angle = (i / 6) * Math.PI * 2;
-        const x = radius * Math.cos(angle);
-        const y = radius * Math.sin(angle);
+        const x = r * Math.cos(angle);
+        const y = r * Math.sin(angle);
         if (i === 0) hexShape.moveTo(x, y);
         else hexShape.lineTo(x, y);
     }
@@ -39,7 +40,7 @@ const Hexagon = function({ radius = 5, sideLength = 1, gridHeight, onPointerMove
             position={[0, gridHeight, 0]}
         >
             <shapeGeometry args={[hexShape]} />
-            <meshStandardMaterial color={boardColor} transparent  opacity={0} roughness={0.4} metalness={0.1} depthTest={true}side={DoubleSide}/>
+            <meshStandardMaterial color={boardColor} transparent  opacity={boardOpacity} roughness={0.4} metalness={0.1} depthTest={true} depthWrite={false} side={DoubleSide}/>
 
             {/* <meshStandardMaterial color="lightblue" side={DoubleSide} /> */}
         </mesh>

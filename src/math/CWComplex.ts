@@ -5,6 +5,7 @@ import { AbstractBall, AbstractCell, AbstractEdge, AbstractFace, AbstractVertex,
 import { CWComplexEditStep } from "../logic/steps";
 import {MAX_DIMENSION} from "../data/configuration";
 import { reindexCheck } from "./reindexCheck";
+import { a } from "vitest/dist/chunks/suite.d.FvehnV49.js";
 export type Key = `${number} ${number}`;
 export type ComplexMeta = {
     name: string;
@@ -13,28 +14,30 @@ export type ComplexMeta = {
     date?: string;
 }
 
+export type CellsType = AbstractCell[][];
+//  & {
+//     // 0: AbstractVertex[];
+//     // 1: AbstractEdge[];
+//     // 2: AbstractFace[];
+//     // 3: AbstractBall[];
+//     [key: number]: AbstractCell[];
+// };
 
 export class CWComplex {
-    cells: {
-        0: AbstractVertex[];
-        1: AbstractEdge[];
-        2: AbstractFace[];
-        3: AbstractBall[];
-        [key: number]: AbstractCell[];
-    };
+    cells: CellsType;
     cellCounts: number[];
     constructor() {
-        const from = { cells: { 0: [], 1: [], 2: [], 3: []} };
+        const from = { cells: [[] , [], [], []], cellCounts: [0, 0, 0, 0] } as CWComplex;
         // create new
         this.cellCounts = [0, 0, 0, 0];
-        this.cells = { ...from.cells };
+        this.cells = [ ...from.cells ] as CellsType;
     }
 
     get numCells(): number {
         return this.cellCounts.reduce((acc, count) => acc + count, 0);
     }
     assignFrom(from: CWComplex) {
-        this.cells = { ...from.cells };
+        this.cells = [ ...from.cells ];
     }
 
     getCellByVertices(names: string[]) {
@@ -55,6 +58,34 @@ export class CWComplex {
         identifyVertices(this, cells);
     }
 
+    identifyNamedCells (cellNames: string[]): void {
+        const cells = cellNames.map(name => getRepsByName(this, name)).flat();
+
+        if (cells.length === 0) {
+            throw new Error("No cells found with the given names");
+        }
+
+        const dimension = cells[0].dimension;
+        if (!cells.every(cell => cell.dimension === dimension)) {
+            throw new Error("Cannot identify cells of different dimensions");
+        }
+
+        if (dimension === 0) {
+            this.identifyVertices(new Set(cells));
+        } else if (dimension === 1) {
+            this.identifyEdges(new Set(cells));
+        } else {
+            // For higher dimensions, just set all cells to the same index and name
+            const rep = cells[0];
+            cells.forEach(cell => {
+                cell.index = rep.index;
+                cell.name = rep.name;
+            });
+            this.cellCounts[dimension] = (this.cellCounts[dimension] || 0) - (cells.length - 1);
+            this.reindex();
+        }
+    }
+
     addVertex (position: [number, number, number], name?: string): Vertex {
         const uniqueCells = [...new Set(this.cells[0].map(c => c.index))];
         const vertex = new Vertex(position, this.cells[0].length, uniqueCells.length,  name);
@@ -62,18 +93,62 @@ export class CWComplex {
         return vertex;
     }
 
-    add(keys: string[], dim: number, name?: string): Cell {
+    add(keys: string[], dim: number, name: (string | ((c?: Cell) => string))): Cell {
+        let retVal: Cell;
         console.count("Adding cell")
         if (dim < 1 || dim > 3) throw new Error("Invalid dimension");
         if (dim === 1) {
-            return this.addEdge(keys, name);
+            retVal =  this.addEdge(keys);
         } else if (dim === 2) {
-            return this.addFace(keys, name);
+            retVal = this.addFace(keys);
+        } else {
+            retVal = this.addBall(keys);
         }
-        return this.addBall(keys, name);
+        if (typeof name === "function") {
+            retVal.name = name(retVal);
+        } else {
+            retVal.name = name;
+        }
+        return retVal;
     }
     deleteCell(cell: AbstractCell): void {
         deleteCell(this, cell);
+    }
+
+    createSubcomplex(cells: AbstractCell[]): CWComplex {
+        const subcomplex = new CWComplex();
+        const map = new Map<string, AbstractCell>();
+        cells.forEach(cell => {
+            const copy = cell.copy();
+            map.set(cell.key, copy);
+            subcomplex.cells[cell.dimension].push(copy);
+            // subcomplex.cells[cell.dimension].push(cell.copy());
+        });
+
+        subcomplex.cells.forEach(dimCells => {
+            dimCells.forEach(cell => {
+                const attachingMap = cell.attachingMap.map(att => map.get(att.key));
+                cell.attachingMap = attachingMap;
+                const cob = cell.cob.map(cob => map.get(cob.key) ?? cob);
+                cell.cob = cob;
+            });
+        })
+        // reindex the subcomplex
+        resetIndices(subcomplex);
+        resetIds(subcomplex);
+        return subcomplex;
+    }
+
+    join(complex: CWComplex) {
+        // Join the cells of another complex to this one., update the ids.
+        const copy = complex.copy();
+        copy.cells.forEach((dimCells, dim) => {
+            dimCells.forEach(cell => {    
+                cell.id = this.cells[dim].length;
+                this.cells[dim].push(cell);
+                this.cellCounts[dim] = (this.cellCounts[dim] || 0) + 1;
+            });
+        });
     }
     addEdge (keys: string[], name?: string): Edge {
         if (keys.length !== 2) throw new Error("Must add edge with exactly two vertices");
@@ -126,9 +201,7 @@ export class CWComplex {
     
         
     copy(): CWComplex {
-        /*
-       I dont even need this probably should remove cause distracting
-        */
+
         const newComplex = new CWComplex();
         const oldToNewMap = new Map<string, AbstractCell>();
         for (let dim = 0; dim <= MAX_DIMENSION; dim++) {
@@ -167,7 +240,7 @@ export class CWComplex {
 
     get center(): [number, number, number] {
         if (this.cells[0].length === 0) return [0, 0, 0];
-        const vertices = this.cells[0];
+        const vertices = this.cells[0] as AbstractVertex[];
         const n = vertices.length;
         const [x, y, z] = [0, 1, 2].map(i => vertices.reduce((acc, v) => acc + v.point[i], 0) / n);
         return [x, y, z];
@@ -898,3 +971,21 @@ const cellIsPresent = function(complex: CWComplex, cell: AbstractCell): boolean 
     return complex.cells[cell.dimension].some(c => cellsAreEqual(c, cell));
 }
 
+export const duplicate = function(complex: CWComplex, cell: AbstractCell): AbstractCell {
+    // create a copy of the cell, and add it to the complex.
+    const newCell = cell.copy();
+    newCell.id = complex.cells[newCell.dimension].length;
+    newCell.index = complex.cells[newCell.dimension].length;
+    if (cellIsPresent(complex, newCell)) {
+        throw new Error("Cell already present in complex");
+    }
+    addCell(complex, newCell);
+    return newCell;
+}
+
+export const duplicateSelected = function(complex: CWComplex, selectedCells: Set<AbstractCell>): CWComplex {
+    // create a new complex with the selected cells duplicated. ensure that the bounaries and coboundary sets are also duplicated and correctly point to the new cells.
+
+    const newComplex = complex.copy();
+   
+}

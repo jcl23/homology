@@ -45,12 +45,12 @@ style={{ color: 'black', fontFamily: "Helvetica Neue", fontSize: '16px', backgro
     padding-top: 0px;
     
     
-} */
-
-.label-vertex {
-    background-color: #0006;
-    mix-blend-mode: luminosity;
-    color: white;
+    } */
+    
+    .label-vertex {
+        background-color: #0006;
+        mix-blend-mode: luminosity;
+        color: white;
     height: 26px;
     aspect-ratio: 1;
     position: relative;
@@ -60,5 +60,8 @@ style={{ color: 'black', fontFamily: "Helvetica Neue", fontSize: '16px', backgro
 }
 .label-vertex-on {
     background-color: var(--selected-bg);
+    color: white;
+}
+.label-face-on {
     color: white;
 }

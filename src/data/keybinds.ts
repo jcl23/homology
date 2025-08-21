@@ -55,7 +55,7 @@ export const keybinds: Keybinds = {
     },
     Ctrld:  (e, _, __) => {
         if (debugOn["s"]) debugger;
-       e.reset();
+       e.duplicate();
     },
     c: (e, _, __) => {
     // clear selection

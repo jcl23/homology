@@ -15,12 +15,13 @@ import { ErrorBoundary } from "./comps/ErrorBoundary";
 import NotificationManager from "./comps/notifs/NotificationManager";
 import History from "./comps/history/History.tsx";
 import styles from "./App.module.css";
-import { defaultPreset } from "./data/defaultComplexes";
 import { HelpPanel } from "./comps/help/HelpPanel";
 import { useKeybindings } from "./keybinding.ts";
 import { TutorialProvider } from "./tutorial/TutorialContext.tsx";
 import { ComplexSettings } from "./comps/modals/ComplexSettings..tsx";
 import { useThree } from "@react-three/fiber";
+import { Download, FolderOpen } from "@mui/icons-material";
+import { downloadHistory } from "./data/download.ts";
 
 const MAX_DIM = 3;
 
@@ -90,14 +91,26 @@ function App() {
           <div className="modalHolder">
           </div>
           <div className={styles.panelHolder}>
-            <HelpPanel />
+            <HelpPanel setPreset={setPreset} />
              <div style={{minHeight: "50px"}}></div>
             <div className={styles.upperPanel} style={{ display: 'flex', flexDirection: 'row' }}>
               {/* <DebugComplex complex={complex} /> */}
               <div className={styles.filePanel}>
                 <LoadComplex setPreset={setPreset} />
                 <ComplexSettings complexEditor={complexEditor} setAllowEditing={setAllowEditing} />
-
+                <button
+                    className={styles.button} 
+                    onClick={() => {
+                      downloadHistory(complexEditor.editorState.history);
+                    }}
+                >
+                    <div>
+                        <div style={{  minHeight: "35px", paddingTop: "5px"}}>
+                            <Download />
+                        </div>
+                        
+                    </div>
+                </button>
               </div>
               <UIPanel
                 complexEditor={complexEditor}

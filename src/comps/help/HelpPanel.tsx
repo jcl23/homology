@@ -7,8 +7,13 @@ import { useTutorial } from '../../tutorial/TutorialContext';
 import MyTooltip from '../../tutorial/MyTooltip';
 import MyBeacon from '../../tutorial/MyBeacon';
 import { tutorialSteps } from '../../tutorial/tutorialSteps';
+import { ExamplesModal } from '../modals/ExamplesModal';
+import { Preset } from '../../data/presets';
 
-export const HelpPanel = () => {
+type HelpPanelProps = {
+  setPreset: (preset: Preset) => void; 
+}
+export const HelpPanel = ({ setPreset }: HelpPanelProps) => {
     const { stepIndex, handleJoyrideCallback } = useTutorial();
     const stepIsModal = stepIndex >= 0 && stepIndex < tutorialSteps.length && tutorialSteps[stepIndex].modal;
     const floaterProps = stepIsModal ? { transitionProperty: "none!important" } : {};
@@ -33,6 +38,7 @@ export const HelpPanel = () => {
                 },
               }}
             />
+            <ExamplesModal setPreset={setPreset} />
         </div>
     );
 }

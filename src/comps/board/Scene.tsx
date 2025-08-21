@@ -22,12 +22,14 @@ export type SceneProps = BoardProps & {
     // updateHoverKey: number;
     setDragSelectData: React.Dispatch<React.SetStateAction<DragSelectData>>;
     dragSelectData: DragSelectData;
+    aspectRatio?: number;
+
 }
 const computedStyles = getComputedStyle(document.documentElement);
 const unselectedFg = computedStyles.getPropertyValue("--unselected-fg").trim();
 const selectedFg = computedStyles.getPropertyValue("--selected-fg").trim();
 const selectedBg = computedStyles.getPropertyValue("--selected-bg").trim();
-export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragSelectData, dragSelectData, allowEditing, gridStyle }: SceneProps) => {
+export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragSelectData, dragSelectData, allowEditing, gridStyle, aspectRatio }: SceneProps) => {
     console.notify("Scene");
     
     // const complex = history[history.length - 1].complex;
@@ -153,7 +155,8 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
                     selectedReps={selectedFaces} toggleRepSelection={vertexToggleRep} 
                     dragSelectData={dragSelectData} setDragSelectData={setDragSelectData}
                 />
-                <ComplexEdges 
+                <ComplexEdges
+                    aspectRatio={aspectRatio || 1}
                     mode={editOptions.mode}
                     showName={viewOptions.nameState[1]} 
                     edges={complex.cells[1]} 
@@ -206,9 +209,10 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
             <group>
                 {
                     viewOptions.gridStyle === "triangular" ? (<>
-                        <TriangleGrid radius={5} sideLength={1} gridHeight={editOptions.gridHeight} />
+                        <TriangleGrid radius={5} altitudeLength={1} gridHeight={editOptions.gridHeight} />
                           <Hexagon 
                             gridHeight={editOptions.gridHeight}
+                            altitudeLength={1}
                             ref={hexRef} 
                             onPointerDown={handlePointerDown}
                             onPointerMove={handlePointerMove}
@@ -306,7 +310,9 @@ const CustomGrid = ({ gridSize, gridExtent, gridHeight }: CustomGridProps) => {
     return (
         <>
             {lines.map((line, index) => (
-                <Line renderOrder={-10000} key={index} points={line} color="lightgray" lineWidth={1} />
+                <Line renderOrder={-10000} key={index} points={line} color={
+                    (line[0][0] === 0 || line[0][2] === 0) ? "#aaa" : "lightgray"
+                } lineWidth={1} />
             ))}
         </>
     );

@@ -1,5 +1,5 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import React, { useState, useRef, Component, ErrorInfo } from 'react';
+import React, { useState, useRef, Component, ErrorInfo, useEffect } from 'react';
 import { Leva, useControls } from 'leva';
 import { ArrowHelper, Color, CylinderGeometry, DoubleSide, Euler, MathUtils, Mesh, MeshStandardMaterial, Quaternion, Vector3 } from 'three';
 import { Plane, Sphere, Line, OrbitControls, Html, Edges, Cone, TransformControls } from '@react-three/drei';
@@ -20,6 +20,7 @@ import { MAX_DIMENSION } from '../../data/configuration';
 import Latex from 'react-latex-next';
 import ClickSphere from './ClickSphere';
 import { CAMERA_POSITION } from '../../cfg/board';
+import { CameraUpdater } from '../CameraUpdater';
 
 
 export type BoardProps = {
@@ -86,9 +87,11 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, allowEditing  }
     //const complex = history[history.length - 1].complex;
     // const { invalidate } = useThree();
     const [dragSelectData, setDragSelectData] = useState<DragSelectData>({ isMouseDown: false, dimSelected: -1, deselecting: false  });
-    
+    const canvasRef = useRef<HTMLCanvasElement>(null);
     // const [updateHoverKey, setUpdateHoverKey] = useState<number>(Math.random());
     console.log("Board render", complex.numReps, complex.numCells);
+
+   
     return (
         <ErrorBoundary>
             <div>
@@ -98,31 +101,39 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, allowEditing  }
             </div>
             <Leva collapsed hidden />
             {/* <BoardStateDebug dragSelectData={dragSelectData} recentlySelected={editComplex.recentlySelected} /> */}
+            <div style={{
+                width: "100%", height: "100%", 
+                position: "relative", overflow: "hidden",
+                alignItems: "center", justifyContent: "center",
+            }}>
+
             <Canvas
+                ref={canvasRef}
                 dpr={[1, 5]}
                 className="canvas"
                 style={{
+                    
                     border: '1px solid grey',
-                    width: '100%',
+                    // aspectRatio: '2.06!important',
                     height: '100%',
+                    // width: '1350px',
+                    minWidth: '700px',
                     margin: "5px 0px",
                     zIndex: 0,
                     userSelect: 'none',
                     boxShadow: "2px 2px 2px 0px #0004 inset;"
-    
+                    
                 }}
                 orthographic
-                // onMouseMove={(e) => {
-                //     console.notify("Mouse move", e.relatedTarget);
-                //     setUpdateHoverKey(Math.random());
-                // }}
+                
                 camera={{ zoom: 50, isOrthographicCamera: true, position: CAMERA_POSITION, near: 0.01, rotation: new Euler(0, 0, 0)}} // Adjust camera position
                 onPointerUp={() => setDragSelectData(data => ({ ...data, isMouseDown: false}))}    
                 onPointerDown={(e) => {
                     // console.log("Scene", e.intersections);
                     setDragSelectData(data => ({ ...data, isMouseDown: true}));
                 }}  
-            >
+                >
+                    <CameraUpdater />
                 {/* <Stats /> */}
                 <ambientLight intensity={2} />
                 <pointLight position={[10, 10, 10]} intensity={1.5} />
@@ -133,14 +144,15 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, allowEditing  }
                 <Scene
                     setDragSelectData={setDragSelectData}
                     dragSelectData={dragSelectData}
-    
+                    aspectRatio={canvasRef.current ? canvasRef.current.clientWidth / canvasRef.current.clientHeight : 1}
                     complex={complex}
                     editComplex={editComplex}
                     viewOptions={viewOptions}
                     editOptions={editOptions}
                     allowEditing={allowEditing}
-                />
+                    />
             </Canvas>
+            </div>
         </ErrorBoundary>
     );
 };

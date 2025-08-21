@@ -1,9 +1,10 @@
 export const nearestTriangularLatticePoint = function(
     x: number,
     y: number,
-    sideLength: number,
+    altitudeLength: number,
     radius: number
 ): { qx: number; qy: number } | null {
+    const sideLength = altitudeLength * 2 / Math.sqrt(3);
     const s = sideLength, r2 = radius * radius, sqrt3 = Math.sqrt(3);
 
     // Transform to lattice coords
@@ -68,17 +69,19 @@ export const nearestTriangularLatticePoint = function(
 
 import { Line } from "@react-three/drei";
 import { Vector3 } from "three";
+import { sqrt } from "three/webgpu";
 
 type TriangleGridProps = {
     radius: number;
-    sideLength: number;
+    altitudeLength?: number;
     gridHeight?: number;
 };
 
 
-const TriangleGrid = ({ radius, sideLength, gridHeight }: TriangleGridProps) => {
+const TriangleGrid = ({ radius, altitudeLength, gridHeight }: TriangleGridProps) => {
     const lines = [];
     const sqrt3 = Math.sqrt(3);
+    const sideLength = altitudeLength * 2 /  sqrt3;
     // hex
     // create the boudnary of our hexagon. If our radius is 5, then we have 5 * 6 points on the edge.
     // let's make the edge:
@@ -117,7 +120,7 @@ const TriangleGrid = ({ radius, sideLength, gridHeight }: TriangleGridProps) => 
         <>
             {/* <Line key="1" points={[[5, 0, -radius * Math.sqrt(3) / 2 * sideLength],[-5, 0, -radius * Math.sqrt(3) / 2 * sideLength]]} color="red" lineWidth={5} /> */}
             {lines.map((line, index) => (
-                <Line key={index} points={line} color="lightgray" lineWidth={1} />
+                <Line key={index} points={line} color={(index % (radius + 1) == radius) ? "#AAA" : "lightgray"} lineWidth={1} />
             ))}
         </>
     );

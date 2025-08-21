@@ -5,9 +5,10 @@ type CustomGridProps = {
     gridExtent: number;
 };
 
+type LineSegment = [[number, number, number], [number, number, number]];
 // TODO extend this to make it possible to be hexagonal!
 const CustomGrid = ({ gridSize, gridExtent }: CustomGridProps) => {
-    const lines = [];
+    const lines: LineSegment[] = [];
     for (let i = -gridExtent; i <= gridExtent; i += gridSize) {
       lines.push([
         [-gridExtent, 0, i],
@@ -22,7 +23,7 @@ const CustomGrid = ({ gridSize, gridExtent }: CustomGridProps) => {
     return (
       <>
         {lines.map((line, index) => (
-          <Line key={index} points={line} color="lightgray" lineWidth={1}  />
+          <Line key={index} points={line} color="lightgray" lineWidth={1} depthWrite={false} />
         ))}
       </>
     );

@@ -85,7 +85,7 @@ export const ComplexVertices = ({ vertices, selectedReps, toggleRepSelection, sh
                             }}
                             onPointerOut={(e) => { e.stopPropagation(); setHovered(null); }}
                         >
-                            <meshStandardMaterial color={color} opacity={(hovered == vertex) ? vertexOpacity : 0} transparent/>
+                            <meshStandardMaterial color={color} depthWrite={false} opacity={(hovered == vertex) ? vertexOpacity : 0} transparent/>
                         </Sphere>
                          {/* <Line
                             points={[[0, 0, 0], [0, 0, 0.002]]}

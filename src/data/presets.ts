@@ -1,7 +1,6 @@
 import { CWComplexStateEditor, EditorState } from "../hooks/useCWComplexEditor";
 import { CWComplexEditStep } from "../logic/steps";
 import { CWComplex, getStartStep  } from "../math/CWComplex";
-import { KleinBottle, RP2, Sphere, Test1 } from "./defaultComplexes";
 
 
 export type Preset = (editor: CWComplexStateEditor) => void;
@@ -48,18 +47,110 @@ export type Preset = (editor: CWComplexStateEditor) => void;
 
 // }
 
+const angled = (a: number, r: number): [number, number, number] => {
+    return [r * Math.cos(Math.PI * 2 * a), 0, r * Math.sin(Math.PI * 2 * a)];
+}
+export const Tetra: Preset = (editor: CWComplexStateEditor) => {
 
-const Tetra: Preset = (editor: CWComplexStateEditor) => {
-    editor.addVertex
-    editor.addVertex([0, 0, 0], "a");
-    editor.addVertex([2, 0, 0], "b");
-    editor.addVertex([0, 2, 0], "c");
+    editor.addVertex(angled(0,  2), "a");
+    editor.addVertex(angled(1 / 3, 2), "b");
+    editor.addVertex(angled(2 / 3, 2), "c");
+    editor.addVertex([0, 8 / 3, 0], "d");
+    editor.selectAll();
+    editor.addCell();
+    editor.addCell();
+
+    editor.rename("acd", "B");
+    editor.rename("bcd", "A");
+    editor.rename("abd", "C");
+    editor.rename("abc", "D");
+}
+  
+export const KleinBottle: Preset = (editor: CWComplexStateEditor) => {
+    editor.addVertex([-2, 0, 0], "a");
+    editor.addVertex([0, 0, -2], "b");
+    editor.addVertex([2, 0, 0], "c");
     editor.addVertex([0, 0, 2], "d");
     editor.selectAll();
     editor.addCell();
     editor.addCell();
+    editor.deselectAll();
+    editor.selectRep("1 4");
+    editor.deleteCells();
+    editor.identifyNamedCells(["ab", "cd"]);
+    editor.identifyNamedCells(["ad", "bc"]);
+    editor.rename("ab", "f");
+    editor.rename("ad", "g");
+    editor.rename("ac", "h");
+    editor.rename("acd", "A");
+    editor.rename("abc", "B");
+    // editor.identify();
+    // editor.deselectAll();
+    // editor.selectRep("1 2");
+    // editor.selectRep("1 4");
+    // editor.identify();
+    // editor.deselectAll();
+    
 }
-  
+
+export const RP2: Preset = (editor: CWComplexStateEditor) => {
+    editor.addVertex([-2, 0, 0], "a");
+    editor.addVertex([2, 0, 0], "a_");
+    editor.addVertex([0, 0, -2], "b");
+    editor.addVertex([0, 0, 2], "b_");
+    editor.selectAll();
+    editor.addCell();
+    editor.deselectAll();
+    editor.selectRep("1 0");
+    editor.deleteCells();
+    editor.selectRep("1 4");
+    editor.selectRep("0 0");
+    editor.addCell();
+    editor.deselectAll();
+    editor.selectRep("1 4");
+    editor.selectRep("0 1");
+    editor.addCell();
+    editor.deselectAll();
+    editor.selectRep("1 0");
+    editor.selectRep("1 3");
+    editor.identify();
+    editor.deselectAll();
+    editor.selectRep("1 1");
+    editor.selectRep("1 2");
+    editor.identify();
+    editor.deselectAll();
+}
+
+export const Sphere: Preset = (editor: CWComplexStateEditor) => {
+    editor.addVertex([0, 0, -2], "a");
+    editor.addVertex([-2, 0, 0], "b");
+    editor.addVertex([2, 0, 0], "b_");
+    editor.addVertex([0, 0, 2], "c");
+
+    editor.selectAll();
+    editor.addCell();
+    editor.addCell();
+    editor.deselectAll();
+    editor.selectRep("1 3");
+    editor.deleteCells();
+    editor.selectRep("1 0");
+    editor.selectRep("1 1");
+    editor.identify();
+    editor.deselectAll();
+    editor.selectRep("1 3");
+    editor.selectRep("1 4");
+    editor.identify();  
+    // editor.deselectAll();
+}
+
+export const KleinBottle2: Preset = (editor: CWComplexStateEditor) => {
+    editor.reset();
+    Tetra(editor);
+
+    editor.deselectAll();
+    editor.identifyNamedCells(["ab", "bd"]);
+    editor.identifyNamedCells(["ac", "cd"]);
+}
 export const complexes = {
     // K: {
     //     name: "K",

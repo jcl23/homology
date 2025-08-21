@@ -63,15 +63,16 @@ export interface EdgeArrowProps {
   selected?: boolean;
   camera?: THREE.Camera;
   object: THREE.Mesh;
+  aspectRatio?: number;
 }
 const computedStyles = getComputedStyle(document.documentElement);
 const unselectedFg = computedStyles.getPropertyValue("--unselected-fg").trim();
 const selectedBg = computedStyles.getPropertyValue("--selected-bg").trim();
 
-const vecToScreen = function(v: THREE.Vector3, camera: THREE.Camera) {
+const vecToScreen = function(v: THREE.Vector3, camera: THREE.Camera, aspect: number) {
   const vScreen = v.clone().project(camera);
   return new THREE.Vector3(
-    (vScreen.x + 1) / 2 * 2,
+    (vScreen.x + 1) / 2 *aspect,
     (1 - (vScreen.y + 1) / 2) * 1,
     vScreen.z
   );
@@ -81,7 +82,8 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
   end,
   scale = 0.5,
   selected = false,
-  object
+  object,
+  aspectRatio
 }) => {
   const { camera } = useThree();
   const spriteRef = useRef<THREE.Sprite>(null);
@@ -90,20 +92,16 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
   const color = selected ? selectedBg : unselectedFg;
   const length = start.distanceTo(end);
 
-  const startOnScreen = vecToScreen(start, camera);
-  const endOnScreen = vecToScreen(end, camera);
+  const startOnScreen = vecToScreen(start, camera, aspectRatio);
+  const endOnScreen = vecToScreen(end, camera, aspectRatio);
 
   const lengthProj = startOnScreen.distanceTo(endOnScreen);
 
-
-  // const projLength = startProj.distanceTo(endProj);
   useFrame(() => {
     const sprite = spriteRef.current;
     if (!sprite) return;
-    
-    // // Midpoint of the edge
+  
     // sprite.position.copy(start).add(end).multiplyScalar(0.5);
-    // Convert above to weighted midpoint average:
     // Calculate weighted midpoint with constant c (between 0 and 1)
     const c = 0.5; // Adjust this value between 0 and 1 to control arrow position
     // sprite.position.copy(
@@ -123,8 +121,8 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
     const projCenter = startProj.clone().add(endProj).multiplyScalar(0.5);
 
     // const projLength = startProj.distanceTo(endProj);
-    const startOnScreen = vecToScreen(start, camera);
-    const endOnScreen = vecToScreen(end, camera);
+    const startOnScreen = vecToScreen(start, camera, aspectRatio);
+    const endOnScreen = vecToScreen(end, camera, aspectRatio);
 
   const lengthProj = startOnScreen.distanceTo(endOnScreen);
 
@@ -135,7 +133,7 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
     //   projCenter.z
     // );
 
-    const aspectRatio = 2.06;
+    //const aspectRatio = 2.06;
     const dx = (endProj.x - startProj.x) * aspectRatio;
     const dy = endProj.y - startProj.y;
 
@@ -150,7 +148,7 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
     camera.getWorldDirection(v1);
     const v2 = camera.position.clone().sub(center);
     const angleDist = v1.angleTo(v2);
-    const scale = 660 / camera.zoom; // Adjust scale based on distance from camera
+    const scale = 670 / camera.zoom; // Adjust scale based on distance from camera
     sprite.geometry = makeArrowGeometry(lengthProj * scale);
 
     sprite.material.rotation = angle;

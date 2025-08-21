@@ -24,7 +24,6 @@ const SimplexData = ({ selected, cell, toggleCellSelection }: SimplexDataProps) 
     const height = expanded ? expandedHeight : "0px";
     const [showModal, setShowModal] = useState(false);
     const updateCell = (updatedCell: AbstractCell) => {
-        // This function would typically update the cell in the complex or state
         console.log("Updating cell:", updatedCell);
     }
     return (

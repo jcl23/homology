@@ -112,7 +112,7 @@ const MyTooltip: React.FC<TooltipRenderProps> = ({
                 </button>
             )}
             {step.title && (
-                <div className="react-joyride__tooltip__title">{step.title}</div>
+                <div className="react-joyride__tooltip__title">{step.title} ({step.index})</div>
             )}
             <button className="react-joyride__tooltip__edge button" style={{minWidth: "20px", paddingLeft: "60px!important"}} {...closeProps} >
               &times;
@@ -136,7 +136,7 @@ const MyTooltip: React.FC<TooltipRenderProps> = ({
                 goToStep(nextStep.index);
               }}
             >
-              {nextStep.button || nextStep.title || "Next"}
+              ({nextStep.index}){nextStep.button || nextStep.title || "Next"}
             </button>
           ))
         }

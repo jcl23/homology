@@ -7,6 +7,7 @@ import { Html, Line } from "@react-three/drei";
 import Label from "./Label";
 import { MAX_DIMENSION } from "../../data/configuration";
 import { EdgeArrow } from "./Arrow";
+import { useThree } from "@react-three/fiber";
 const computedStyles = getComputedStyle(document.documentElement);
 const unselectedFg = computedStyles.getPropertyValue("--unselected-fg").trim();
 const selectedBg = computedStyles.getPropertyValue("--selected-bg").trim();
@@ -15,12 +16,14 @@ const selectedMid = computedStyles.getPropertyValue("--selected-mid").trim();
 const selectedFg = computedStyles.getPropertyValue("--selected-fg").trim();
 type ComplexEdgesProps = CellsProps & {
     edges: AbstractEdge[];
+    aspectRatio: number;
 };
-export const ComplexEdges = ({ mode, edges, selectedReps, toggleRepSelection, showName, setDragSelectData, dragSelectData: { isMouseDown, dimSelected, deselecting } }: ComplexEdgesProps) => {
+export const ComplexEdges = ({ mode, edges, selectedReps, toggleRepSelection, showName, setDragSelectData, dragSelectData: { isMouseDown, dimSelected, deselecting }}: ComplexEdgesProps) => {
     const { edgeOpacity } = useControls({ edgeOpacity: { value: 0.5, min: 0, max: 1 } });
     // const [hovered, setHovered] = useState<AbstractEdge | null>(null);
     const [hovered, setHovered] = useState<AbstractEdge | null>(null);
-    
+    const { size } = useThree();
+    const aspectRatio = Math.max(size.width, 700) / size.height;
     return (
         <group  renderOrder={5}>
             {edges.map((edge) => {
@@ -70,7 +73,7 @@ export const ComplexEdges = ({ mode, edges, selectedReps, toggleRepSelection, sh
                             scale={1}
                             selected={isSelected}
                             object={mesh}
-
+                            aspectRatio={aspectRatio}
                         />
                         <primitive 
                             depthTest={true}

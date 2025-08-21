@@ -9,6 +9,7 @@ export type EditType = "delete" | AddingType | IdentifyType | "collapse" | "satu
 export type EditStep = (complex: CWComplex, selectedKeys?: Set<string>) => void;
 
 export type CWComplexEditStep = {
+    args: any[];
     step: EditStep;
     selectedKeys: Set<string>;
     type: EditType;

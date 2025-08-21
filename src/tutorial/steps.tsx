@@ -31,7 +31,7 @@ type GeneralChunkedSteps = BranchedStepChunks | CustomStep
 export type IndexedStep = CustomStep & { index: number; }
 
 
-export type LinkedStep = IndexedStep & { next: LinkedStep[]; }
+export type LinkedStep = IndexedStep & { next: LinkedStep[]; branches?: LinkedStep[][]; };
 
 type IndexedChunkedStep = GeneralChunkedSteps & { index: number; };
 
@@ -219,7 +219,7 @@ const indexedSteps = allSteps as IndexedChunkedStep[];
 
 console.log("(test) Linked Steps:", linked);
 
-export const linkStepTree = (steps: GeneralStep[]): LinkedStep[] => {
+export const linkStepTree = (steps: GeneralStep[], delta: number): LinkedStep[] => {
     // First chunk the steps
     const chunkedSteps = chunkSteps(steps);
     
@@ -230,7 +230,7 @@ export const linkStepTree = (steps: GeneralStep[]): LinkedStep[] => {
     const linkedStartStep = linkChunkedSteps(chunkedSteps);
     for (let index = 0; index < allSteps.length; index++) {
         const step = allSteps[index];
-        (step as IndexedStep).index = index;
+        (step as IndexedStep).index = index + delta;
     }
     
 
