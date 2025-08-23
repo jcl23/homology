@@ -115,7 +115,7 @@ export class CWComplexStateEditor  {
                 return letter;
             } else {
                 return cell.vertices.reduce((acc, v) => {
-                    const letter = v.name?.[0] ?? "a";
+                    const letter = v.name ?? "a";
                     return acc + letter;
                 }, "");
             } 
@@ -140,7 +140,25 @@ export class CWComplexStateEditor  {
             return number;
         }
     }
-
+    renameMany(pairs: [string, string][]) {
+        // Batch rename multiple cells
+        this.setEditorState(({complex, ...state}) => {
+            for (const [from, to] of pairs) {
+                for (let d = 0; d < MAX_DIMENSION; d++) {
+                    for (const cell of complex.cells[d]) {
+                        if (cell.name === from) {
+                            cell.name = to;
+                        }
+                    }
+                }
+            }
+            
+            return {
+                ...state,
+                complex
+            };
+        });
+    }
     rename(from: string, to: string) {
         const complex = this.editorState.complex;
         
@@ -527,7 +545,10 @@ export class CWComplexStateEditor  {
     selectRep = (key: string): void => {
         this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
             const newSelected = new Set(selectedKeys);
-            newSelected.add(key);
+            const keys = key.split(",");
+            keys.forEach(k => {
+                newSelected.add(k.trim());
+            });
             console.notify("Selecting", key);
             // this.selected_ = transferSelected(complex, newSelected);
 

@@ -29,7 +29,7 @@ const HistoryGroup = ({ group, index }: { group: HistoryGroup, index: number }) 
     // display the type, and ONLY if more than 1 in group, "x{num}"
     if (group.steps.length === 1) {
         return (
-            <div className={styles.historyItem}>
+            <div className={styles.historyItem} key={`history-group-${index}`}>
                 {group.type}
             </div>
         )

@@ -9,12 +9,14 @@ style={{ color: 'black', fontFamily: "Helvetica Neue", fontSize: '16px', backgro
 
     padding: 2px;
 
-    /* transform: translate(-50%, -50%); */
+    transform: translate(-100px, 0px)
     /* transition: background-color 0.2s ease, color 0.2s ease; */
 
 }
 .label-edge {
-    background-color: #888;
+    background-color: #0005;
+    border-radius: 10px;
+    color:  white;
     background-blend-mode: overlay;
     margin-top: -10px;
     margin-left: -8px;
@@ -22,9 +24,10 @@ style={{ color: 'black', fontFamily: "Helvetica Neue", fontSize: '16px', backgro
     /* transform: translate(510px, 5px); */
     mix-blend-mode: lighten!important;
     max-height: 20px;
-    border-radius: 1px;
+    /* border-radius: 1px; */
     line-height: 12px!important;
-    border: 2px solid #aaa;   
+    /* border: 2px solid #aaa;    */
+    transform: translate(calc(10px - 50%), 2px)!important;
 }
 .label-edge-on {
     background-color: var(--selected-bg);
@@ -64,4 +67,7 @@ style={{ color: 'black', fontFamily: "Helvetica Neue", fontSize: '16px', backgro
 }
 .label-face-on {
     color: white;
+}
+.label-face {
+    transform: translate(-50%, -50%)!important;
 }

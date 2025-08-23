@@ -20,15 +20,32 @@ const makeArrowGeometry = (length, width = 0.6, height = 0.3, thickness = 0.07) 
   // console.log(`123:Missing apex X: ${missingApexX}`);
   const missingApexY = missingApexX / arrowUpSlope;
   // console.log(`123:Missing apex Y: ${missingApexY}`);
-  const c = 0;
-  const d = -0.299;
-  const iw = 0.05;
-  shape.moveTo(c - length / 2, d + 0.5 * width + iw);
-  shape.lineTo(c - length / 2 - iw, d + 0.5 * width);
-  shape.lineTo(c - length / 2, d + 0.5 * width - iw);
-  shape.lineTo(c + length / 2, d + 0.5 * width - iw); 
-  shape.lineTo(c + length / 2 + iw, d + 0.5 * width);
-  shape.lineTo(c + length / 2, d + 0.5 * width + iw); // Top point (swapped from 0.5 * width, 0)
+  const c = 0; // horizontal center offset
+  const d = -0.299; // vertical center offset
+  const iw = 0.05; // inner width
+  const aw = 0.2; // arrow width
+  const app = 0.55; // arrow position (proportion)
+  const ao = 0; // arrow offset )
+  const ap = (app - 0.5) * length + ao - aw/2; // arrow position (absolute)
+  const lineTo = (x, y) => {
+    shape.lineTo(c + x, d + y);
+  }
+  const moveTo = (x, y) => {
+    shape.moveTo(c + x, d + y);
+  }
+  moveTo(-length / 2, 0.5 * width + iw);
+  lineTo(-length / 2 - iw, 0.5 * width);
+  lineTo(-length / 2, 0.5 * width - iw);
+  lineTo(ap, 0.5 * width - iw);
+  lineTo(ap, 0.5 * width - aw);
+  lineTo(ap + aw - iw, 0.5 * width - iw);
+  lineTo(length / 2, 0.5 * width - iw);
+  lineTo(length / 2 + iw, 0.5 * width);
+  lineTo(length / 2, 0.5 * width + iw);
+  lineTo(ap + aw - iw, 0.5 * width + iw);
+  lineTo(ap + 0, 0.5 * width + aw);
+  lineTo(ap + 0, 0.5 * width + iw);
+  
  
   // shape.holes.push(hole);
 

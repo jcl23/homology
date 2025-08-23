@@ -1,3 +1,4 @@
+import { texToUnicode } from "../comps/board/Label";
 import { CWComplexStateEditor, EditorState } from "../hooks/useCWComplexEditor";
 import { CWComplexEditStep } from "../logic/steps";
 import { CWComplex, getStartStep  } from "../math/CWComplex";
@@ -53,7 +54,7 @@ const angled = (a: number, r: number): [number, number, number] => {
 export const Tetra: Preset = (editor: CWComplexStateEditor) => {
     editor.setMeta({ 
         name: "Sphere ($S^2 \\cong \\delta\\Delta^3$)",
-        // description: "A sphere by the boundary of a tetrahedron ($\Delta^3$).",
+    
     });
     editor.addVertex(angled(0,  2), "a");
     editor.addVertex(angled(1 / 3, 2), "b");
@@ -72,8 +73,7 @@ export const Tetra: Preset = (editor: CWComplexStateEditor) => {
 }
   
 export const KleinBottle: Preset = (editor: CWComplexStateEditor) => {
-    editor.setMeta({ name: "Klein Bottle ($K \\cong \\Delta^1 \\times \\Delta^1 / \\sim$)" });
-
+    editor.setMeta({ name: "Klein Bottle ($K \\cong \\Delta^1 \\times \\Delta^1 / \\sim$)", description: "Hatcher 2.1.5"  });
     editor.addVertex([-2, 0, 0], "a");
     editor.addVertex([0, 0, -2], "b");
     editor.addVertex([2, 0, 0], "c");
@@ -105,30 +105,23 @@ export const KleinBottle: Preset = (editor: CWComplexStateEditor) => {
 export const RP2: Preset = (editor: CWComplexStateEditor) => {
     editor.setMeta({ name: "Real Projective Plane ($\\mathbb{RP}^2 \\cong \\Delta^1 \\times \\Delta^1 / \\sim$)" });
     editor.addVertex([-2, 0, 0], "a");
-    editor.addVertex([2, 0, 0], "a_");
-    editor.addVertex([0, 0, -2], "b");
-    editor.addVertex([0, 0, 2], "b_");
+    editor.addVertex([2, 0, 0], "b");
+    editor.addVertex([0, 0, -2], "c");
+    editor.addVertex([0, 0, 2], "d");
     editor.selectAll();
+    editor.addCell();
     editor.addCell();
     editor.deselectAll();
     editor.selectRep("1 0");
     editor.deleteCells();
-    editor.selectRep("1 4");
-    editor.selectRep("0 0");
-    editor.addCell();
-    editor.deselectAll();
-    editor.selectRep("1 4");
-    editor.selectRep("0 1");
-    editor.addCell();
-    editor.deselectAll();
-    editor.selectRep("1 0");
-    editor.selectRep("1 3");
-    editor.identify();
-    editor.deselectAll();
-    editor.selectRep("1 1");
-    editor.selectRep("1 2");
-    editor.identify();
-    editor.deselectAll();
+    editor.identifyNamedCells(["ad", "bc"]);
+    editor.identifyNamedCells(["ac", "bd"]);
+    editor.rename("ad", "f");
+    editor.rename("ac", "g");
+    editor.rename("cd", "h");
+    editor.rename("acd", "A");
+    editor.rename("bcd", "B");
+
 }
 
 export const Sphere: Preset = (editor: CWComplexStateEditor) => {
@@ -136,7 +129,7 @@ export const Sphere: Preset = (editor: CWComplexStateEditor) => {
 
     editor.addVertex([0, 0, -2], "a");
     editor.addVertex([-2, 0, 0], "b");
-    editor.addVertex([2, 0, 0], "b_");
+    editor.addVertex([2, 0, 0], "d");
     editor.addVertex([0, 0, 2], "c");
 
     editor.selectAll();
@@ -153,12 +146,17 @@ export const Sphere: Preset = (editor: CWComplexStateEditor) => {
     editor.selectRep("1 4");
     editor.identify();  
     editor.deselectAll();
+    editor.rename("abc", "A");
+    editor.rename("adc", "B");
+    
 }
 
 export const KleinBottle2: Preset = (editor: CWComplexStateEditor) => {
     editor.reset();
     Tetra(editor);
-        editor.setMeta({ name: "Klein Bottle ($K= \\Delta^3/\\sim$)" });
+        editor.setMeta({ name: "Klein Bottle ($K= \\Delta^3/\\sim$)" , 
+        description: "Hatcher 2.1.2" 
+        });
 
 
     editor.deselectAll();
@@ -167,7 +165,50 @@ export const KleinBottle2: Preset = (editor: CWComplexStateEditor) => {
     editor.deselectAll();
 
 }
+
+export const TriangleParachute: Preset = (editor: CWComplexStateEditor) => {
+    editor.setMeta({ name: "Triangle Parachute", description: "Hatcher 2.1.4" });
+    editor.addVertex(angled(0, 2), "a");
+    editor.addVertex(angled(1 / 3, 2), "b");
+    editor.addVertex(angled(2 / 3, 2), "c");
+    editor.selectAll();
+    editor.addCell();
+    editor.addCell();
+    editor.identify();
+
+}
+
+export const H216: Preset = (editor: CWComplexStateEditor) => {
+    editor.setMeta({ name: "Hatcher 2.1.6 (n=3)", description: "Hatcher 2.1.6" });
+    const c = 4;
+    const w = 2; 
+    const h = c / w;
+    for (let i = 0; i < c; i++) {
+        const sx = (i % w) * 2 - w + 1;
+        const sy = Math.floor(i / w) * 2 - h + 1;
+        editor.addVertex([sx, 0, sy], `${i}0`);
+        editor.addVertex([sx, 0, sy + 1], `${i}1`);
+        editor.addVertex([sx + 1, 0, sy + 1], `${i}2`);
+        editor.selectRep(`0 ${i*3}, 0 ${i*3+1}, 0 ${i*3+2}`);
+        editor.addCell();
+        editor.addCell();
+        editor.rename(`${i}0${i}1`, `${i}|01`);
+        editor.rename(`${i}0${i}2`, `${i}|02`);
+        editor.rename(`${i}1${i}2`, `${i}|12`);
+        editor.rename(`${i}0${i}1${i}2`, `A${i}`);
+        editor.deselectAll();
+    }
+    editor.identifyNamedCells(["0|01", "0|02", "0|12"]);
+    for (let i = 1; i < c; i++) {
+        editor.identifyNamedCells([`${i}|01`, `${i}|12`]);
+        editor.identifyNamedCells([`${i}|02`, `${i-1}|01`]);
+    }
+    editor.renameMany(Array(c).fill(0).map((_, i) => [`${i}|01`, `e${i}`]))
+    editor.rename("00", 'v');
+}
+        
 export const complexes = {
+
     // K: {
     //     name: "K",
     //     complex: K()

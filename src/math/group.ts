@@ -47,7 +47,7 @@ export const printGroupSerifs = (group: AbelianGroup, name: string): string => {
     } else if (group.order > 1) {
         terms.push(`\\mathbb{Z}^\{${group.order}\}`)
     }
-    terms.push(...group.torsion.map(t => `\\Z_${t}`));
+    terms.push(...group.torsion.map(t => `\\Z_{${t}}`));
     if (terms.length == 0) {
         return `${name} =  0`;
     }

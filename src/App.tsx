@@ -63,6 +63,7 @@ function App() {
   useEffect(() => {
     complexEditor.reset();
     preset(complexEditor);
+    complexEditor.deselectAll();
   }, [preset]);
 
   

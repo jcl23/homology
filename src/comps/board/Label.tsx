@@ -22,7 +22,11 @@ export const numToSubscript = (num: number) => {
 
 export const texToUnicode = (text: string) => {
     // replace _(number) with subscript
-    return text.replace(/_(\d+)/g, (match, num) => {
+    return text
+        .replace(/_\{([\d,]+)\}/g, (match, num) => {
+            return num.split(',').map(n => numToSubscript(parseInt(n))).join(',');
+        })
+        .replace(/_(\d+)/g, (match, num) => {
         return numToSubscript(parseInt(num));
     });
 }

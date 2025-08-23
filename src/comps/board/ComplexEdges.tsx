@@ -33,10 +33,12 @@ export const ComplexEdges = ({ mode, edges, selectedReps, toggleRepSelection, sh
                 const color = isSelected ? selectedBg : unselectedFg;
                 const [start, end] = edge.attachingMap.map((vertex: Vertex) => new Vector3(...vertex.point));
 
-                const c = 0.60; // Adjust this value between 0 and 1 to control arrow position
+                const proportion = 0.55; // Adjust this value between 0 and 1 to control arrow position
+                const offset = -0.005; 
+                const length = start.distanceTo(end);
+                const c = proportion + offset;
                 const middle = (start.clone().multiplyScalar(1 - c).add(end.clone().multiplyScalar(c)));
                 const direction = new Vector3().subVectors(end, start).normalize();
-                const length = new Vector3().subVectors(end, start).length();
 
                 // Create ArrowHelper
                 const arrow = new ArrowHelper(direction.normalize(), middle, 0.1, new Color(color), 0.15, 0.09);
