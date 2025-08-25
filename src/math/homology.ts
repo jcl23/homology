@@ -7,7 +7,8 @@ import { AbelianGroup, GroupWithBasis, printGroup } from "./group";
 
 
 export const getChainGroups = (complex: CWComplex): number[] => {
-    return [0, 1, 2, 3].map(dim => {
+    return [0, 1, 2, 3, 4].map(dim => {
+        if (dim >= 4) return 0;
         const allIndices = complex.cells[dim].map(cell => cell.index);
         const uniqueIndices = [...new Set(allIndices)];
         return uniqueIndices.length;

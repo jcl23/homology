@@ -27,9 +27,9 @@ export class CWComplex {
     cells: CellsType;
     cellCounts: number[];
     constructor() {
-        const from = { cells: [[] , [], [], []], cellCounts: [0, 0, 0, 0] } as CWComplex;
+        const from = { cells: [[] , [], [], [], []], cellCounts: [0, 0, 0, 0, 0] } as CWComplex;
         // create new
-        this.cellCounts = [0, 0, 0, 0];
+        this.cellCounts = [0, 0, 0, 0, 0];
         this.cells = [ ...from.cells ] as CellsType;
     }
 
@@ -760,7 +760,7 @@ export const identifyEdges = (complex: CWComplex, cells: Set<AbstractCell>, newN
 };
 
 export const getCellsByLayer = (complex: CWComplex): AbstractCell[][] => {
-    return [0, 1, 2, 3].map(dim => {
+    return [0, 1, 2, 3, 4].map(dim => {
         const allCells = complex.cells[dim];
         // return unique by index
         return allCells.filter((cell, i, arr) => arr.findIndex(c => c.index === cell.index) === i);
