@@ -116,7 +116,7 @@ const {faceOpacity} = useControls({ faceOpacity: { value: 0.5, min: 0, max: 1 } 
                                 selected={isSelected}
                                 toggle={() => {
                                         toggleRepSelection(face.key);
-                                        throw new Error("Toggle rep selection not implemented for faces");
+                                        // throw new Error("Toggle rep selection not implemented for faces");
                                     }
                                 }
                             /> 

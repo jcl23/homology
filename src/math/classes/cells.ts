@@ -28,6 +28,16 @@ export type AbstractBall =   AbstractCell;//AbstractCell & { attachingMap: Abstr
 
 type classes = [Vertex, Edge, Face, Ball];
 
+const first50Primes = [
+    2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
+    31, 37, 41, 43, 47, 53, 59, 61, 67, 71,
+    73, 79, 83, 89, 97, 101, 103, 107, 109, 113,
+    127, 131, 137, 139, 149, 151, 157, 163, 167, 173,
+    179, 181, 191, 193, 197, 199, 211, 223, 227, 229
+]
+export function summarize(vertices: AbstractVertex[]): string {
+    return "" + vertices.reduce((acc, v, i) => acc * first50Primes[v.id], 1);
+}
 export class Cell implements AbstractCell {
     id: number;
     index: number;
@@ -46,6 +56,31 @@ export class Cell implements AbstractCell {
         this.dimension = -1;
         // this.#vertices = [];
     }
+    edges(): AbstractEdge[] {
+        if (this.dimension == 0) return [];
+        if (this.dimension == 1) return [this as AbstractEdge];
+        if (this.dimension == 2) return this.attachingMap as AbstractEdge[];
+        const edgesWithDupes = (this.attachingMap as AbstractFace[]).flatMap(f => f.attachingMap);
+        return edgesWithDupes.filter((e, i) => edgesWithDupes.indexOf(e) === i);
+
+    }
+    getLocalOrientation(): Record<number, number>{
+        if (this.dimension < 1) return { [this.id]: 0};
+        const orientation: number[] = [];
+        // Go through eaceh of the edges in the face. Count the number of times a vertex is the END of an edge. 
+        // If for example the cell is a face, and there are 3 faces, the "start" vertex will appear 0 times as the end of an edge, and 2 times as the start of an edge.
+        const vertices = this.vertices;
+
+        const counts: Record<number, number> = {};
+        const edges = this.edges();
+        edges.forEach(edge => {
+            // const v1 = edge.attachingMap[0];
+            const v2 = edge.attachingMap[1];
+            counts[v2.id] ??= 0;
+            counts[v2.id]++;
+        });
+        return counts;
+    }
 
     get positionKey(): string {
         return this.vertices_.map(v => v.positionKey).join("|");
@@ -53,7 +88,7 @@ export class Cell implements AbstractCell {
 
     #setFromVertices(complex: CWComplex, vertices: AbstractVertex[]) {
         this.vertices_ = vertices;
-        this.vertices_.sort((a, b) => a.id - b.id);
+        this.vertices_.sort((a, b) => a.index - b.index);
         // in order for the cell added to be added to the vertices attaching map
         this.vertices_.forEach(v => v.cob.push(this));
         this.dimension = vertices.length - 1;
@@ -62,14 +97,14 @@ export class Cell implements AbstractCell {
     }
 
     get vertices() {
-        const isSorted = this.vertices_.every((v, i, arr) => i === 0 || v.id > arr[i - 1].id);
-        if (!isSorted) console.warn("Unsorted vertices")
+        // const isSorted = this.vertices_.every((v, i, arr) => i === 0 || v.id > arr[i - 1].id);
+        // if (!isSorted) console.warn("Unsorted vertices")
         return [...this.vertices_];
         // shpould update attaching map to be like this
     }
 
     get vertexSummary() {
-        return [...this.vertices].map(v => v.id).join(", ");
+        return summarize(this.vertices);
     }
     get boundarySummary() {
         return this.attachingMap.map(c => c.id).toSorted().join(", ");
@@ -163,7 +198,7 @@ export class Edge extends Cell implements AbstractEdge {
         this.attachingMap = [v1, v2];
         this.cob = [];
         this.vertices_ = [v1, v2];
-        this.vertices_.sort((a, b) => a.id - b.id);
+        this.vertices_.sort((a, b) => a.index - b.index);
         this.dimension = 1;
 
     }
@@ -184,7 +219,7 @@ export class Face extends Cell implements AbstractFace {
         this.attachingMap = [...edges];
         this.cob = [];
         this.vertices_ = [...new Set(edges.flatMap(e => e.vertices))];
-        this.vertices_.sort((a, b) => a.id - b.id);
+        this.vertices_.sort((a, b) => a.index - b.index);
         this.dimension = 2;
     }
 
@@ -204,7 +239,7 @@ export class Ball extends Cell implements AbstractBall {
         this.name = "B_" + this.id;
         this.attachingMap = [...faces];
         this.vertices_  = [...new Set(faces.flatMap(f => f.vertices))];
-        this.vertices_.sort((a, b) => a.id - b.id);
+        this.vertices_.sort((a, b) => a.index - b.index);
         this.dimension = 3;
     }
 

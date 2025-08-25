@@ -1,12 +1,13 @@
 import { select } from "material-components-web";
 import { CWComplex, retrieveCellsFromSelectedKeys } from "../math/CWComplex";
+import { Cell } from "../math/classes/cells";
 
 
 export type AddingType = "addVertex" | "addEdge" | "addFace" | "addBall";
 export type IdentifyType = "identify" | "identifyVertices" | "identifyEdges" | "identifyFaces" | "identifyBalls";
 export type EditType = "delete" | AddingType | IdentifyType | "collapse" | "saturate" | "start" | "shift";
 
-export type EditStep = (complex: CWComplex, selectedKeys?: Set<string>) => void;
+export type EditStep = (complex: CWComplex, selectedKeys?: Set<string>) => void | Cell;
 
 export type CWComplexEditStep = {
     args: any[];

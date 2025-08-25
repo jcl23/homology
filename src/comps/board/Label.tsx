@@ -34,7 +34,7 @@ const Label = ({ type, position, text, selected, toggle }: LabelProps) => {
     // const userData = cell ? { object: cell } : {};
     return (
         <Html renderOrder={0} style={{pointerEvents: (type == "vertex" ? "none" : "all") }} position={position} zIndexRange={[100, 200]} 
-                className={`${styles.label} ${styles[`label-${type}`]} ${styles[`label-${type}-${selected ? 'on' : 'off'}`]}`}>
+                className={`${styles.label}  ${styles[`label-${type}`]}  ${styles[`label-${type}-${selected ? 'on' : 'off'}`]}`}>
           
               {/* <Latex>$\sf {text}$</Latex>   */}
              <div style={{ width: "100%", height: "100%", pointerEvents: (type == "vertex" ? "none" : "all") }} onMouseDown={toggle}

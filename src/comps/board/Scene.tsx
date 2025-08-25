@@ -29,7 +29,7 @@ const computedStyles = getComputedStyle(document.documentElement);
 const unselectedFg = computedStyles.getPropertyValue("--unselected-fg").trim();
 const selectedFg = computedStyles.getPropertyValue("--selected-fg").trim();
 const selectedBg = computedStyles.getPropertyValue("--selected-bg").trim();
-export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragSelectData, dragSelectData, allowEditing, gridStyle, aspectRatio }: SceneProps) => {
+export const Scene = ({ stepIndex, editComplex, viewOptions, complex, editOptions, setDragSelectData, dragSelectData, allowEditing, gridStyle, aspectRatio }: SceneProps) => {
     console.notify("Scene");
     
     // const complex = history[history.length - 1].complex;
@@ -100,14 +100,6 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
         if (!allowEditing) return;
         try {
             if (editOptions.mode  === 'add' && previewPosition) {
-                // const newVertex: AbstractVertex = {
-                //     id: "" + complex.cells[0].length,
-                //     index: complex.cells[0].length,
-                //     name: "v" + complex.cells[0].length,
-                //     attachingMap: () => { throw new Error("Shouldn't compute boundary of vertex"); },
-                //     point: previewPosition,
-                //     dimension: 0,
-                // };
                 console.log("add vertex");
                 editComplex.addVertex(previewPosition);
                 setPreviewPosition(null); // Clear preview after adding
@@ -172,7 +164,7 @@ export const Scene = ({ editComplex, viewOptions, complex, editOptions, setDragS
                 />
             </>
         )
-    }, [complex.numCells, complex.numReps, selectedReps.length, dragSelectData.dimSelected, complex.cells, editComplex.recentlySelected.lastClickedDepth]);
+    }, [stepIndex, selectedReps.length, editComplex.recentlySelected.lastClickedDepth]);
 
     const boardColor = computedStyles.getPropertyValue("--board-color").trim();
     const boardOpacity = +computedStyles.getPropertyValue("--board-opacity").trim();

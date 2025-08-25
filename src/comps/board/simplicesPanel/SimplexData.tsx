@@ -18,7 +18,8 @@ const SimplexData = ({ selected, cell, toggleCellSelection }: SimplexDataProps) 
     const starList = cell.cob.map(c => c.name);
     const numLines = [
         boundaryList.length,
-        starList.length
+        starList.length,
+        cell.vertices.length
     ].filter(Boolean).length;
     const expandedHeight = `${numLines * 24}px`;
     const height = expanded ? expandedHeight : "0px";
@@ -33,7 +34,7 @@ const SimplexData = ({ selected, cell, toggleCellSelection }: SimplexDataProps) 
                 {texToUnicode(cell.name)}
                 <div style={{display: "flex", alignItems: "center"}}>
                     <div>
-                    {/* id={cell.id} */}
+                    [{cell.index}] ({cell.key})
                     </div>
                     <button 
                         className={styles.expandButton}
@@ -61,7 +62,8 @@ const SimplexData = ({ selected, cell, toggleCellSelection }: SimplexDataProps) 
             >
                 <div style={{paddingLeft: "20px"}}> 
                    bd = {cell.attachingMap.map(c => c.name).join(", ")}<br />
-                   star = {cell.cob.map(c => c.name).join(", ")}
+                   star = {cell.cob.map(c => c.name).join(", ")}<br />
+                   V = {cell.vertices.map(v => v.name).join(", ")}
                 </div>
                 <div>
                     {cell.cob.map(c => c.name).join(", ")}

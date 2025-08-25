@@ -1,22 +1,24 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import { createPreset, CWComplex, printCWComplex, toLabeledMatrices } from "../math/CWComplex"
+import { createPreset, CWComplex, printCWComplex, toLabeledMatrices, toNamedMatrices } from "../math/CWComplex"
 import { computeHomology } from "../math/homology"
 import styles   from './HomologyPanel.module.css'
-import { computeTorsion, isZeroMatrix, LabeledMatrix,  } from "../math/matrix"
+import { computeTorsion, isZeroMatrix, LabeledMatrix, NamedMatrix,  } from "../math/matrix"
 import Matrix from "ml-matrix";
 import { AbelianGroup, printGroup, groupsEqual, GroupWithBasis } from "../math/group";
 import Group from "./Group";
 type HomologyPanelProps = {
-    complex: CWComplex
+    complex: CWComplex,
+    stepIndex: number
 }
 
 type MatrixPanelProps = {
-    labeledMatrix: LabeledMatrix
-    name: string
+    namedMatrix: NamedMatrix
+    name: string,
+    hide: () => void
 }
-const MatrixPanel = ({ labeledMatrix, name }: MatrixPanelProps) => {
-    const { ins, outs, matrix } = labeledMatrix;
+export const MatrixPanel = ({ namedMatrix, name, hide }: MatrixPanelProps) => {
+    const { ins, outs, matrix } = namedMatrix;
     if (matrix.length === 0) {
         return <div>{"Empty Matrix"}</div>;
     }
@@ -24,8 +26,24 @@ const MatrixPanel = ({ labeledMatrix, name }: MatrixPanelProps) => {
  
     const width = matrix[0].length;
     const height = matrix.length;
+    const divWidth = width * 40 + 100;
+    const divHeight = height * 40 + 100;
     return (
-        <div>
+        <div
+            style={{
+                width: divWidth + "px",
+                height: divHeight + "px",
+                position: "absolute",
+                background: "white",
+                opacity: 1,
+                top: "50%",
+                left: "50%",
+                border: "2px solid black",
+                zIndex: 10000000000000000000000,
+                transform: "translate(-50%, -50%)",
+
+            }}
+        onClick={hide}>
             {name} ({width}x{height})
         <table>
             <thead>
@@ -56,7 +74,8 @@ type DimensionLayerProps = {
     C: AbelianGroup,
     B: GroupWithBasis,
     Z: GroupWithBasis,
-    H: AbelianGroup
+    H: AbelianGroup,
+    matrixOut: NamedMatrix,
 }
 
 const lower = (num: number): string => "₀₁₂₃₄₅₆₇₈₉"[num];
@@ -69,7 +88,8 @@ const ShadowRect = (props: React.SVGProps<SVGRectElement>) => {
         </>
     );
 }
-export const DimensionLayer = ({dimension, ...groups}: DimensionLayerProps) => {
+export const DimensionLayer = ({dimension, matrixOut, ...groups}: DimensionLayerProps) => {
+    const [showMatrix, setShowMatrix] =  useState(false);
     const groupNames = ["C", "B", "Z", "H"] as const;
     const CEqualsZ = groupsEqual(groups.C, groups.Z.group);
     const ZEqualsB = groupsEqual(groups.Z.group, groups.B.group);
@@ -100,7 +120,8 @@ export const DimensionLayer = ({dimension, ...groups}: DimensionLayerProps) => {
     const bStroke = "white";
     const zeroFill = "black";
     return (
-        <div className={styles.homologyLayer} style={{zIndex: dimension}}>
+        <div className={styles.homologyLayer} style={{zIndex: dimension}} onClick={() => setShowMatrix(!showMatrix)}>
+            { showMatrix && <MatrixPanel namedMatrix={matrixOut} name={`∂_${dimension}`} hide={() => setShowMatrix(false)}/> }
             <svg style={{opacity: 1}} width={totalWidth} height={totalHeight}>
                 <defs>
                     <filter id="shadow" x="-100%" y="-50%" width="300%" height="150%" >
@@ -277,7 +298,7 @@ export const DimensionLayer = ({dimension, ...groups}: DimensionLayerProps) => {
     )
     */
 }
-export const HomologyPanel = ({ complex }: HomologyPanelProps) => {
+export const HomologyPanel = ({ complex, stepIndex }: HomologyPanelProps) => {
    
     useEffect(() => {
         printCWComplex(complex);
@@ -286,18 +307,19 @@ export const HomologyPanel = ({ complex }: HomologyPanelProps) => {
 
     
     const homologyResult = computeHomology(complex);
-
+    const matrices = toNamedMatrices(complex);
     return (
+        <div>
 
             <div className={styles.homologyBackground}>
                 {homologyResult.toReversed().map((s, i, a) => {
                     const dimension = a.length - i - 1;
                     return (
-                        <DimensionLayer {...s} dimension={dimension} />
+                        <DimensionLayer {...s} dimension={dimension} matrixOut={matrices[dimension]} />
                     )
                 }
             )}
-            </div>  
-      
+            </div>
+        </div>
     )
 }

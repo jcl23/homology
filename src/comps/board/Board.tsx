@@ -30,7 +30,7 @@ export type BoardProps = {
     //setComplex: (c: CWComplex) => void;
     // selectedReps: Set<string>;
     allowEditing: boolean;
-
+    stepIndex: number;
     // toggleRepSelection: (cell: AbstractCell) => void;
     editComplex: CWComplexStateEditor;
 
@@ -81,7 +81,7 @@ const BoardStateDebug = ({ dragSelectData, recentlySelected }: BoardStateDebugPr
 }
 
 
-const Board = ({ viewOptions, editOptions, complex, editComplex, allowEditing  }: BoardProps) => {
+const Board = ({ viewOptions, editOptions, complex, editComplex, allowEditing, stepIndex  }: BoardProps) => {
     //const { history } = editComplex;
     const { nameState } = viewOptions;
     //const complex = history[history.length - 1].complex;
@@ -99,7 +99,7 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, allowEditing  }
                     {nameState ? <Latex>{ editComplex.meta.name  ?? "CW Complex with no name that's not good..."}</Latex> : ""}
                 </div>
             </div>
-            <Leva collapsed hidden />
+            <Leva collapsed  />
             {/* <BoardStateDebug dragSelectData={dragSelectData} recentlySelected={editComplex.recentlySelected} /> */}
             <div style={{
                 width: "100%", height: "100%", 
@@ -131,7 +131,8 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, allowEditing  }
                 onPointerDown={(e) => {
                     // console.log("Scene", e.intersections);
                     setDragSelectData(data => ({ ...data, isMouseDown: true}));
-                }}  
+                }}
+                frameloop='demand'  
                 >
                     <CameraUpdater />
                 {/* <Stats /> */}
@@ -150,6 +151,7 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, allowEditing  }
                     viewOptions={viewOptions}
                     editOptions={editOptions}
                     allowEditing={allowEditing}
+                    stepIndex={stepIndex}
                     />
             </Canvas>
             </div>

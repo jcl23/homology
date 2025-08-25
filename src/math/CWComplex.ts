@@ -1,5 +1,5 @@
-import { add, all } from "three/webgpu";
-import { createMatrix, LabeledMatrix, Matrix } from "./matrix";
+import { add, all, min } from "three/webgpu";
+import { createMatrix, LabeledMatrix, Matrix, NamedMatrix } from "./matrix";
 import { getChainGroups } from "./homology";
 import { AbstractBall, AbstractCell, AbstractEdge, AbstractFace, AbstractVertex, Ball, Cell, Edge, Face, Vertex } from "./classes/cells";
 import { CWComplexEditStep } from "../logic/steps";
@@ -57,6 +57,9 @@ export class CWComplex {
     identifyVertices (cells: Set<AbstractCell>): void  {
         identifyVertices(this, cells);
     }
+    identifyCells (cells: Set<AbstractCell>, renameCells = true): void {
+        identifyCells(this, cells, renameCells);
+    }
 
     identifyNamedCells (cellNames: string[]): void {
         const cells = cellNames.map(name => getRepsByName(this, name)).flat();
@@ -69,21 +72,22 @@ export class CWComplex {
         if (!cells.every(cell => cell.dimension === dimension)) {
             throw new Error("Cannot identify cells of different dimensions");
         }
+        this.identifyCells(new Set(cells), true);
 
-        if (dimension === 0) {
-            this.identifyVertices(new Set(cells));
-        } else if (dimension === 1) {
-            this.identifyEdges(new Set(cells));
-        } else {
-            // For higher dimensions, just set all cells to the same index and name
-            const rep = cells[0];
-            cells.forEach(cell => {
-                cell.index = rep.index;
-                cell.name = rep.name;
-            });
-            this.cellCounts[dimension] = (this.cellCounts[dimension] || 0) - (cells.length - 1);
-            this.reindex();
-        }
+        // if (dimension === 0) {
+        //     this.identifyVertices(new Set(cells));
+        // } else if (dimension === 1) {
+        //     this.identifyEdges(new Set(cells));
+        // } else {
+        //     // For higher dimensions, just set all cells to the same index and name
+        //     const rep = cells[0];
+        //     cells.forEach(cell => {
+        //         cell.index = rep.index;
+        //         cell.name = rep.name;
+        //     });
+        //     this.cellCounts[dimension] = (this.cellCounts[dimension] || 0) - (cells.length - 1);
+        //     this.reindex();
+        // }
     }
 
     addVertex (position: [number, number, number], name?: string): Vertex {
@@ -558,14 +562,33 @@ export const getBoundaryFromParts = (faces: AbstractCell[]): Chain => {
     const allVertices = faces.flatMap(face => getVertices(face));
     const allVerticesSet = new Set(allVertices);
     const allVerticesArray = Array.from(allVerticesSet);
-    allVerticesArray.sort((a, b) => a.id - b.id);
-
+    // allVerticesArray.sort((a, b) => a.id - b.id);
     const subFaces: SubFace[] = faces.map(face => {
         const faceVertices = getVertices(face);
         const missing = allVerticesArray.find(vertex => !faceVertices.includes(vertex))!;
         return { face, missing };
     });
-    subFaces.sort((a, b) => a.missing.id - b.missing.id);
+    const d = faces[0].dimension + 1;
+    //     const cell = (
+    //     d == 1 ? new Edge(allVerticesArray[0], allVerticesArray[1], -1, -1) :
+    //     d == 2 ? new Face(faces as AbstractEdge[], -1, -1) :
+    //     new Ball(faces as AbstractFace[], -1, -1)
+    // );
+        
+    // const orient = cell.getLocalOrientation();
+    // subFaces.sort((a, b) => orient[a.missing.id] - orient[b.missing.id]);
+    if (faces.length == 2) {
+        subFaces.sort((a, b) => a.missing.index - b.missing.index);
+    } else if (faces.length == 3) {
+        const hypotheticalFace = new Face(faces, -1, -1);
+        const orient = hypotheticalFace.getLocalOrientation();
+        subFaces.sort((a, b) => orient[b.missing.id] - orient[a.missing.id]);
+
+    } else {
+        const hypotheticalBall = new Ball(faces, -1, -1);
+        const orient = hypotheticalBall.getLocalOrientation();
+        subFaces.sort((a, b) => orient[a.missing.id] - orient[b.missing.id]);
+    } 
     const boundaryChain: Chain = subFaces.flatMap(({ face, missing }, i) => {
         const sign = (i % 2 == 0) ? 1 : -1;
         return getBoundaryOfCell(face).map(({ dimension, index }, j) => ({ sign: sign * ((j % 2 == 0) ? 1 : -1), dimension, index }));
@@ -590,10 +613,10 @@ export const getBoundaryOfCell = (cell: AbstractCell): Chain => {
     const allVertices = getVertices(cell);
 
     try {
-        allVertices.sort((a, b) => a.id - b.id);
+        // allVertices.sort((a, b) => a.id - b.id);
     } catch (e) {
         const allVertices_ = getVertices(cell);
-        allVertices_.sort((a, b) => a.id - b.id);
+        // allVertices_.sort((a, b) => a.id - b.id);
     }
     // const inverseMap = allVertices.reduce((acc, vertex, index) => {
     //     acc[vertex.index] = index;
@@ -606,7 +629,8 @@ export const getBoundaryOfCell = (cell: AbstractCell): Chain => {
         return { face, missing };
     });
 
-    subFaces.sort((a, b) => a.missing.id - b.missing.id);
+    subFaces.reverse()
+    subFaces.sort((a, b) => a.missing.index - b.missing.index);
 
     // for each subface, figure out the sign
     const boundary = subFaces.map(({ face, missing }, i) => {
@@ -634,8 +658,11 @@ const isFiniteNumber = (value: number): value is FiniteNumber => {
     return Number.isFinite(value);
 };
 export const identifyVertices = (complex: CWComplex, cells: Set<AbstractCell>): void => {
+    throw new Error("identifyVertices is deprecated, use identifyCells instead");
+    const indices = Array.from(cells).map(c => c.index);
+    const elements = complex.cells[0].filter(v => indices.includes(v.index));
     // select a representative vertex.Create a new complex in which all the vertices are identified with the representative vertex.
-    const elements = [...cells];
+    // const elements = [...cells];
     if (elements.length === 0) return;
     let leastIndex = Infinity;
     let rep = null;
@@ -712,52 +739,117 @@ export const madeWithGivenVertices = (face: AbstractCell, vertices: AbstractVert
 }
 
 export const identifyEdges = (complex: CWComplex, cells: Set<AbstractCell>, newName?: string): void => {
-    const indices = Array.from(cells).map(c => c.index);
-    const representative = complex.cells[1].find(e => indices.some(index => index == e.index))!;
-    const [startIndex, endIndex] = representative.attachingMap.map(v => v.index);
-    // check for starts all the same. If not, identify starts.
-    const allBounds = indices.map(index => {
-        const edge = complex.cells[1].find(e => e.index === index)!;
-        return edge.attachingMap.map(v => v);
-    });
-    console.log("IDENTIFY");
-    const allStarts = allBounds.map(([start, end]) => start);
-    const allEnds = allBounds.map(([start, end]) => end);
-
-    const maxStartIndex = Math.max(...allStarts.map(v => v.index));
-    const minStartIndex = Math.min(...allStarts.map(v => v.index));
-    const maxEndIndex = Math.max(...allEnds.map(v => v.index));
-    const minEndIndex = Math.min(...allEnds.map(v => v.index));
-
-    if (minStartIndex <= maxEndIndex) {
-        // identify all from range maxStart to minEndIndex
-        const vertices = complex.cells[0].filter(v => v.index <= maxStartIndex && v.index >= minEndIndex);
-        identifyVertices(complex, new Set(vertices));
-    } else {
-        // they are separate, identify from maxStart to minStart and also maxEnd to minEnd.
-        const set1 = complex.cells[0].filter(v => v.index <= maxStartIndex && v.index >= minStartIndex);
-        const set2 = complex.cells[0].filter(v => v.index <= maxEndIndex && v.index >= minEndIndex);
-        identifyVertices(complex, new Set(set1));
-        identifyVertices(complex, new Set(set2));
-    }
-    // if (!allEnds.every(end => end.index === endIndex)) {
-    //     identifyVertices(complex, new Set(allEnds));
-    // }
-    // if (!allStarts.every(start => start.index === startIndex)) {
-    //     identifyVertices(complex, new Set(allStarts));
-    // }
-
-    const { id, name: name_, index } = representative;
-    const name = newName ?? name_;
-    const allEdges = complex.cells[1];
-    allEdges.forEach(e => {
-        if (indices.some(index => index == e.index)) {
-            e.index = index;
-            e.name = name;
+    // const indices = Array.from(cells).map(c => c.index);
+    const edges = complex.cells[1];
+    if (edges.length === 0) return;
+    let leastIndex = Infinity;
+    let representative: AbstractCell | null = null;
+    for (let cell of cells) {
+        if (cell.attachingMap[0].index < leastIndex) {
+            leastIndex = cell.index;
+            representative = cell;
         }
-    });
-    complex.reindex();
+    }
+    // const representative = complex.cells[1].find(e => indices.some(index => index == e.index))!;
+    // to be rewritten since its totally wrong
+
 };
+
+export const identifyCells = (complex: CWComplex, cells: Set<AbstractCell>, rename: boolean, newName?: string): void => {
+    // a fully general algorithm. We need to ensure the delta complex structure is preserved.
+    // when the order doesn't seem like it is preserved, until it is, identify needed vertices
+    // const elements = [...cells];
+    const cellArray = Array.from(cells);
+    const d = cellArray[0].dimension;
+    const indices = cellArray.map(c => c.index);
+    const elements = complex.cells[d].filter(v => indices.includes(v.index));
+    const numVertices = complex.cells[0].length;
+    if (!elements.every(c => c.dimension === d)) {
+        throw new Error("Cannot identify cells of different dimensions");
+    } 
+ 
+    const verticesBySubindex: AbstractVertex[][] = Array(d  + 1).fill(0).map(() => []);
+    const minAtSubindex = Array(d + 1).fill(Infinity);
+    const minCells = Array(d + 1).fill(null) as (AbstractCell | null)[];
+    const maxAtSubindex = Array(d + 1).fill(-Infinity);
+    const indexMap = Array(d).fill(0).map((_, i) => i); // begin as identity
+    let representative: AbstractCell | null = null;
+    elements.forEach(cell => {
+        const vertices = cell.vertices;
+
+        if (!representative) representative = cell;
+        if (cell.vertices[0].index < representative.vertices[0].index) {
+            representative = cell;
+        }
+        if (vertices.length !== d + 1) {
+            throw new Error("Cannot identify non-simplicial cells");
+        }
+        vertices.forEach((v, i) => {
+            verticesBySubindex[i].push(v);
+            if (v.index < minAtSubindex[i]) {
+                minAtSubindex[i] = v.index;
+                minCells[i] = v;
+            }
+            if (v.index > maxAtSubindex[i]) {
+                maxAtSubindex[i] = v.index;
+            }
+        });
+    }); 
+
+    for (let i = 0; i <= d; i++) {
+        for (let j = i + 1; j <= d; j++) {
+            if (maxAtSubindex[i] >= minAtSubindex[j]) {
+                minAtSubindex[j] = minAtSubindex[i];
+                minCells[j] = minCells[i];
+                maxAtSubindex[i] = maxAtSubindex[j];
+                indexMap[j] = i;
+            }
+        }
+    }
+
+    for (let i = 0; i <= d; i++) {
+        const vertices = verticesBySubindex[i];
+        if (vertices.length === 0) continue;
+       
+        // vertices.forEach(v => {
+        //     v.index = minAtSubindex[i];
+        //     if (rename) {
+        //         v.name = minCells[i].name
+        //         if (newName) v.name = newName;
+        //     }
+        // });
+    }
+    assignFromClosed(complex, representative!, elements, rename);
+    complex.reindex();
+    console.log("verticesBySubindex", verticesBySubindex);
+}
+
+const assignFrom = (complex: CWComplex, from: AbstractCell, to: AbstractCell[],  rename = true) => {
+    to.forEach(t => {
+        t.index = from.index;
+        if (rename) t.name = from.name;
+    });
+}
+const assignFromClosed = (complex: CWComplex,  from: AbstractCell, to: AbstractCell[], rename = true) => {
+    assignFrom(complex, from, to, rename);
+    const numFaces = from.attachingMap.length;
+    for (let i = 0; i < numFaces; i ++) {
+        const someFaces = to.map(t => t.attachingMap[i]);
+        const indices = someFaces.map(c => c.index);
+        const d = from.dimension - 1;
+        const faces = complex.cells[d].filter(v => indices.includes(v.index));
+        if (true || i % 2 == 0) {
+            assignFromClosed(complex, from.attachingMap[i], faces, rename);
+        } else {
+            assignFrom(complex, from.attachingMap[i], faces, rename);
+        }
+    }
+    // const face1s = to.map(t => t.attachingMap[0]);
+    // const face2s = to.map(t => t.attachingMap[1]);
+    // assignFrom(from.attachingMap[0], face1s);
+    // assignFrom(from.attachingMap[1], face2s);
+}
+
 
 export const getCellsByLayer = (complex: CWComplex): AbstractCell[][] => {
     return [0, 1, 2, 3, 4].map(dim => {
@@ -812,31 +904,40 @@ const toLabeledMatrix = function(complex: CWComplex, cells: AbstractCell[]): Lab
     }
 
     const targetDimension = cells[0].dimension - 1;
-
     //  height: The number of unique indices in all complex for the target dimension
     // width: the number of unique indices in the cells list.
     const dim = cells[0].dimension - 1;
-    const allCells = complex.cells[dim];
+    const allCells = [...complex.cells[dim]];
+    allCells.sort((c1, c2) => c1.name.localeCompare(c2.name));
     // get all the boundaries, and find the max index.
-    const ins = [...new Set(cells.flatMap(cell => cell.index))];
+    const ins = [...new Set(cells.map(cell => cell.index))];
     const width = ins.length;
     const outs = [...new Set(allCells.flatMap(cell => cell.index))];
     const height = outs.length;
+    const outsInverse = Array(height).fill(0);
+    outs.forEach((index, i) => {
+        outsInverse[index] = i;
+    });
     if (ins.some(i => i >= width)) {
         console.log({ins, width});
         throw new Error("Ins has indices greater than height");
     } 
     if (outs.some(i => i >= height)) {
+        debugger;
         console.log({outs, height});
         throw new Error("Outs has indices greater than width");
     }
     console.log("Width", width, "Height", height);
     const matrix = createMatrix(height, width);
-    for (let cell of cells) {
+    for (let i = 0; i < cells.length; i++) {
+        const cell = cells[i];
         const boundary = getBoundary(complex, [{ dimension: cell.dimension, index: cell.index, sign: 1 }]);
-        for (let { index, sign } of boundary) {
+        // for (let { index, sign } of boundary) {
+        for (let j = 0; j < boundary.length; j++) {
+            const { index, sign } = boundary[j];
             try {
-                matrix[index][cell.index] = sign;
+                const row = outsInverse[index];
+                matrix[row][i] = sign;
             } catch (e) {
                 console.log("Error", e);
             }
@@ -871,6 +972,34 @@ export const toLabeledMatrices = function(complex: CWComplex): LabeledMatrix[]  
     return matrices;
 }
 
+export const toNamedMatrix  = function(complex: CWComplex, cells: AbstractCell[]): NamedMatrix {
+    const labeled = toLabeledMatrix(complex, cells);
+    // get the names by ID.
+    const ins = labeled.ins.map(index => {
+        const cell = getCells(complex, cells[0].dimension, index)[0];
+        return cell.name;
+    });
+    const outs = labeled.outs.map(index => {
+        const cell = getCells(complex, cells[0].dimension - 1, index)[0];
+        return cell.name;
+    });
+    return {
+        matrix: labeled.matrix,
+        ins, outs
+    }
+}
+
+export const toNamedMatrices = function(complex: CWComplex): NamedMatrix[]  {
+    const [vertices, ...cellsLists] = getCellsByLayer(complex);
+    cellsLists.forEach((cells, i) => {
+        cells.sort((c1, c2) => c1.name.localeCompare(c2.name));
+    })
+    const matrices = cellsLists.map((cells, i) => {
+        return toNamedMatrix(complex, cells);
+
+    });
+    return matrices;
+}
 
 const addCell = function(complex: CWComplex, cell: AbstractCell): void {
     // const newComplex = { ...complex };

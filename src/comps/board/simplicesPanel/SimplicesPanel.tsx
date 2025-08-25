@@ -4,6 +4,7 @@ import { CWComplex, getBoundary, printChain } from "../../../math/CWComplex";
 import SimplexData from "./SimplexData";
 import styles from './SimplicesPanel.module.css';
 import { CWComplexStateEditor } from "../../../hooks/useCWComplexEditor";
+import { useControls } from "leva";
 type SimplicesPanelProps = {
     // complex: CWComplex;
     complexEditor: CWComplexStateEditor;
@@ -26,12 +27,14 @@ const SimplicesPanel = ({
      complexEditor, selectionKey
     }: SimplicesPanelProps) => {
         // debugger;
-    //const { complex, selectedKeys, selectRep, unselectRep } = complexEditor;
-    // const [vertices, edges, faces, balls] = complexEditor.cells;
-    // const cells = [...complex.cells[0], ...complex.cells[1], ...complex.cells[2], ...complex.cells[3]];
+
+    const [ { showIdentifiedCells}, set ] = useControls(() => ({
+        showIdentifiedCells: true
+    }));
     const [vertices, edges, faces, balls] = [0, 1, 2, 3].map(dim => {
         const allCells = complexEditor.cells[dim];
         // return unique by index
+        if (showIdentifiedCells) return allCells;
         return allCells.filter((cell, i, arr) => arr.findIndex(c => c.index === cell.index) === i);
     });
     // no buttons, just click the rows
@@ -46,13 +49,13 @@ const SimplicesPanel = ({
         // don't use .has because it compared by identity not contents
         if (cellIsSelected) {
             console.notify("Unselecting")
-            complexEditor.deselectRep(cell);
+            complexEditor.deselectRep(cell.key);
             // unselectRep(cell.key);
         } else {
             complexEditor.selectRep(cell.key);
         }
     }
-   
+//    const [viewMode, setViewMode] = useState<"index" | "id">("id");
     const totalNumCells = vertices.length + edges.length + faces.length + balls.length;
     const MAX_CELLS_BEFORE_SPLIT = 18;
     const [selectedDim, setSelectedDim] = useState<number>(0);
@@ -62,8 +65,34 @@ const SimplicesPanel = ({
         : balls.length === 0 ? 2
         : 3;
     const doSplit = totalNumCells > MAX_CELLS_BEFORE_SPLIT;
+    const sliderPinLeft = !showIdentifiedCells ? "0" : "calc(100% - 16px)";
+
     return (
         <div className={styles.panel}>
+            <div className={styles.header} style={{ height: "30px", border: "1px solid red", padding: '5px', marginBottom: '10px', display: "flex", }}>
+                    <div>Index</div>
+                    <div style={{
+                        width: "50px", height: "100%",
+                        border: "1px solid black", backgroundColor: showIdentifiedCells ? "var(--selected-bg)" : "var(--unselected-bg)",
+                        transition: "background-color 0.15s",
+                        left: "calc(100% - 50px)",
+                        
+                        
+                        
+                    }}
+                    onClick={() => { set({ showIdentifiedCells: !showIdentifiedCells }) } }
+                    >
+                        <div style={{
+                            height: "100%",
+                            aspectRatio: "1",
+                            left: sliderPinLeft,
+                            position: "relative",
+                            backgroundColor: showIdentifiedCells ? "var(--selected-fg)" : "var(--unselected-fg)",
+                            transition: "left 0.15s, background-color 0.15s"
+                        }} />
+                    </div>
+                            <div>ID</div>
+            </div>
             <div className={styles.table}>
 
                     {doSplit ? <>
@@ -91,6 +120,7 @@ const SimplicesPanel = ({
                     ))}
 
             </div>
+            {`(${doSplit ? [vertices, edges, faces, balls][selectedDim].length : totalNumCells} cells)`}
             {/* <table cellSpacing={0} cellPadding={2} className={styles.table}>
                 <thead>
                     <tr>

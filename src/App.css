@@ -17,6 +17,11 @@
   /* Board */
   --board-color: white;
   --board-opacity: 0.5;
+
+  --vertex-name-opacity: 1;
+  --edge-name-opacity: 1;
+  --face-name-opacity: 1;
+  
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 

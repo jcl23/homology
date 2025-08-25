@@ -4,7 +4,7 @@ import React, { useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 
 // Create an arrow texture
-const makeArrowGeometry = (length, width = 0.6, height = 0.3, thickness = 0.07) => {
+const makeArrowGeometry = (length, showArrows, width = 0.6, height = 0.3, thickness = 0.07) => {
   // Create arrow shape (outer triangle and inner triangle)
   // debugger;
   const shape = new THREE.Shape();
@@ -36,15 +36,20 @@ const makeArrowGeometry = (length, width = 0.6, height = 0.3, thickness = 0.07) 
   moveTo(-length / 2, 0.5 * width + iw);
   lineTo(-length / 2 - iw, 0.5 * width);
   lineTo(-length / 2, 0.5 * width - iw);
-  lineTo(ap, 0.5 * width - iw);
-  lineTo(ap, 0.5 * width - aw);
-  lineTo(ap + aw - iw, 0.5 * width - iw);
+  if (showArrows) {
+    lineTo(ap, 0.5 * width - iw);
+    lineTo(ap, 0.5 * width - aw);
+    lineTo(ap + aw - iw, 0.5 * width - iw);
+  }
   lineTo(length / 2, 0.5 * width - iw);
   lineTo(length / 2 + iw, 0.5 * width);
   lineTo(length / 2, 0.5 * width + iw);
-  lineTo(ap + aw - iw, 0.5 * width + iw);
-  lineTo(ap + 0, 0.5 * width + aw);
-  lineTo(ap + 0, 0.5 * width + iw);
+  if (showArrows) {
+
+    lineTo(ap + aw - iw, 0.5 * width + iw);
+    lineTo(ap + 0, 0.5 * width + aw);
+    lineTo(ap + 0, 0.5 * width + iw);
+  }
   
  
   // shape.holes.push(hole);
@@ -81,6 +86,7 @@ export interface EdgeArrowProps {
   camera?: THREE.Camera;
   object: THREE.Mesh;
   aspectRatio?: number;
+  opacity?: number;
 }
 const computedStyles = getComputedStyle(document.documentElement);
 const unselectedFg = computedStyles.getPropertyValue("--unselected-fg").trim();
@@ -100,7 +106,9 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
   scale = 0.5,
   selected = false,
   object,
-  aspectRatio
+  aspectRatio,
+  opacity = 1,
+  showArrows = true
 }) => {
   const { camera } = useThree();
   const spriteRef = useRef<THREE.Sprite>(null);
@@ -166,7 +174,7 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
     const v2 = camera.position.clone().sub(center);
     const angleDist = v1.angleTo(v2);
     const scale = 670 / camera.zoom; // Adjust scale based on distance from camera
-    sprite.geometry = makeArrowGeometry(lengthProj * scale);
+    sprite.geometry = makeArrowGeometry(lengthProj * scale, showArrows);
 
     sprite.material.rotation = angle;
 
@@ -192,6 +200,7 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
         //   depthTest={true}
         depthWrite={false}
         color={color}
+        opacity={opacity}
       />
     </sprite>
   );

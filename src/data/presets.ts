@@ -5,51 +5,10 @@ import { CWComplex, getStartStep  } from "../math/CWComplex";
 
 
 export type Preset = (editor: CWComplexStateEditor) => void;
-// const defaultPreset: Preset = () => ({
-//     history: [],
-//     complex: new CWComplex,
-//     selectedKeys: undefined,
-//     lastSelect: {
-//         lastClickedDepth: 0,
-//         cellList: ""
-//     },
-//     meta: {
-//         name: "New Complex",
-//         description: "",
-//         author: "",
-//         date: ""
-//     }
-// });
 
 
-
-// const T2: () => CWComplex = () => {
-//     const v1 = { id: "v1", name: "v1", dimension: 0, index: 0, point: [0, 0, 0], attachingMap: [] };
-//     const v2 = { id: "v2", name: "v2", dimension: 0, index: 1, point: [1, 0, 1], attachingMap: [] };
-//     const v3 = { id: "v3", name: "v3", dimension: 0, index: 2, point: [1, 0, 0], attachingMap: [] };
-//     const v4 = { id: "v4", name: "v4", dimension: 0, index: 3, point: [0, 0, 1], attachingMap: [] };
-//     const e1 = { id: "e1", index: 0, dimension: 1, name: "e1", attachingMap: [v3, v1] };
-//     const e2 = { id: "e2", index: 1, dimension: 1, name: "e2", attachingMap: [v3, v2] };
-//     const e3 = { id: "e3", index: 2, dimension: 1, name: "e3", attachingMap: [v4, v1] };
-//     const e4 = { id: "e4", index: 3, dimension: 1, name: "e4", attachingMap: [v4, v2] };
-//     const e5 = { id: "e5", index: 4, dimension: 1, name: "e5", attachingMap: [v4, v3] };
-//     const f1 = { id: "f1", index: 0, dimension: 2, name: "f1", attachingMap: [e1, e3, e5] };
-//     const f2 = { id: "f2", index: 1, dimension: 2, name: "f2", attachingMap: [e2, e4, e5] };
-//     return {
-//         cells: {
-//             0: [v1, v2, v3, v4],
-//             1: [e1, e2, e3, e4, e5],
-//             2: [f1, f2],
-//             3: []
-//         }
-//     };
-// }
-
-
-// }
-
-const angled = (a: number, r: number): [number, number, number] => {
-    return [r * Math.cos(Math.PI * 2 * a), 0, r * Math.sin(Math.PI * 2 * a)];
+const angled = (a: number, r: number, y = 0): [number, number, number] => {
+    return [r * Math.cos(Math.PI * 2 * a), y, r * Math.sin(Math.PI * 2 * a)];
 }
 export const Tetra: Preset = (editor: CWComplexStateEditor) => {
     editor.setMeta({ 
@@ -64,10 +23,10 @@ export const Tetra: Preset = (editor: CWComplexStateEditor) => {
     editor.addCell();
     editor.addCell();
 
-    editor.rename("acd", "B");
-    editor.rename("bcd", "A");
-    editor.rename("abd", "C");
-    editor.rename("abc", "D");
+    editor.rename("a,c,d", "B");
+    editor.rename("b,c,d", "A");
+    editor.rename("a,b,d", "C");
+    editor.rename("a,b,c", "D");
     editor.deselectAll();
 
 }
@@ -84,13 +43,13 @@ export const KleinBottle: Preset = (editor: CWComplexStateEditor) => {
     editor.deselectAll();
     editor.selectRep("1 4");
     editor.deleteCells();
-    editor.identifyNamedCells(["ab", "cd"]);
-    editor.identifyNamedCells(["ad", "bc"]);
-    editor.rename("ab", "f");
-    editor.rename("ad", "g");
-    editor.rename("ac", "h");
-    editor.rename("acd", "A");
-    editor.rename("abc", "B");
+    editor.identifyNamedCells(["a,b", "c,d"]);
+    editor.identifyNamedCells(["a,d", "b,c"]);
+    editor.rename("a,b", "f");
+    editor.rename("a,d", "g");
+    editor.rename("a,c", "h");
+    editor.rename("a,c,d", "A");
+    editor.rename("a,b,c", "B");
     editor.deselectAll();
 
     // editor.identify();
@@ -114,13 +73,13 @@ export const RP2: Preset = (editor: CWComplexStateEditor) => {
     editor.deselectAll();
     editor.selectRep("1 0");
     editor.deleteCells();
-    editor.identifyNamedCells(["ad", "bc"]);
-    editor.identifyNamedCells(["ac", "bd"]);
-    editor.rename("ad", "f");
-    editor.rename("ac", "g");
-    editor.rename("cd", "h");
-    editor.rename("acd", "A");
-    editor.rename("bcd", "B");
+    editor.identifyNamedCells(["a,d", "b,c"]);
+    editor.identifyNamedCells(["a,c", "b,d"]);
+    // editor.rename("ad", "f");
+    // editor.rename("ac", "g");
+    // editor.rename("cd", "h");
+    // editor.rename("acd", "A");
+    // editor.rename("bcd", "B");
 
 }
 
@@ -146,8 +105,8 @@ export const Sphere: Preset = (editor: CWComplexStateEditor) => {
     editor.selectRep("1 4");
     editor.identify();  
     editor.deselectAll();
-    editor.rename("abc", "A");
-    editor.rename("adc", "B");
+    editor.rename("a,b,c", "A");
+    editor.rename("a,d,c", "B");
     
 }
 
@@ -157,11 +116,12 @@ export const KleinBottle2: Preset = (editor: CWComplexStateEditor) => {
         editor.setMeta({ name: "Klein Bottle ($K= \\Delta^3/\\sim$)" , 
         description: "Hatcher 2.1.2" 
         });
-
+    editor.selectAll();
+    editor.addCell();
 
     editor.deselectAll();
-    editor.identifyNamedCells(["ab", "bd"]);
-    editor.identifyNamedCells(["ac", "cd"]);
+    editor.identifyNamedCells(["a,b", "b,d"]);
+    editor.identifyNamedCells(["a,c", "c,d"]);
     editor.deselectAll();
 
 }
@@ -192,10 +152,10 @@ export const H216: Preset = (editor: CWComplexStateEditor) => {
         editor.selectRep(`0 ${i*3}, 0 ${i*3+1}, 0 ${i*3+2}`);
         editor.addCell();
         editor.addCell();
-        editor.rename(`${i}0${i}1`, `${i}|01`);
-        editor.rename(`${i}0${i}2`, `${i}|02`);
-        editor.rename(`${i}1${i}2`, `${i}|12`);
-        editor.rename(`${i}0${i}1${i}2`, `A${i}`);
+        editor.rename(`${i}0,${i}1`, `${i}|01`);
+        editor.rename(`${i}0,${i}2`, `${i}|02`);
+        editor.rename(`${i}1,${i}2`, `${i}|12`);
+        editor.rename(`${i}0,${i}1,${i}2`, `A${i}`);
         editor.deselectAll();
     }
     editor.identifyNamedCells(["0|01", "0|02", "0|12"]);
@@ -203,10 +163,62 @@ export const H216: Preset = (editor: CWComplexStateEditor) => {
         editor.identifyNamedCells([`${i}|01`, `${i}|12`]);
         editor.identifyNamedCells([`${i}|02`, `${i-1}|01`]);
     }
-    editor.renameMany(Array(c).fill(0).map((_, i) => [`${i}|01`, `e${i}`]))
+    editor.renameMany(Array(c).fill(0).map((_, i) => [`${i}|01`, `e_${i}`]))
     editor.rename("00", 'v');
 }
-        
+export const LensSpace: Preset = (editor: CWComplexStateEditor) => {
+    editor.setMeta({ name: "Lens Space" , description: "Hatcher 2.1.8"  });
+    const n = 6;
+    for (let i = 0; i < n; i++) {
+        editor.addVertex(angled(i / n, 2, 2), `${i}`);
+    }
+    
+    editor.selectAll();
+    // editor.deselectRep("0 0");
+    editor.identify(false);
+    editor.deselectAll();
+    const a = editor.addVertex([0, 0, 0], "a");
+    const b = editor.addVertex([0, 4, 0], "b");
+
+
+    editor.selectRep(`0 ${n}, 0 ${n + 1}`);
+    editor.addCell();
+    editor.deselectAll();
+    editor.selectRep(`0 0`);
+    for (let i = 0; i < n; i++) {
+        editor.deselectRep(`0 ${((i+n-1)%n)+0}`);
+        editor.selectRep(`0 ${((i+1)%n)+0}`);
+        editor.addCell();
+    }
+    editor.deselectAll();
+    editor.selectRep(`1 0`);
+    for (let i = 0; i < n * 3 - 1; i++) {
+        editor.setSelectedById(`1 0, 1 ${(i % n) + 1}`);
+        editor.addCell();
+        // editor.addCell();
+    }
+
+    editor.deselectAll();
+    const p = (i) => `${i%n},${(i + 1)%n}`; 
+    for (let i = 0; i < n; i++) {
+        editor.identifyNamedCells([`${p(i)},a`, `${p(i + 1)},b`]);
+    }
+    // for (let i = 0; i < n; i++) {
+    //     editor.rename(`${p(i)}a`, `A${i + 1}`);
+    //     editor.rename(`${i}ab`, `B${i + 1}`);
+    // }
+    
+    // for (let i = 0; i < n; i++) {
+    //     editor.rename(`${i}a`, `f${i + 1}`);
+    //     // editor.rename(`${i}ab`, `B${i + 1}`);
+    // }
+    
+    // editor.rename("ab", "p");
+    // editor.rename("10", "b");
+    // editor.rename("0", "v");
+    // editor.rename("a", "w");
+}
+
 export const complexes = {
 
     // K: {

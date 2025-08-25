@@ -28,6 +28,8 @@ style={{ color: 'black', fontFamily: "Helvetica Neue", fontSize: '16px', backgro
     line-height: 12px!important;
     /* border: 2px solid #aaa;    */
     transform: translate(calc(10px - 50%), 2px)!important;
+    opacity: var(--edge-name-opacity);
+
 }
 .label-edge-on {
     background-color: var(--selected-bg);
@@ -60,14 +62,23 @@ style={{ color: 'black', fontFamily: "Helvetica Neue", fontSize: '16px', backgro
     mix-blend-mode: overlay;
     margin: -13px -12px;
     border-radius: 50%;
+    opacity: var(--vertex-name-opacity);
+
 }
 .label-vertex-on {
     background-color: var(--selected-bg);
     color: white;
 }
 .label-face-on {
-    color: white;
+    color: red!important;
+    background: white;
+    opacity: 1!important;
 }
 .label-face {
     transform: translate(-50%, -50%)!important;
+    color: white;
+    font-weight: bold;
+    height: 20px;
+    line-height: 15px;
+    opacity: var(--face-name-opacity);
 }

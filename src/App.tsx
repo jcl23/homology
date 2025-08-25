@@ -22,6 +22,7 @@ import { ComplexSettings } from "./comps/modals/ComplexSettings..tsx";
 import { useThree } from "@react-three/fiber";
 import { Download, FolderOpen } from "@mui/icons-material";
 import { downloadHistory } from "./data/download.ts";
+import { useControls } from "leva";
 
 const MAX_DIM = 3;
 
@@ -63,15 +64,28 @@ function App() {
   useEffect(() => {
     complexEditor.reset();
     preset(complexEditor);
-    complexEditor.deselectAll();
+    // complexEditor.deselectAll();
   }, [preset]);
 
   
   const { mode, selectionKey } = editOptions
   const { nameState, gridStyle } = viewOptions;
 
-
   useKeybindings(setEditOptions, setViewOptions, complexEditor, allowEditing);
+  const { vertexNameOpacity, edgeNameOpacity, faceNameOpacity } = useControls({
+    edgeNameOpacity: { value: 1, min: 0, max: 1 },
+    vertexNameOpacity: { value: 1, min: 0, max: 1 },
+    faceNameOpacity: { value: 1, min: 0, max: 1 },
+  });
+  useEffect(() => {
+    document.documentElement.style.setProperty('--edge-name-opacity', edgeNameOpacity.toString());
+  }, [edgeNameOpacity]);
+  useEffect(() => {
+    document.documentElement.style.setProperty('--vertex-name-opacity', vertexNameOpacity.toString());
+  }, [vertexNameOpacity]);
+  useEffect(() => {
+    document.documentElement.style.setProperty('--face-name-opacity', faceNameOpacity.toString());
+  }, [faceNameOpacity]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -129,7 +143,7 @@ function App() {
               />
             </div>
               <div className={`${styles.lowerPanel} lowerPanel`} key={"COMPLEX"}>
-                  <HomologyPanel complex={complexEditor.currentComplex}  />
+                  <HomologyPanel complex={complexEditor.currentComplex}stepIndex={complexEditor.editorState.history.length - 1} />
               </div>
         </div>
       
@@ -141,6 +155,7 @@ function App() {
           editOptions={editOptions} 
           editComplex={complexEditor}
           complex={complexEditor.currentComplex}
+          stepIndex={complexEditor.editorState.history.length - 1}
           // selectedReps={complexEditor.selected}
         />
         <div className={styles.keybinds}>

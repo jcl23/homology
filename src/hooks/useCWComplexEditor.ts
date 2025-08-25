@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { CWComplex, ComplexMeta, copyStep, getBoundary, getBoundaryOfCell, getVertices, madeWithGivenVertices, retrieveCellsFromSelectedKeys } from "../math/CWComplex";
-import { AbstractCell, Cell, Edge,Vertex } from "../math/classes/cells";
+import { AbstractCell, Cell, Edge,summarize,Vertex } from "../math/classes/cells";
 import { CWComplexEditStep, EditType  } from "../logic/steps";
 import { MAX_DIMENSION, MAX_VERTEX_SELECT} from "../data/configuration";
 import { ThermostatOutlined, ThumbUpSharp } from "@mui/icons-material";
@@ -116,8 +116,8 @@ export class CWComplexStateEditor  {
             } else {
                 return cell.vertices.reduce((acc, v) => {
                     const letter = v.name ?? "a";
-                    return acc + letter;
-                }, "");
+                    return acc + "," + letter;
+                }, "").slice(1);
             } 
             // else {
             //     const d = cell.dimension;
@@ -278,7 +278,7 @@ export class CWComplexStateEditor  {
         });
         
     }
-    identify(): void {
+    identify(renameCells = true): void {
         this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
             if (selectedKeys.size === 0) {
                 console.notify("Select some cells to identify");
@@ -293,15 +293,16 @@ export class CWComplexStateEditor  {
                     const selectedCells = retrieveCellsFromSelectedKeys(c, selectedKeys);
                     
                     const dimension = [...selectedCells][0].dimension;
-                    if (dimension === 0) {
-                        c.identifyVertices(selectedCells);
-                    } else if (dimension === 1) {
-                        c.identifyEdges(selectedCells);
-                    } else if (dimension === 2) {
-                       // c.identifyFaces(selectedCells);
-                    } else {
-                        throw new Error("Cannot identify balls");    
-                    }
+                    c.identifyCells(selectedCells, renameCells);
+                    // if (dimension === 0) {
+                    //     c.identifyVertices(selectedCells);
+                    // } else if (dimension === 1) {
+                    //     c.identifyEdges(selectedCells);
+                    // } else if (dimension === 2) {
+                    //    // c.identifyFaces(selectedCells);
+                    // } else {
+                    //     throw new Error("Cannot identify balls");    
+                    // }
                 }
             };
             if (DEBUG) console.log("NewStep", editStep);
@@ -397,9 +398,10 @@ export class CWComplexStateEditor  {
             };
         });
     }
-    addVertex(position: [number, number, number], name?: string): void {
+    addVertex(position: [number, number, number], name?: string): Vertex {
         if (!name) name = "" + this.makeName(0);
         console.count("addVertex");
+        let vertex: Vertex;
         this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
 
             // const complex = history[history.length - 1].complex;
@@ -408,11 +410,11 @@ export class CWComplexStateEditor  {
                 type: "addVertex",
                 args: [...[position], name], 
                 step: (c: CWComplex) => { 
-                    c.addVertex([...position], name); 
+                    return c.addVertex([...position], name); 
                 },
                 selectedKeys: new Set() 
             };
-            stepData.step(complex);
+            vertex = stepData.step(complex) as Vertex;
             if (DEBUG) console.log("addVertex", complex.size);
             return {
                 history: [...history, stepData],
@@ -422,6 +424,7 @@ export class CWComplexStateEditor  {
                 lastSelect
             };
         });
+        return vertex;
     }
     collapse(): void {
         // TODO
@@ -430,7 +433,9 @@ export class CWComplexStateEditor  {
 
     addCell() {
         const makeName = this.makeName;
+        const newCells:  Cell[] = [];
         this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
+            
             const keyList = [...selectedKeys];
             // use coboundaries to check for shit
             const step = function(complex: CWComplex, selectedKeys?: Set<string>) {
@@ -438,8 +443,10 @@ export class CWComplexStateEditor  {
                 const allCellsList: AbstractCell[] = [...retrieveCellsFromSelectedKeys(complex, selectedKeys)];
           
                 const allVertices = unique(allCellsList.flatMap(getVertices));
+
+        
                 // sort vertices by id
-                allVertices.sort((a, b) => a.id - b.id);
+                 allVertices.sort((a, b) => a.index - b.index);
                 if (allVertices.length > MAX_VERTEX_SELECT) {
                     console.notify("Fill", `Select 2-${MAX_VERTEX_SELECT} vertices to fill.`)
                     // return;
@@ -450,7 +457,8 @@ export class CWComplexStateEditor  {
                 let addMore = true;
                 for (let i = 0; (i < cellDimension) && addMore; i++) {
                     // Get those faces that may be part of the structure via the reverse attaching maps
-                    const existingHigherCells = unique(lowerCells.flatMap(c => c.cob));
+                    const higherCellsNotUnique = lowerCells.flatMap(c => c.cob);
+                    const existingHigherCells = unique(higherCellsNotUnique);
 
                     // Reduce to the set of faces that have all the vertices. These should all be considered
                     // all will be used except for duplicates
@@ -466,7 +474,7 @@ export class CWComplexStateEditor  {
                     // for each point -> for eah face. if the face is not there, add it
                     const higherCells = iterateChoice(allVertices, i + 2).map(function(chosen, j)  {
                         const higherCells = includedHigherCells.filter(f => f.vertices.every(v => chosen.includes(v)));
-                        const hypotheticalSummary = chosen.map(c => c.id).join(", ");
+                        const hypotheticalSummary = summarize(chosen);
                         const face = verticesListMap.get(hypotheticalSummary);
                         
                         if (face) {
@@ -475,10 +483,17 @@ export class CWComplexStateEditor  {
                             addMore = false;
                             const lowerFaces = chosen.map((_, i) => {
                                 const faceVertices = chosen.filter((_, j) => i !== j);
-                                const faceSummary = faceVertices.map(v => v.id).join(", ");
+                                const faceSummary = summarize(faceVertices);
                                 return lowerCells.find(c => c.vertexSummary === faceSummary)!;
                             });
-                            return complex.add(lowerFaces.map(f => f.key), i + 1, makeName);
+
+                            const cell = complex.add(lowerFaces.map(f => f.key), i + 1, makeName);
+                            if (cell.vertexSummary == "51") {
+                             
+                                cell.vertices
+                            }
+                            newCells.push(cell);
+                            return cell;
                         }
                     });
                    
@@ -514,8 +529,7 @@ export class CWComplexStateEditor  {
                 lastSelect
             };
         });
-    
-
+        return newCells;
     }
 
     deleteCells() {
@@ -561,8 +575,33 @@ export class CWComplexStateEditor  {
             }
         });
     }
+    setSelected = (newSelected: AbstractCell[]): void => {
+        const selectedKeys = new Set(newSelected.map(c => c.key));
+        this.setEditorState(({history, complex, meta, lastSelect}: EditorState) => {
+            // this.selected_ = transferSelected(complex, newSelected);
+            return {
+                history: history,
+                complex: complex,
+                selectedKeys,
+                meta,
+                lastSelect
+            }
+        });
+    }
+    setSelectedById = (newSelected: string): void => {
+        const selectedKeys = new Set(newSelected.split(",").map(s => s.trim()).filter(s => s.length > 0));
+        this.setEditorState(({history, complex, meta, lastSelect}: EditorState) => {
+            // this.selected_ = transferSelected(complex, newSelected);
+            return {
+                history: history,
+                complex: complex,
+                selectedKeys,
+                meta,
+                lastSelect
+            }
+        });
+    }
     selectByName = (name: string): void => {
-        debugger;
 
 
         this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
@@ -584,11 +623,11 @@ export class CWComplexStateEditor  {
             }
         });
     }
-    deselectRep(cell: AbstractCell): void {
+    deselectRep(key: string): void {
         this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
 
             const newSelected = new Set(selectedKeys);
-            newSelected.delete(cell.key);
+            newSelected.delete(key);
             // this.selected_ = transferSelected(complex, newSelected);
             return {
                 history: history,
@@ -654,11 +693,16 @@ export class CWComplexStateEditor  {
     toggleRepSelection(key: string): void { 
         this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
             const newSelected = new Set(selectedKeys);
-            //const key = cell.key;
+            const cell = this.getCell(key);
+
+            const dimension = +key.split(" ")[0];
+            const rest = complex.cells[dimension].filter(c => c.index == cell?.index);
             if (newSelected.has(key)) {
                 newSelected.delete(key);
+                rest.forEach(c => newSelected.delete(c.key));
             } else {
                 newSelected.add(key);
+                rest.forEach(c => newSelected.add(c.key));
             }
             // this.selected_ = transferSelected(complex, newSelected);
             return {

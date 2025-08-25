@@ -1,5 +1,5 @@
 
-import { Preset, Tetra, KleinBottle, RP2, Sphere, KleinBottle2, TriangleParachute, H216 } from "./presets";
+import { Preset, Tetra, KleinBottle, RP2, Sphere, KleinBottle2, TriangleParachute, H216, LensSpace } from "./presets";
 
 export type Example = {
     name: string;
@@ -50,5 +50,11 @@ export const examples: Example[] = [
         description: "Hatcher 1.2.6 for n=5",
         image: "",
         setter: H216
+    },
+    {
+        name: "Lens Space",
+        description: "Hatcher 2.1.8",
+        image: "",
+        setter: LensSpace
     }
 ]
