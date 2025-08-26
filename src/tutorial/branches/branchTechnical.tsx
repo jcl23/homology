@@ -12,6 +12,13 @@ export default  [
         content: 'This is the area where you can display and interact with your space.',
     },
     {
+        target: '.button-reset',
+        pass: ({ complexEditor }: TutorialStepConditionProps) => {
+            return complexEditor.cells.every(cell => cell.length === 0);
+        },
+        content: 'Press "r" to reset the canvas. ',
+    },
+    {
         target: '.button-add',
         pass: ({ editOptions }: TutorialStepConditionProps) => {
             return editOptions.mode === "add";
@@ -36,7 +43,7 @@ export default  [
         // select all the points
         target: '.canvas',
         pass: ({ complexEditor }: TutorialStepConditionProps) => {
-            return complexEditor.editorState.selectedKeys.size === 3;
+            return complexEditor.editorState.selectedKeys.length === 3;
         },
         content: "Click (or use Ctrl+A) select the vertices you just added.",
     },
@@ -78,18 +85,18 @@ export default  [
     {
         target: '.button-add, .canvas',
         pass: ({  complexEditor }: TutorialStepConditionProps) => {
-            const { editorState } = complexEditor;
+            const { editorState, selected } = complexEditor;
             if (editorState.complex.cells[0].length <= 3) return false;
             
             // original triangle
-            const triangleVertices = editorState.complex.cells[0].slice(0, 3);//s.map((v: Vertex) => v.point);
+            const triangleVertices= editorState.complex.cells[0].slice(0, 3) as AbstractVertex[] ;//s.map((v: Vertex) => v.point);
             
             const newPoint = editorState.complex.cells[0][3] as AbstractVertex;
             
             console.log("isInsideTriangle",newPoint.point);
-            return isInsideTriangle(newPoint, triangleVertices);
+            return isInsideTriangle(newPoint, triangleVertices) && selected.has(newPoint);
         },
-        content: 'Add a new vertex inside the triangle you created.',
+        content: 'Add a new vertex inside the triangle you created, and select it.',
     },
     {
         target: '.button-move,.canvas',
@@ -103,16 +110,16 @@ export default  [
         target: '.button-up, .canvas',
         pass: ({ complexEditor }: TutorialStepConditionProps) => {
             // Check if any vertex has been raised (z coordinate > 0)
-            return complexEditor.editorState.complex.cells[0].some((vertex: AbstractVertex) => vertex.point[1] > 0.01);
+            return complexEditor.editorState.complex.cells[0].some((vertex: AbstractVertex) => vertex.point[1] > 2);
         },
-        content: 'Select the new vertex. Press the up arrow or key to raise it above the plane.',
+        content: 'Press the up arrow or key a few times to raise it above the plane.',
     },
     {
         target: '.canvas,.ui-panel',
         box: '',
         pass: ({ complexEditor }: TutorialStepConditionProps) => {
             // Assuming the UI is considered "selected" when all vertices are selected
-            return complexEditor.editorState.selectedKeys.size === 7;
+            return complexEditor.editorState.selectedKeys.length === 7;
         },
         content: 'Return to select mode and select all vertices. Alternatively, you can use Ctrl+A to select all.',
     },
@@ -123,11 +130,11 @@ export default  [
             // Assuming the UI is considered "selected" when all vertices are selected
             return complexEditor.editorState.complex.cells[1].length === 6;
         },
-        content: 'Pressing fill will add in new cells of the lowest "missing" dimension in the selection.',
+        content: 'Pressing fill will add in new cells of the lowest "missing" dimension (1) in the selection.',
     },
     {
         target: '.canvas, .button-fill',
-        content: <><>In dimension 2, <br /> Press fill again to add 2-simplices.</></>,
+        content: <>Press fill again to add the 2 dimension simplices.</>,
         // content: <><>Since there were missing edges between vertices, all pairs of points that didn't have an edge between them, got one.<br /> Press fill again to add 2-simplices.</></>,
         pass: ({ complexEditor }: TutorialStepConditionProps) => {
             return complexEditor.editorState.complex.cells[2].length === 4;

@@ -7,7 +7,7 @@ export const CameraUpdater = function() {
     useEffect(() => {
         // Update aspect ratio on window resize
         const handleResize = () => {
-            camera.aspect = size.width / size.height;
+            // camera.aspect = size.width / size.height;
             camera.updateProjectionMatrix();
         };
 

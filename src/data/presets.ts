@@ -1,7 +1,7 @@
 import { texToUnicode } from "../comps/board/Label";
 import { CWComplexStateEditor, EditorState } from "../hooks/useCWComplexEditor";
 import { CWComplexEditStep } from "../logic/steps";
-import { CWComplex, getStartStep  } from "../math/CWComplex";
+import { CWComplex  } from "../math/CWComplex";
 
 
 export type Preset = (editor: CWComplexStateEditor) => void;
@@ -28,7 +28,7 @@ export const Tetra: Preset = (editor: CWComplexStateEditor) => {
     editor.rename("a,b,d", "C");
     editor.rename("a,b,c", "D");
     editor.deselectAll();
-
+    editor.setFreeze();
 }
   
 export const KleinBottle: Preset = (editor: CWComplexStateEditor) => {
@@ -43,14 +43,16 @@ export const KleinBottle: Preset = (editor: CWComplexStateEditor) => {
     editor.deselectAll();
     editor.selectRep("1 4");
     editor.deleteCells();
-    editor.identifyNamedCells(["a,b", "c,d"]);
-    editor.identifyNamedCells(["a,d", "b,c"]);
+    editor.identifyNamedCells(["a,b", "c,d"], true);
+    editor.identifyNamedCells(["a,d", "b,c"], true);
     editor.rename("a,b", "f");
     editor.rename("a,d", "g");
     editor.rename("a,c", "h");
     editor.rename("a,c,d", "A");
     editor.rename("a,b,c", "B");
     editor.deselectAll();
+    editor.setFreeze();
+
 
     // editor.identify();
     // editor.deselectAll();
@@ -73,8 +75,13 @@ export const RP2: Preset = (editor: CWComplexStateEditor) => {
     editor.deselectAll();
     editor.selectRep("1 0");
     editor.deleteCells();
-    editor.identifyNamedCells(["a,d", "b,c"]);
-    editor.identifyNamedCells(["a,c", "b,d"]);
+    editor.identifyNamedCells(["a,d", "b,c"], true, "x");
+    editor.identifyNamedCells(["a,c", "b,d"], true, "y");
+    editor.rename("c,d", "m")
+    editor.setNameByIndex(2, 0, "A");
+    editor.setNameByIndex(2, 1, "B");
+    editor.setFreeze();
+
     // editor.rename("ad", "f");
     // editor.rename("ac", "g");
     // editor.rename("cd", "h");
@@ -107,6 +114,7 @@ export const Sphere: Preset = (editor: CWComplexStateEditor) => {
     editor.deselectAll();
     editor.rename("a,b,c", "A");
     editor.rename("a,d,c", "B");
+    editor.setFreeze();
     
 }
 
@@ -123,6 +131,8 @@ export const KleinBottle2: Preset = (editor: CWComplexStateEditor) => {
     editor.identifyNamedCells(["a,b", "b,d"]);
     editor.identifyNamedCells(["a,c", "c,d"]);
     editor.deselectAll();
+    editor.setFreeze();
+
 
 }
 
@@ -135,6 +145,8 @@ export const TriangleParachute: Preset = (editor: CWComplexStateEditor) => {
     editor.addCell();
     editor.addCell();
     editor.identify();
+    editor.setFreeze();
+
 
 }
 
@@ -165,6 +177,8 @@ export const H216: Preset = (editor: CWComplexStateEditor) => {
     }
     editor.renameMany(Array(c).fill(0).map((_, i) => [`${i}|01`, `e_${i}`]))
     editor.rename("00", 'v');
+    editor.setFreeze();
+
 }
 export const LensSpace: Preset = (editor: CWComplexStateEditor) => {
     editor.setMeta({ name: "Lens Space" , description: "Hatcher 2.1.8"  });
@@ -201,20 +215,23 @@ export const LensSpace: Preset = (editor: CWComplexStateEditor) => {
     editor.deselectAll();
     const p = (i) => `${i%n},${(i + 1)%n}`; 
     for (let i = 0; i < n; i++) {
-        editor.identifyNamedCells([`${p(i)},a`, `${p(i + 1)},b`]);
+        editor.identifyNamedCells([`${p(i)},a`, `${p(i + 1)},b`], true, `A_${i + 1}`);
     }
-    // for (let i = 0; i < n; i++) {
-    //     editor.rename(`${p(i)}a`, `A${i + 1}`);
-    //     editor.rename(`${i}ab`, `B${i + 1}`);
-    // }
+    for (let i = 0; i < n; i++) {
+
+        editor.setNameByIndex(1, i + 2, `f_${i + 1}`);
+        editor.rename(`${i},a,b`, `B_${i + 1}`);
+    }
     
     // for (let i = 0; i < n; i++) {
-    //     editor.rename(`${i}a`, `f${i + 1}`);
+    //     editor.rename(`${i},a`, `f${i + 1}`);
     //     // editor.rename(`${i}ab`, `B${i + 1}`);
     // }
     
-    // editor.rename("ab", "p");
-    // editor.rename("10", "b");
+    editor.rename("a,b", "p");
+    editor.rename("0,5", "b");
+    editor.setFreeze();
+
     // editor.rename("0", "v");
     // editor.rename("a", "w");
 }

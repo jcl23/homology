@@ -1,20 +1,21 @@
-.board {
 
-}
 
 .panelHolder {
     width: min-content;
     display: flex;
     margin: 15px;
     flex-direction: column;
+    border: 1px solid grey;
 }
 
 
 .keybinds {
-    
+    font-family: "Helvetica Neue";
+    display: none;
+    margin-left: 20px!important;
 }
 .keybinds > div {
-    border-width: 1px 0px;
+    /* border-width: 1px 0px; */
     border-color: rgb(173, 173, 173);
     border-style: solid;
     margin: 5px;
@@ -37,11 +38,24 @@
 }
 
 .keybindLabel {
-    font-weight: bold;
-    color: grey;
+    color: #555;
     border: none;
     box-shadow: none;
-    border-width: 1px 0px 0px 1px!important;
+    border-width: 0px;
+    display: flex;
+}
+.keybindLabel > div {
+    font-weight: bold;
+    display: flex;
+    line-height: 0.8;
+    height: calc(100% - 5px);
+    font-size: 14px;
+    padding: 4px 5px;
+    margin-top: 2px;
+    border-radius: 4px;
+    background: #555;
+    color: white;
+    margin-right:5px;
 }
 .keybinds {
     display: flex;

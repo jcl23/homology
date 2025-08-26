@@ -7,7 +7,8 @@ const MyBeacon = forwardRef<HTMLButtonElement, BeaconRenderProps>((props, ref) =
   return <button 
     className={styles.beacon} 
     // ref={ref} 
-{...props}>
+    
+    {...props}>
       Enter Tutorial
     </button>;
 });

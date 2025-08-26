@@ -14,7 +14,6 @@ type CellIdentifier = {
     name?: string; // a human readable name
 }
 type ComplexHistorySetter = React.Dispatch<React.SetStateAction<EditorState>>;
-type SelectedSetter = React.Dispatch<Set<string>>;
 
 const DEBUG = true;
 
@@ -42,7 +41,7 @@ const iterateChoice = <T>(arr: T[], c: number): T[][] => {
     }
     return result;
 }
-const transferSelected = function(complex: CWComplex, selected: Set<string>): Set<AbstractCell> {
+const transferSelected = function(complex: CWComplex, selected: string[]): Set<AbstractCell> {
     // when a new CWComplex is made, the cells are cloned. so they are no longer equal by reference
     const newSelected = new Set<AbstractCell>();
     selected.forEach(cell => {
@@ -69,12 +68,12 @@ export class CWComplexStateEditor  {
         private setEditorState: ComplexHistorySetter,
         public editorState: EditorState,
         private nameMode: "letter" | "number" = "letter",
-        
         // private history: CWComplexEditStep[],
         
     ) { 
         this.setComplex = this.setComplex.bind(this);
         this.getCell = this.getCell.bind(this);
+        this.setEditorState = this.setEditorState.bind(this);
         this.performVertexIdentification = this.performVertexIdentification.bind(this);
         this.performEdgeIdentification = this.performEdgeIdentification.bind(this);
         this.toggleRepSelection = this.toggleRepSelection.bind(this);
@@ -85,8 +84,13 @@ export class CWComplexStateEditor  {
         this.undo = this.undo.bind(this);
         this.reset = this.reset.bind(this);
         this.makeName = this.makeName.bind(this);
+        this.setNameByIndex = this.setNameByIndex.bind(this);
     }
     
+    setFreeze() {
+        this.setEditorState((state) => ({...state, freezeIndex: state.history.length - 1}) );
+    }
+
     get recentlySelected(): LastSelect{
         return this.editorState.lastSelect;
     }
@@ -137,7 +141,7 @@ export class CWComplexStateEditor  {
             while (usedNumbers.has(number)) {
                 number++;
             }
-            return number;
+            return "" + number;
         }
     }
     renameMany(pairs: [string, string][]) {
@@ -153,6 +157,26 @@ export class CWComplexStateEditor  {
                 }
             }
             
+            return {
+                ...state,
+                complex
+            };
+        });
+    }
+    setNameByIndex(dimension: number, index: number, to: string) {
+        
+        // set all of them
+        this.setEditorState(({complex, ...state}) => {
+            const cells = complex.cells[dimension];
+            const cellsWithIndex = cells.filter(c => c.index === index);
+            if (cellsWithIndex.length === 0) {
+                console.notify("No cell found with index " + index + " in dimension " + dimension);
+                return;
+            }
+            // for all the cells with the index, set the name
+            for (const cell of cellsWithIndex) {
+                cell.name = to;
+            }
             return {
                 ...state,
                 complex
@@ -208,92 +232,93 @@ export class CWComplexStateEditor  {
     // }
     setMeta(newMeta: ComplexMeta): void {
         // no edit step, just update the meta
-        this.setEditorState(({history, selectedKeys, complex, lastSelect, meta: oldMeta}: EditorState) => {
+        this.setEditorState((editorState: EditorState) => {
             // apply props of meta argument to existing
-            const meta = { ...oldMeta, ...newMeta };
+            const meta = { ...editorState.meta, ...newMeta };
             return {
-                history,
-                complex,
-                selectedKeys,
+                ...editorState,
                 meta,
-                lastSelect
             };
         });
     }
     reset(): void {
-        this.setEditorState(({  meta, lastSelect}: EditorState) => {
+        this.setEditorState((editorState: EditorState) => {
             return {
+                ...editorState,
                 history: [{ 
                     type: "start", 
-                    step: () => new CWComplex(), 
-                    selectedKeys: new Set(),
+                    step: () => {}, 
+                    selectedKeys: [],
                     args: [],
                 }], 
                 complex: new CWComplex(),
-                selectedKeys: new Set(),
-                meta,
-                lastSelect
+                selectedKeys: [],
+                meta: makeDefaultMeta(),
+                lastSelect: { lastClickedDepth: -1, cellList: "" },
             };
     })};
     setComplex(newComplex: CWComplex): void {
-        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
-                
+        this.setEditorState((editorState: EditorState) => {
+            const { complex, selectedKeys, meta, lastSelect } = editorState;
                 const editStep: CWComplexEditStep = {
                     args: [],
                     type: "start",
                     step: (complex: CWComplex) => {complex.assignFrom(newComplex)},
-                    selectedKeys: new Set()
+                    selectedKeys: []
                 };
                 if (DEBUG) console.log("NewStep", editStep);
                 editStep.step(complex, selectedKeys);
                 return {
+                    ...editorState,
                     history: [editStep],
                     complex: complex,
-                    selectedKeys: new Set(),
+                    selectedKeys: [],
                     meta,
-                    lastSelect
+                    lastSelect: { lastClickedDepth: -1, cellList: ""  }
                 };
             }
         );
     }
-    identifyNamedCells(names: string[]): void {
-        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
+    identifyNamedCells(names: string[], rename: boolean = true, newName?: string): void {
+        this.setEditorState((editorState: EditorState) => {
+            const { history, selectedKeys, complex, meta, lastSelect } = editorState;
             const editStep: CWComplexEditStep = { 
                 args: [],
                 type: "identify",
-                selectedKeys: new Set(selectedKeys),
-                step: (c: CWComplex, selectedKeys?: Set<string>) => { 
-                    c.identifyNamedCells(names);
+                selectedKeys: [...selectedKeys],
+                step: (c: CWComplex, selectedKeys?: string[]) => { 
+                    c.identifyNamedCells(names, rename, newName);
                 }
             };
             if (DEBUG) console.log("NewStep", editStep);
             editStep.step(complex, selectedKeys);
             return {
+                ...editorState,
+
                 history: [...history, editStep],
                 complex: complex,
                 selectedKeys: selectedKeys,
-                meta,
-                lastSelect
             };
         });
         
     }
     identify(renameCells = true): void {
-        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
-            if (selectedKeys.size === 0) {
+        this.setEditorState((editorState: EditorState) => {
+            const { complex, history, selectedKeys } = editorState;
+            if (selectedKeys.length === 0) {
                 console.notify("Select some cells to identify");
-                return { history, complex, selectedKeys, meta, lastSelect };
+                return { ...editorState  };
             }
             
             const editStep: CWComplexEditStep = { 
                 args: [],
                 type: "identify",
-                selectedKeys: new Set(selectedKeys),
-                step: (c: CWComplex, selectedKeys?: Set<string>)  => { 
+                selectedKeys: [...selectedKeys],
+                step: (c: CWComplex, selectedKeys?: string[])  => { 
                     const selectedCells = retrieveCellsFromSelectedKeys(c, selectedKeys);
                     
                     const dimension = [...selectedCells][0].dimension;
-                    c.identifyCells(selectedCells, renameCells);
+                    c.identifyCells(selectedCells, renameCells, selectedCells[0].name);
                     // if (dimension === 0) {
                     //     c.identifyVertices(selectedCells);
                     // } else if (dimension === 1) {
@@ -313,26 +338,26 @@ export class CWComplexStateEditor  {
                 throw new InvalidIdentificationError(complex, e);
             }
             return {
+                ...editorState,
                 history: [...history, editStep],
                 complex: complex,
                 selectedKeys: selectedKeys,
-                meta,
-                lastSelect
             };
         });
     }
     duplicate(): void {
         // Duplicate the selected cells, giving them new IDs and names.
-        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
+        this.setEditorState((editorState: EditorState) => {
             // if (selectedKeys.size === 0) {
             //     console.notify("Select some cells to duplicate");
             //     return { history, complex, selectedKeys, meta, lastSelect };
             // }
+            const { selectedKeys, history, complex } = editorState;
             const editStep: CWComplexEditStep = { 
                 args: [],
                 type: "duplicate",
-                selectedKeys: new Set(selectedKeys),
-                step: (c: CWComplex, selectedKeys?: Set<string>) => { 
+                selectedKeys: [...selectedKeys],
+                step: (c: CWComplex, selectedKeys?: string[]) => { 
                     const selectedCells = retrieveCellsFromSelectedKeys(c, selectedKeys);
                     c.join(c.copy());
                 }
@@ -340,24 +365,25 @@ export class CWComplexStateEditor  {
             if (DEBUG) console.log("NewStep", editStep);
             editStep.step(complex, selectedKeys);
             return {
+                ...editorState,
                 history: [...history, editStep],
                 complex: complex,
                 selectedKeys: selectedKeys,
-                meta,
-                lastSelect
+
             };
         });
     }
 
     performVertexIdentification(): void {
-        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
+        this.setEditorState((editorState: EditorState) => {
             // const selected = retrieveCellsFromSelectedKeys(complex, selectedKeys);
             // complex.performVertexIdentification(selected);
+            const { selectedKeys, complex, history} = editorState;
             const editStep: CWComplexEditStep = { 
                 args: [],
                 type: "identifyVertices",
-                selectedKeys: new Set(selectedKeys),
-                step: (c: CWComplex, selectedKeys?: Set<string>) => { 
+                selectedKeys: [...selectedKeys],
+                step: (c: CWComplex, selectedKeys?: string[]) => { 
                     const selectedCells = retrieveCellsFromSelectedKeys(c, selectedKeys);
                     c?.identifyVertices(selectedCells) }
             };
@@ -365,24 +391,25 @@ export class CWComplexStateEditor  {
             
             editStep.step(complex, selectedKeys);
             return {
+                ...editorState,
                 history: [...history, editStep],
                 complex: complex,
                 selectedKeys: selectedKeys,
-                meta,
-                lastSelect
             };
         });
     }
 
     performEdgeIdentification(): void {
-        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
+        this.setEditorState((editorState: EditorState) => {
+            const { selectedKeys, complex, history} = editorState;
+
             const selected = retrieveCellsFromSelectedKeys(complex, selectedKeys);
             complex.identifyEdges(selected);
             const editStep: CWComplexEditStep = { 
                 args: [],
                 type: "identifyEdges",
-                selectedKeys: new Set(selectedKeys),
-                step: (c: CWComplex, selectedKeys?: Set<string>) => { 
+                selectedKeys: [...selectedKeys],
+                step: (c: CWComplex, selectedKeys?: string[]) => { 
                     const selectedCells = retrieveCellsFromSelectedKeys(c, selectedKeys);
                     c.identifyEdges(selectedCells);
                     c.reindex(); 
@@ -390,38 +417,35 @@ export class CWComplexStateEditor  {
             };
             if (DEBUG) console.log("NewStep", editStep);
             return {
+                ...editorState, 
                 history: [...history, editStep],
                 complex: complex,
                 selectedKeys: selectedKeys,
-                meta,
-                lastSelect
+                
             };
         });
     }
     addVertex(position: [number, number, number], name?: string): Vertex {
-        if (!name) name = "" + this.makeName(0);
+        if (!name) name = "" + this.makeName();
         console.count("addVertex");
         let vertex: Vertex;
-        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
+        this.setEditorState((state: EditorState) => {
 
-            // const complex = history[history.length - 1].complex;
-            // const newComplex = complex.addVertex(position);
+            const { history, selectedKeys, complex, meta, lastSelect } = state;
             const stepData: CWComplexEditStep = { 
                 type: "addVertex",
                 args: [...[position], name], 
                 step: (c: CWComplex) => { 
                     return c.addVertex([...position], name); 
                 },
-                selectedKeys: new Set() 
+                selectedKeys: []
             };
             vertex = stepData.step(complex) as Vertex;
             if (DEBUG) console.log("addVertex", complex.size);
             return {
+                ...state,
                 history: [...history, stepData],
-                complex: complex,
-                selectedKeys: new Set(selectedKeys),
-                meta,
-                lastSelect
+                selectedKeys: [...selectedKeys],
             };
         });
         return vertex;
@@ -434,11 +458,11 @@ export class CWComplexStateEditor  {
     addCell() {
         const makeName = this.makeName;
         const newCells:  Cell[] = [];
-        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
-            
+        this.setEditorState((editorState: EditorState) => {
+            const { history, selectedKeys, complex, meta, lastSelect } = editorState;
             const keyList = [...selectedKeys];
             // use coboundaries to check for shit
-            const step = function(complex: CWComplex, selectedKeys?: Set<string>) {
+            const step = function(complex: CWComplex, selectedKeys?: string[]) {
                 console.count("Performed add cell step")
                 const allCellsList: AbstractCell[] = [...retrieveCellsFromSelectedKeys(complex, selectedKeys)];
           
@@ -505,12 +529,11 @@ export class CWComplexStateEditor  {
                 args: [],
                 step,
                 type: "saturate",
-                selectedKeys: new Set(selectedKeys),
+                selectedKeys: [...selectedKeys],
             }
             
             if (step === null) {
-                console
-                return { history, complex, selectedKeys, meta, lastSelect };
+                return { ...editorState };
             }
             const totalCellCount = complex.numReps;
             step(complex, selectedKeys);
@@ -518,13 +541,14 @@ export class CWComplexStateEditor  {
 
             // if no new cells, don't bother adding a step
             if (totalCellCount === newCellCount) {
-                return { history, complex, selectedKeys, meta, lastSelect };
+                return { history, complex, ...editorState };
             }
 
             return {
+                ...editorState,
                 history: [...history, stepData],
                 complex: complex,
-                selectedKeys: new Set(selectedKeys),
+                selectedKeys: [...selectedKeys],
                 meta,
                 lastSelect
             };
@@ -533,8 +557,10 @@ export class CWComplexStateEditor  {
     }
 
     deleteCells() {
-        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
-            const step = function(complex: CWComplex, selectedKeys?: Set<string>) {
+        this.setEditorState((editorState: EditorState) => {
+            const { selectedKeys, complex, history} = editorState;
+
+            const step = function(complex: CWComplex, selectedKeys?: string[]) {
                 const cells = retrieveCellsFromSelectedKeys(complex, selectedKeys);
                 cells.forEach(c => complex.deleteCell(c));
             };
@@ -546,131 +572,119 @@ export class CWComplexStateEditor  {
             }
             step(complex, selectedKeys);
             return {
+                ...editorState,
                 history: [...history, stepData],
                 complex: complex,
-                selectedKeys: new Set(),
-                meta,
-                lastSelect
+                selectedKeys: [],
             };
         });
     }
     
     
     selectRep = (key: string): void => {
-        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
-            const newSelected = new Set(selectedKeys);
+         this.setEditorState((editorState: EditorState) => {
+            const { selectedKeys } = editorState;
+
+            const newSelected = [...selectedKeys];
             const keys = key.split(",");
             keys.forEach(k => {
-                newSelected.add(k.trim());
+                newSelected.push(k.trim());
             });
             console.notify("Selecting", key);
             // this.selected_ = transferSelected(complex, newSelected);
 
             return {
-                history: history,
-                complex: complex,
+                ...editorState,
                 selectedKeys: newSelected,
-                meta,
-                lastSelect
             }
         });
     }
     setSelected = (newSelected: AbstractCell[]): void => {
-        const selectedKeys = new Set(newSelected.map(c => c.key));
-        this.setEditorState(({history, complex, meta, lastSelect}: EditorState) => {
+        const selectedKeys = newSelected.map(c => c.key);
+        this.setEditorState((editorState: EditorState) => {
             // this.selected_ = transferSelected(complex, newSelected);
             return {
-                history: history,
-                complex: complex,
+                ...editorState,
                 selectedKeys,
-                meta,
-                lastSelect
             }
         });
     }
     setSelectedById = (newSelected: string): void => {
-        const selectedKeys = new Set(newSelected.split(",").map(s => s.trim()).filter(s => s.length > 0));
-        this.setEditorState(({history, complex, meta, lastSelect}: EditorState) => {
+        const selectedKeys = newSelected.split(",").map(s => s.trim()).filter(s => s.length > 0);
+        this.setEditorState((editorState: EditorState) => {
             // this.selected_ = transferSelected(complex, newSelected);
             return {
-                history: history,
-                complex: complex,
+                ...editorState,
                 selectedKeys,
-                meta,
-                lastSelect
             }
         });
     }
     selectByName = (name: string): void => {
 
 
-        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
+        this.setEditorState((editorState: EditorState) => {
+            const { complex, selectedKeys } = editorState;
             const reps = complex.getRepsByName(name);
             if (reps.length === 0) {
                 console.notify(`No cells with name '${name}' found`);
                 return;
             }
                 
-            const newSelected = new Set(selectedKeys);
-            reps.forEach(rep => newSelected.add(rep.key));
+            const newSelected = [...selectedKeys];
+            reps.forEach(rep => newSelected.push(rep.key));
             // this.selected_ = transferSelected(complex, newSelected);
             return {
-                history: history,
-                complex: complex,
+                ...editorState,
                 selectedKeys: newSelected,
-                meta,
-                lastSelect
             }
         });
     }
     selectIndex = (dimension: number, index: number): void => {
-        const cells = this.editorState.complex.cells[dimension].filter(c => c.index === index);
-        if (cells.length === 0) {
-            console.notify(`No cells of dimension ${dimension} and index ${index} found`);
-            return;
-        }
-        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
-
-            const newSelected = new Set(selectedKeys);
-            cells.forEach(c => newSelected.add(c.key));
+        
+        this.setEditorState((editorState: EditorState) => {
+            const { selectedKeys, complex } = editorState;
+            const cells = complex.cells[dimension].filter(c => c.index === index);
+            if (cells.length === 0) {
+                console.notify(`No cells of dimension ${dimension} and index ${index} found`);
+                return;
+            }
+            const newSelected = [...selectedKeys];
+            cells.forEach(c => newSelected.push(c.key));
             // this.selected_ = transferSelected(complex, newSelected);
             return {
-                history: history,
-                complex: complex,
+                ...editorState,
                 selectedKeys: newSelected,
-                meta,
-                lastSelect
             }
         });
     }
     deselectIndex(dimension: number, index: number): void {
         const cells = this.editorState.complex.cells[dimension].filter(c => c.index === index);
-        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
-
-            const newSelected = new Set(selectedKeys);
-            cells.forEach(c => newSelected.delete(c.key));
-            // this.selected_ = transferSelected(complex, newSelected);
+        this.setEditorState((editorState: EditorState) => {
+            const { selectedKeys } = editorState;
+            const newSelected = [...selectedKeys];
+            const keysToRemove = cells.map(c => c.key);
+            const newSelectedFiltered = newSelected.filter(key => !keysToRemove.includes(key));
             return {
-                history: history,
-                complex: complex,
-                selectedKeys: newSelected,
-                meta,
-                lastSelect
+                ...editorState,
+                selectedKeys: newSelectedFiltered,
             }
+            // this.selected_ = transferSelected(complex, newSelected);
+
         }); 
     }
     deselectRep(key: string): void {
-        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
+        this.setEditorState((editorState: EditorState) => {
+            const { selectedKeys } = editorState;
+            const newSelected = [...selectedKeys];
+            const index = newSelected.indexOf(key);
+            if (index > -1) {
+                newSelected.splice(index, 1);
+            }
 
-            const newSelected = new Set(selectedKeys);
-            newSelected.delete(key);
             // this.selected_ = transferSelected(complex, newSelected);
             return {
-                history: history,
-                complex: complex,
+                ...editorState,
                 selectedKeys: newSelected,
-                meta,
-                lastSelect
             }
         });
     }
@@ -683,17 +697,20 @@ export class CWComplexStateEditor  {
             return;
         }
         const cellList = cells.map(c => c.key).join(", ");
-        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
+        this.setEditorState((editorState: EditorState) => {
+            const { selectedKeys, lastSelect } = editorState;
             const {lastClickedDepth, cellList: lastCellList } = lastSelect;
-            const newSelected = new Set(selectedKeys);
+            const newSelected = [...selectedKeys];
             const toggle = (key: string) => {
                 if (key == null) {
                     throw new Error("Tried to flip null cell");
                 }
-                if (newSelected.has(key)) {
-                    newSelected.delete(key);
-                } else {
-                    newSelected.add(key);
+                const index = newSelected.indexOf(key);
+                if (index > -1) {
+                    newSelected.splice(index, 1);
+                }
+                else {
+                    newSelected.push(key);
                 }
             }
             // If this is the same set of cells we saw before, rotate.
@@ -704,9 +721,8 @@ export class CWComplexStateEditor  {
                 toggle(cells[nextIndex].key);
 
                 return {
-                    history,
+                    ...editorState,
                     selectedKeys: newSelected,
-                    complex, meta,
                     lastSelect: {
                         lastClickedDepth: nextIndex,
                         cellList
@@ -715,9 +731,8 @@ export class CWComplexStateEditor  {
             } else {
                 toggle(cells[0].key);
                 return {
-                    history,
+                    ...editorState,
                     selectedKeys: newSelected,
-                    complex, meta,
                     lastSelect: {
                         lastClickedDepth: 0,
                         cellList,
@@ -727,49 +742,57 @@ export class CWComplexStateEditor  {
         });
     }
     toggleRepSelection(key: string): void { 
-        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
-            const newSelected = new Set(selectedKeys);
+        this.setEditorState((editorState: EditorState) => {
+            const { selectedKeys, complex } = editorState;
+            const newSelected = [...selectedKeys];
             const cell = this.getCell(key);
 
             const dimension = +key.split(" ")[0];
             const rest = complex.cells[dimension].filter(c => c.index == cell?.index);
-            if (newSelected.has(key)) {
-                newSelected.delete(key);
-                rest.forEach(c => newSelected.delete(c.key));
+            if (newSelected.includes(key)) {
+                const index = newSelected.indexOf(key);
+                if (index > -1) {
+                    newSelected.splice(index, 1);
+                }
+                rest.forEach(c => {
+                    const i = newSelected.indexOf(c.key);
+                    if (i > -1) {
+                        newSelected.splice(i, 1);
+                    }
+                });
             } else {
-                newSelected.add(key);
-                rest.forEach(c => newSelected.add(c.key));
+                newSelected.push(key);
+                rest.forEach(c => {
+                    if (!newSelected.includes(c.key)) {
+                        newSelected.push(c.key);
+                    }
+                });
             }
+
+
             // this.selected_ = transferSelected(complex, newSelected);
             return {
-                history: history,
-                complex: complex,
-                selectedKeys: newSelected,
-                meta, lastSelect
+                ...editorState,
+                complex, selectedKeys: newSelected
             }
         });
     }
 
     deselectAll(): void {
-        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
+        this.setEditorState((editorState: EditorState) => {
             return {
-                history, complex, meta,
-                selectedKeys: new Set(),
-                lastSelect: {
-                    lastClickedDepth: -1,
-                    cellList: "",
-                }
+                ...editorState,  
+                selectedKeys: [],
             }
         });
     }
 
     selectAll(): void {
-        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
+        this.setEditorState((editorState: EditorState) => {
+            const { complex } = editorState;
             return {
-                history: history,
-                complex: complex,
-                selectedKeys: new Set(Array(MAX_DIMENSION).fill(0).map((_, i) => complex.cells[i].map(c => c.key)).flat()),
-                meta, lastSelect
+                ...editorState,
+                selectedKeys: Array(MAX_DIMENSION).fill(0).map((_, i) => complex.cells[i].map(c => c.key)).flat(),
             }
         });
     }
@@ -779,29 +802,36 @@ export class CWComplexStateEditor  {
     }
 
     jumpToStep(i: number): void {
-        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
+        this.setEditorState((editorState: EditorState) => {
+            const { history, meta, lastSelect } = editorState;
             const newHistory = history.slice(0, i + 1);
             const newComplex = new CWComplex();
             newHistory.forEach(step => step.step(newComplex, step.selectedKeys));
             const latest = newHistory[newHistory.length - 1];
             // this.selected_ = transferSelected(newComplex, latest.selectedKeys);
             return {
+                ...editorState,
                 history: newHistory,
                 complex: newComplex,
                 selectedKeys: latest.selectedKeys,
-                meta, lastSelect
+                lastSelect: { lastClickedDepth: -1, cellList: ""}
             };
         });
         
     }
-
     undo(): void {
+        this.goBackTo(-1);
+    }
+    goBackTo(n: number): void {
         console.warn("UNDO");
-        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
-            if (history.length === 1) {
-                return { history, complex, selectedKeys, meta, lastSelect };
-            }
-            const newHistory = history.slice(0, history.length - 1);
+        const { history } = this.editorState;
+        const maxIndex = n < 0 ? history.length + n : n + 1;
+        if (maxIndex <= this.editorState.freezeIndex) return;
+        if (history.length === 1) {
+            return;
+        }
+        this.setEditorState((editorState: EditorState) => {
+            const newHistory = history.slice(0, maxIndex);
             const newComplex = new CWComplex();
             newHistory.forEach(step => {
                 step.step(newComplex, step.selectedKeys);
@@ -809,26 +839,27 @@ export class CWComplexStateEditor  {
             const latest = newHistory[newHistory.length - 1];
             // this.selected_ = transferSelected(newComplex, latest.selectedKeys);
             return {
+                ...editorState,
                 history: newHistory,
                 complex: newComplex,
                 selectedKeys: latest.selectedKeys,
-                meta,
-                lastSelect
+                lastSelect: { lastClickedDepth: -1, cellList: ""}
             };
         });
     }
 
     shiftSelection(dx: number, dy: number, dz: number): void {
-        if (this.editorState.selectedKeys.size == 0) return;
-        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
-            const newSelected = new Set(selectedKeys);
+        if (this.editorState.selectedKeys.length == 0) return;
+        this.setEditorState((editorState: EditorState) => {
+            const { complex, selectedKeys, history } = editorState;
+            const newSelected = [...selectedKeys];
             const cells = retrieveCellsFromSelectedKeys(complex, selectedKeys);
             console.notify("Total shifted", [...cells].length);
             // cells.forEach(c => c.shift(dx, dy, dz));
             // We changed a property of the cell, but to update it on react,
             // we need to change the key
-            cells.forEach(c => newSelected.delete(c.key));
-            cells.forEach(c => newSelected.add(c.key));
+            // cells.forEach(c => newSelected.delete(c.key));
+            // cells.forEach(c => newSelected.add(c.key));
             // this.selected_ = transferSelected(complex, newSelected);
 
             const stepData: CWComplexEditStep = {
@@ -838,18 +869,17 @@ export class CWComplexStateEditor  {
                     const cells = retrieveCellsFromSelectedKeys(c, selectedKeys);
                     cells.forEach(cell => cell.shift(dx, dy, dz));
                 },
-                selectedKeys: new Set(newSelected)
+                selectedKeys: newSelected
             };
 
             const newComplex = new CWComplex();
             newComplex.assignFrom(complex);
             stepData.step(newComplex);
             return {
+                ...editorState,
                 history: [...history, stepData],
                 complex: newComplex,
                 selectedKeys: newSelected,
-                meta,
-                lastSelect
             };
 
         });
@@ -860,9 +890,10 @@ export class CWComplexStateEditor  {
 export type EditorState = {
     history: CWComplexEditStep[];
     complex: CWComplex;
-    selectedKeys: Set<string>;
+    selectedKeys: string[];
     lastSelect: LastSelect;
     meta: ComplexMeta;
+    freezeIndex: number;
 }
 export const makeDefaultMeta = (): ComplexMeta => ({
     name: "New CW Complex",
@@ -875,8 +906,8 @@ export const makeDefault = (): EditorState => {
     const defaultComplex = new CWComplex();
     const defaultHistory = [{
         type: "start" as EditType,
-        step: () => defaultComplex,
-        selectedKeys: new Set<string>(),
+        step: () => {},
+        selectedKeys: [],
         args: []
     }];
     const defaultMeta: ComplexMeta = makeDefaultMeta();
@@ -888,13 +919,14 @@ export const makeDefault = (): EditorState => {
         },
         history: defaultHistory,
         complex: defaultComplex,
-        selectedKeys: new Set(),
-        meta: defaultMeta
+        selectedKeys: [],
+        meta: defaultMeta,
+        freezeIndex: -1,
     };
 }
 
 
-export function useEditComplex(preset?: (e: CWComplexStateEditor) => void): CWComplexStateEditor {
+export function useEditComplex(preset?: (e: CWComplexStateEditor) => void): [EditorState, CWComplexStateEditor] {
     
     const [editorState, setEditorState] = useState<EditorState>(makeDefault());
     const { history, complex, selectedKeys, meta } = editorState;
@@ -917,5 +949,5 @@ export function useEditComplex(preset?: (e: CWComplexStateEditor) => void): CWCo
     // }
     // const latest = complex;
     // return [{ history, complex, selectedKeys, meta }, editComplex];
-    return editComplex;
+    return [editorState, editComplex];
 }

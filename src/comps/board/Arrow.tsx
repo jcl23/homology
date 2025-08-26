@@ -87,6 +87,7 @@ export interface EdgeArrowProps {
   object: THREE.Mesh;
   aspectRatio?: number;
   opacity?: number;
+  showArrows?: boolean;
 }
 const computedStyles = getComputedStyle(document.documentElement);
 const unselectedFg = computedStyles.getPropertyValue("--unselected-fg").trim();
@@ -191,7 +192,7 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
   console.log("ProjLength", lengthProj, vec2str(startOnScreen), vec2str(startOnScreen), );
   return (
     <sprite
-      geometry={makeArrowGeometry(1)}
+      geometry={makeArrowGeometry(1, showArrows)}
       ref={spriteRef}
       scale={[scale, scale, 1]}
       userData={{object}}

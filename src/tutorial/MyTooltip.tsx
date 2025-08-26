@@ -99,7 +99,7 @@ const MyTooltip: React.FC<TooltipRenderProps> = ({
 
   useEffect(() => {
     if (step.pass && step.pass(tutorialStepConditionProps)) {
-      setTimeout(() => goToStep(step.next[0].index),250);
+      setTimeout(() => goToStep(step.next[0].index),0);
     }
   }, [tutorialStepConditionProps, step.pass]);
   return (
@@ -112,7 +112,7 @@ const MyTooltip: React.FC<TooltipRenderProps> = ({
                 </button>
             )}
             {step.title && (
-                <div className="react-joyride__tooltip__title">{step.title} ({step.index})</div>
+                <div className="react-joyride__tooltip__title">{step.title}</div>
             )}
             <button className="react-joyride__tooltip__edge button" style={{minWidth: "20px", paddingLeft: "60px!important"}} {...closeProps} >
               &times;
@@ -136,7 +136,7 @@ const MyTooltip: React.FC<TooltipRenderProps> = ({
                 goToStep(nextStep.index);
               }}
             >
-              ({nextStep.index}){nextStep.button || nextStep.title || "Next"}
+             {nextStep.button || nextStep.title || "Next"}
             </button>
           ))
         }

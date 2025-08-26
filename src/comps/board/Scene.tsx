@@ -12,6 +12,7 @@ import { DAMPING_FACTOR, LOOK_AT, ROTATE_SPEED } from "../../cfg/board";
 import TriangleGrid, { nearestTriangularLatticePoint } from "../grids/TriangleGrid";
 // import { Hexagon } from "@mui/icons-material";
 import Hexagon from "./Hexagon";
+import { AbstractVertex } from "../../math/classes/cells";
 // import { HexagonGeometry } from "./Hexagon";
 export type DragSelectData = {
     isMouseDown: boolean;
@@ -29,7 +30,7 @@ const computedStyles = getComputedStyle(document.documentElement);
 const unselectedFg = computedStyles.getPropertyValue("--unselected-fg").trim();
 const selectedFg = computedStyles.getPropertyValue("--selected-fg").trim();
 const selectedBg = computedStyles.getPropertyValue("--selected-bg").trim();
-export const Scene = ({ stepIndex, editComplex, viewOptions, complex, editOptions, setDragSelectData, dragSelectData, allowEditing, gridStyle, aspectRatio }: SceneProps) => {
+export const Scene = ({ stepIndex, editComplex, viewOptions, complex, editOptions, setDragSelectData, dragSelectData, allowEditing,  aspectRatio }: SceneProps) => {
     console.notify("Scene");
     
     // const complex = history[history.length - 1].complex;
@@ -158,7 +159,7 @@ export const Scene = ({ stepIndex, editComplex, viewOptions, complex, editOption
                 <ComplexVertices 
                     mode={editOptions.mode}
                     showName={viewOptions.nameState[0]} 
-                    vertices={complex.cells[0]} 
+                    vertices={complex.cells[0] as AbstractVertex[]} 
                     selectedReps={selectedVertices} toggleRepSelection={faceToggleRep} 
                     dragSelectData={dragSelectData} setDragSelectData={setDragSelectData}
                 />

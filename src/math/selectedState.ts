@@ -1,6 +1,6 @@
 export type SelectedState = "verticesOnly" | "none" | "other" | "edgesOnly" | "facesOnly";
 
-// export const classifySelected = (selected: Set<string>): SelectedState => {
+// export const classifySelected = (selected: string[]): SelectedState => {
 //     const selectedList = [...selected];
 //     const selectedVertexReps = new Set(selectedList.filter((cell) => cell.dimension === 0));
 //     const selectedEdgeReps = new Set(selectedList.filter((cell) => cell.dimension === 1));

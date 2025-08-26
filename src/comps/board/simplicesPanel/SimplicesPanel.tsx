@@ -8,8 +8,6 @@ type SimplicesPanelProps = {
     // complex: CWComplex;
     complexEditor: CWComplexStateEditor;
     selectionKey: "index" | "id";
-    //selectedCells: Set<number>[];
-    // selectedKeys: Set<string>;
     //selectCell: (dim: number, index: number) => void;
     // selectRep: (key: string) => void
     //unselectCell: (dim: number, index: number) => void;
@@ -28,10 +26,11 @@ const SimplicesPanel = ({
         // debugger;
 
     const [ { showIdentifiedCells: useID }, set ] = useControls(() => ({
-        showIdentifiedCells: true
+        showIdentifiedCells: false
     }));
     const [vertices, edges, faces, balls] = [0, 1, 2, 3].map(dim => {
         const allCells = complexEditor.cells[dim];
+        allCells.sort((a, b) => a.name.localeCompare(b.name));
         // return unique by index
         if (useID) return allCells;
         return allCells.filter((cell, i, arr) => arr.findIndex(c => c.index === cell.index) === i);
@@ -123,11 +122,11 @@ const SimplicesPanel = ({
                             <SimplexData key={cell.id + cell.positionKey} cell={cell} selected={complexEditor.selected.has(cell)} toggleCellSelection={toggleCellSelection} />
                         ))}
                     </> 
-                    : Object.entries({vertices: vertices, edges: edges, faces: faces, balls: balls}).flatMap(([name, cells], i) => (
+                    : Object.entries({vertices: vertices, edges: edges, faces: faces, tetra: balls}).flatMap(([name, cells], i) => (
                         [
 
                             <div key={name}>
-                                <div className={styles.dimName} style={{textAlign: "center", fontWeight: "bold"}}>{name}</div>
+                                <div className={styles.dimName} style={{textAlign: "center", fontWeight: "bold"}}>{name} ({cells.length})</div>
                             </div>,
                             (cells.map((cell, j) => (
                                 <SimplexData key={cell.id} cell={cell} selected={complexEditor.selected.has(cell)} toggleCellSelection={toggleCellSelection} />

@@ -20,8 +20,8 @@ export const HelpPanel = ({ setPreset }: HelpPanelProps) => {
     return (
         <div className={styles.panel}>
             {/* <FAQModal /> */}
-            <h2 style={{ textAlign: 'center', marginBottom: '5em', marginTop: '0.2em', fontWeight: 'bold', color: "#444" }}>
-            justin's Δ-complex editor
+            <h2 style={{ textAlign: 'center', fontFamily:"Helvetica Neue", marginBottom: '5em', marginTop: '0.2em', fontWeight: 'bold', color: "#444" }}>
+            Justin's Δ-Complex Editor
             </h2>
             <Joyride
               tooltipComponent={MyTooltip}

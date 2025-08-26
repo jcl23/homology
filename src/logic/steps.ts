@@ -5,21 +5,21 @@ import { Cell } from "../math/classes/cells";
 
 export type AddingType = "addVertex" | "addEdge" | "addFace" | "addBall";
 export type IdentifyType = "identify" | "identifyVertices" | "identifyEdges" | "identifyFaces" | "identifyBalls";
-export type EditType = "delete" | AddingType | IdentifyType | "collapse" | "saturate" | "start" | "shift";
+export type EditType = "delete" | AddingType | IdentifyType | "collapse" | "saturate" | "start" | "shift" | "duplicate";
 
-export type EditStep = (complex: CWComplex, selectedKeys?: Set<string>) => void | Cell;
+export type EditStep = (complex: CWComplex, selectedKeys?: string[]) => void | Cell;
 
 export type CWComplexEditStep = {
     args: any[];
     step: EditStep;
-    selectedKeys: Set<string>;
+    selectedKeys: string[];
     type: EditType;
 }
 
 // previous:
 // const stepData: CWComplexEditStep = { 
 //     type: "addEdge", 
-//     step: (_: Set<string>, c: CWComplex) => { 
+//     step: (_: string[], c: CWComplex) => { 
 //         c.addEdge(reps[0] as Vertex, reps[1] as Vertex) 
 //         console.warn("Adding edge between", reps[0].id, reps[1].id);
 //     },
@@ -37,7 +37,7 @@ export type CWComplexEditStep = {
 const keyToCellType = (key: string): string => ["vertex", "edge", "face", "ball"][+key[0]];
 // const makeAddEdgeStep = (): CWComplexEditStep => ({
 //     type: "addEdge",
-//     step: (complex: CWComplex, selectedKeySet?: Set<string>) => {
+//     step: (complex: CWComplex, selectedKeySet?: string[]) => {
 //         const selectedKeys = [...selectedKeySet ?? []];
 //         //const reps = [...retrieveCellsFromSelectedKeys(complex, selectedKeys)];
 //         if (selectedKeys.length !== 2) {
@@ -57,7 +57,7 @@ const keyToCellType = (key: string): string => ["vertex", "edge", "face", "ball"
 
 // const makeAddFaceStep = (): CWComplexEditStep => ({
 //     type: "addFace",
-//     step: (complex: CWComplex, selectedKeySet?: Set<string>) => {
+//     step: (complex: CWComplex, selectedKeySet?: string[]) => {
 //         const selectedKeys = [...selectedKeySet ?? []];
 //         if (selectedKeys.length !== 3) {
 //             console.notify("EditFailure", `Cannot add face with ${selectedKeys.length} representatives`);

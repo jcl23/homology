@@ -20,7 +20,7 @@ const SimplexData = ({ selected, cell, toggleCellSelection }: SimplexDataProps) 
     const numLines = [
         boundaryList.length,
         starList.length,
-        cell.vertices.length
+        cell.vertices.length - 1
     ].filter(Boolean).length;
     const expandedHeight = `${numLines * 24}px`;
     const height = expanded ? expandedHeight : "0px";
@@ -34,8 +34,12 @@ const SimplexData = ({ selected, cell, toggleCellSelection }: SimplexDataProps) 
             <div className={`${styles.cellHeader} ${styles[selected ? "selected" : "unselected"]}`} onClick={() => toggleCellSelection(cell)}>
                 {texToUnicode(cell.name)}
                 <div style={{display: "flex", alignItems: "center"}}>
-                    <div>
-                    [{cell.index}] ({cell.key})
+                    <div style={{
+                        display: expanded ? "inherit" : "none",
+                        opacity: 0.7,
+                        color: selected ? "var(--selected-fg)" : "var(--unselected-fg)",
+                    }}>
+                     id: {cell.id}; index: {cell.index}
                     </div>
                     <button 
                         className={styles.expandButton}
@@ -62,14 +66,15 @@ const SimplexData = ({ selected, cell, toggleCellSelection }: SimplexDataProps) 
                 onClick={() => toggleCellSelection(cell)}
             >
                 <div style={{paddingLeft: "20px"}}> 
-                    del = {printChain(getBoundaryOfCell(cell))}<br />
-                   bd = {cell.attachingMap.map(c => c.name).join(", ")}<br />
-                   star = {cell.cob.map(c => c.name).join(", ")}<br />
-                   V = {cell.vertices.map(v => v.name).join(", ")}
-                </div>
-                <div>
-                    {cell.cob.map(c => c.name).join(", ")}
-                </div>
+                    <Latex>{`$
+                        \\partial ${cell.name} = ${printChain(getBoundaryOfCell(cell))};
+                        \\\\
+                        V = \\{${cell.vertices.map(v => v.name).join(", ")}\\}
+                        $`}</Latex><br />
+                    
+        
+
+            </div>
             </div>
 
         </ div>

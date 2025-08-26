@@ -104,8 +104,8 @@ export const ComplexVertices = ({ vertices, selectedReps, toggleRepSelection, sh
                             position={[0, 0, 0]} 
                             text={vertex.name} 
                             type="vertex" 
+                            toggle={() => toggleRepSelection(vertex.key)}
                             selected={isSelected}
-                            cell={vertex}
                             />
                         }
                     </group>

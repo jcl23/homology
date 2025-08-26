@@ -53,14 +53,16 @@
     border: none;
     background: rgba(255, 157, 157, 0.5);
     position: absolute;
-    left: -83px;
+    left: -93px;
     font-family: "Helvetica Neue";
     text-rendering: geometricPrecision;
     font-size: large;
     color: rgb(110, 11, 11);
 
     font-weight: bold;
-    top: 36px;
-    min-width: calc(var(--left-panel-width) / 2 - 10px);
+    top: 28px;
+    min-width: calc(var(--left-panel-width) / 2 - 20px);
+    /* margin-left: 10px; */
+    margin: 0px!important;
     min-height: 40px;
 }

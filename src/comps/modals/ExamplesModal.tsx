@@ -18,7 +18,7 @@ export const ExamplesModal: React.FC<ExamplesModalProps> = ({ setPreset }) => {
       <button
         className={styles.beacon}
         onClick={() => setOpen(true)}
-        style={{ margin: "8px" }}
+        style={{ margin: "0px"}}
       >
         Show Examples
       </button>

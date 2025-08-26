@@ -28,7 +28,6 @@ export type BoardProps = {
     editOptions: EditOptions;
     complex: CWComplex;
     //setComplex: (c: CWComplex) => void;
-    // selectedReps: Set<string>;
     allowEditing: boolean;
     stepIndex: number;
     // toggleRepSelection: (cell: AbstractCell) => void;
@@ -115,13 +114,12 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, allowEditing, s
                     
                     border: '1px solid grey',
                     // aspectRatio: '2.06!important',
-                    height: '100%',
+                    height: 'calc(100% - 6px)',
                     // width: '1350px',
                     minWidth: '700px',
                     margin: "5px 0px",
                     zIndex: 0,
                     userSelect: 'none',
-                    boxShadow: "2px 2px 2px 0px #0004 inset;"
                     
                 }}
                 orthographic
@@ -152,7 +150,7 @@ const Board = ({ viewOptions, editOptions, complex, editComplex, allowEditing, s
                     editOptions={editOptions}
                     allowEditing={allowEditing}
                     stepIndex={stepIndex}
-                    />
+                />
             </Canvas>
             </div>
         </ErrorBoundary>

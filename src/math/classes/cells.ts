@@ -212,15 +212,23 @@ export class Edge extends Cell implements AbstractEdge {
 export class Face extends Cell implements AbstractFace {
 
 
-
-
     constructor(edges: AbstractEdge[], id: number, index: number, name?: string) {
         super(id, index, name ?? "f_" + id);
-        this.attachingMap = [...edges];
         this.cob = [];
         this.vertices_ = [...new Set(edges.flatMap(e => e.vertices))];
         this.vertices_.sort((a, b) => a.index - b.index);
         this.dimension = 2;
+        const orientation = this.getLocalOrientation();
+        const withMissing = edges.map(edge => {
+            const missing = this.vertices_.filter(v => !edge.vertices.includes(v))[0];
+            return {edge, missing}
+        });
+        withMissing.sort((a, b) => {
+            const aEnd = a.missing;
+            const bEnd = b.missing;
+            return orientation[bEnd.id] - orientation[aEnd.id];
+        });
+        this.attachingMap = withMissing.map(o => o.edge);
     }
 
     copy(): Face {
