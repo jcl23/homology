@@ -17,7 +17,7 @@
   /* Board */
   --board-color: white;
   --board-opacity: 0.5;
-
+  --left-panel-width: 511px;
   --vertex-name-opacity: 1;
   --edge-name-opacity: 1;
   --face-name-opacity: 1;
@@ -33,7 +33,6 @@ a:hover {
   background-color: var(--selected-bg);
 }
 button:hover {
-  transform: translateY(-2px);
   transition: transform 0.2s ease;
 }
 #root {

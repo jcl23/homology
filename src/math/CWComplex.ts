@@ -422,8 +422,7 @@ export const copyStep = (step: CWComplexEditStep): CWComplexEditStep => {
 // signs and edges
 type Chain = {
     sign: number;
-    index: number;
-    dimension:number;
+    cell: AbstractCell;
 }[];
 
 export const getAnyCell = (complex: CWComplex, dimension: number, index: number): AbstractCell => {
@@ -507,46 +506,47 @@ export const resetIds = (complex: CWComplex): void => {
         });
     }
 }
-export const getBoundary = function (complex: CWComplex, chain: Chain): Chain {
+export const getBoundary = function (chain: Chain): Chain {
     // return a chain with the boundary of each cell summed up.
-    const boundaryTracker: Map<string, { count: number, dim: number, index: number }> = new Map();
+    const boundaryTracker: Map<string, { count: number, cell: AbstractCell }> = new Map();
     
-    for (const { index, dimension, sign: outerSign } of chain) {
-        const cell = getAnyCell(complex, dimension, index) as Cell;
+    for (const { cell, sign: outerSign } of chain) {
+       
         const boundary = (() => {
             try {
                 return getBoundaryOfCell(cell)
             } catch (e) {
-                debugger;
+               
                 console.error("Error getting boundary of cell", cell, e)    
                 return getBoundaryOfCell(cell)
             }
         })();
-        for (const { sign, dimension, index } of boundary) {
+        for (const { sign, cell } of boundary) {
             const signProduct = sign * outerSign;
-            const key = dimension + ", " + index;
-            if (boundaryTracker.has(key)) {
-                const value = boundaryTracker.get(key)!;
+            if (boundaryTracker.has(cell.key)) {
+                const value = boundaryTracker.get(cell.key)!;
                 const { count } = value;
-                boundaryTracker.set(key, { ...value, count: count + signProduct });
+                boundaryTracker.set(cell.key, { ...value, count: count + signProduct });
 
             } else {
-                boundaryTracker.set(key, { count: signProduct, dim: dimension, index: index });
+                boundaryTracker.set(cell.key, { count: signProduct, cell });
             }
         }
     }
-    return [...boundaryTracker.values()].map(({ count, dim, index }) => ({ sign: count, dimension: dim as (number), index: index }));
+    return [...boundaryTracker.values()].map(({ count, cell }) => ({ sign: count, cell}));
     // combine like terms
 
 }
 export const isCycle = (complex: CWComplex, chain: Chain): boolean => {
     const boundary = getBoundary(complex, chain);
-    const result =  printChain(complex, boundary);
+    const result =  printChain(boundary);
     return result == "0";
 }
 
 export const formsCycle = (complex: CWComplex, cells: AbstractCell[]): boolean => {
-    return printChain(complex, getBoundaryFromParts(cells)) === "0";
+    const bigChain = cells.flatMap(cell => getBoundaryOfCell(cell));
+    const result = printChain(getBoundary(bigChain));
+    return result == "0";
 }
 // export const getBoundaryOfCell = (complex: CWComplex, dimension: number, index: number): Chain => {
 // export const getBoundaryOfCell = (complex: CWComplex, dimension: number, index: number): Chain => {
@@ -559,10 +559,42 @@ type SubFace = { face: AbstractCell, missing: AbstractVertex };
 export const getBoundaryFromParts = (faces: AbstractCell[]): Chain => {
     // model off of function below. don't edit in place, copy the array, then figure out the signs to make the chain
     // figure out the proper ordering first
-    const allVertices = faces.flatMap(face => getVertices(face));
+
+    //     const cell = (
+    //     d == 1 ? new Edge(allVerticesArray[0], allVerticesArray[1], -1, -1) :
+    //     d == 2 ? new Face(faces as AbstractEdge[], -1, -1) :
+    //     new Ball(faces as AbstractFace[], -1, -1)
+    // );
+        
+    // const orient = cell.getLocalOrientation();
+    // subFaces.sort((a, b) => orient[a.missing.id] - orient[b.missing.id]);
+    const d = faces[0].dimension + 1;
+    const cell = (
+        d == 1 ? new Edge(faces[0].attachingMap[0] as AbstractVertex, faces[0].attachingMap[1] as AbstractVertex, -1, -1) :
+        d == 2 ? new Face(faces as AbstractEdge[], -1, -1  ) :
+        new Ball(faces as AbstractFace[], -1, -1)
+    );
+    return getBoundaryOfCell(cell);
+    // const boundaryChain = upperChain.map
+}
+
+
+export const getBoundaryOfCell = (cell: AbstractCell, outerSign = 1): Chain => {
+    if (cell.dimension === 0) {
+        return [];
+    }
+    // const cell = getAnyCell(complex, dimension, index)
+    // if (dimension === 1) {
+
+    //     const [start, finish] = cell.attachingMap;
+    //     return [{ sign: 1, dimension: 0, index: finish.index }, { sign: -1, dimension: 0, index: start.index }];
+    // }
+
+   const allVertices = cell.vertices;
     const allVerticesSet = new Set(allVertices);
     const allVerticesArray = Array.from(allVerticesSet);
     // allVerticesArray.sort((a, b) => a.id - b.id);
+    const faces = cell.attachingMap;
     const subFaces: SubFace[] = faces.map(face => {
         const faceVertices = getVertices(face);
         const missing = allVerticesArray.find(vertex => !faceVertices.includes(vertex))!;
@@ -577,9 +609,9 @@ export const getBoundaryFromParts = (faces: AbstractCell[]): Chain => {
         
     // const orient = cell.getLocalOrientation();
     // subFaces.sort((a, b) => orient[a.missing.id] - orient[b.missing.id]);
-    if (faces.length == 2) {
+    if (cell.dimension == 1) {
         subFaces.sort((a, b) => a.missing.index - b.missing.index);
-    } else if (faces.length == 3) {
+    } else if (cell.dimension == 2) {
         const hypotheticalFace = new Face(faces, -1, -1);
         const orient = hypotheticalFace.getLocalOrientation();
         subFaces.sort((a, b) => orient[b.missing.id] - orient[a.missing.id]);
@@ -590,54 +622,13 @@ export const getBoundaryFromParts = (faces: AbstractCell[]): Chain => {
         subFaces.sort((a, b) => orient[a.missing.id] - orient[b.missing.id]);
     } 
     const boundaryChain: Chain = subFaces.flatMap(({ face, missing }, i) => {
-        const sign = (i % 2 == 0) ? 1 : -1;
-        return getBoundaryOfCell(face).map(({ dimension, index }, j) => ({ sign: sign * ((j % 2 == 0) ? 1 : -1), dimension, index }));
-        return { sign, index: face.index, dimension: face.dimension as number };
+        let sign = (i % 2 == 0) ? 1 : -1;
+        sign *= outerSign;
+        //return getBoundaryOfCell(face).map(({ cell: subFace, sign: sign2 }, j) => ({ sign: sign * sign2, cell: subFace }));
+        return { sign, cell: face };
     });
-    return boundaryChain;
-    // const boundaryChain = upperChain.map
-}
+    return simplifyChain(boundaryChain);
 
-
-export const getBoundaryOfCell = (cell: AbstractCell): Chain => {
-    if (cell.dimension === 0) {
-        return [];
-    }
-    // const cell = getAnyCell(complex, dimension, index)
-    // if (dimension === 1) {
-
-    //     const [start, finish] = cell.attachingMap;
-    //     return [{ sign: 1, dimension: 0, index: finish.index }, { sign: -1, dimension: 0, index: start.index }];
-    // }
-
-    const allVertices = getVertices(cell);
-
-    try {
-        // allVertices.sort((a, b) => a.id - b.id);
-    } catch (e) {
-        const allVertices_ = getVertices(cell);
-        // allVertices_.sort((a, b) => a.id - b.id);
-    }
-    // const inverseMap = allVertices.reduce((acc, vertex, index) => {
-    //     acc[vertex.index] = index;
-    //     return acc;
-    // }, {} as Record<number, number>);
-    // for each face, figure out which vertex is not there.
-    const subFaces: SubFace[] = cell.attachingMap.map((face) => {
-        const faceVertices = getVertices(face);
-        const missing = allVertices.find(vertex => !faceVertices.includes(vertex))!;
-        return { face, missing };
-    });
-
-    subFaces.reverse()
-    subFaces.sort((a, b) => a.missing.index - b.missing.index);
-
-    // for each subface, figure out the sign
-    const boundary = subFaces.map(({ face, missing }, i) => {
-        const sign = (i % 2 == 0) ? 1 : -1;
-        return { sign, index: face.index, dimension: face.dimension };
-    });
-    return boundary;
 }
 
 
@@ -859,11 +850,16 @@ export const getCellsByLayer = (complex: CWComplex): AbstractCell[][] => {
     });
 }
 
-export const simplifyChain = (complex: CWComplex, chain: Chain): Chain => {
+export const simplifyChain = (chain: Chain): Chain => {
     // combine like terms
     const tracker: Map<string, number> = new Map();
-    for (const { sign, dimension, index } of chain) {
-        const key = dimension + ", " + index;
+    const cells: Map<string, AbstractCell> = new Map();
+    if (!Array.isArray(chain)) {
+        throw new Error("Chain is not an array");
+    }
+    for (const { sign, cell } of chain) {
+        const key = cell.dimension + ", " + cell.index;
+        cells.set(key, cell);
         if (tracker.has(key)) {
             const count = tracker.get(key)!;
             tracker.set(key, count + sign);
@@ -873,16 +869,16 @@ export const simplifyChain = (complex: CWComplex, chain: Chain): Chain => {
     }
     return [...tracker.entries()].filter(([key, val]) => (val !== 0)).map(([key, sign]) => {
         const [dimension, index] = key.split(", ").map(Number);
-        return { sign, dimension: dimension as (number), index };
+        return { sign, cell: cells.get(key)! };
     });
 }
-export const printChain = (complex: CWComplex, chain: Chain) => {
-    const simplified = simplifyChain(complex, chain);
-    let retVal = simplified.reduce((acc, { sign, index, dimension }) => {
+export const printChain = (chain: Chain) => {
+    const simplified = simplifyChain(chain);
+    let retVal = simplified.reduce((acc, { sign, cell }) => {
         if (sign === 0) return acc;
         const coeffValue = Math.abs(sign) === 1 ? "" : Math.abs(sign);
         const orientationSymbol = sign > 0 ? "+ " : "- ";
-        const cell = getAnyCell(complex, dimension, index);
+        // const cell = getAnyCell(complex, dimension, index);
         return acc + " " + orientationSymbol + coeffValue + (cell?.name as any ?? "");
     }, "");
     if (retVal.length === 0) return "0";
@@ -927,16 +923,17 @@ const toLabeledMatrix = function(complex: CWComplex, cells: AbstractCell[]): Lab
         console.log({outs, height});
         throw new Error("Outs has indices greater than width");
     }
+    
     console.log("Width", width, "Height", height);
     const matrix = createMatrix(height, width);
     for (let i = 0; i < cells.length; i++) {
         const cell = cells[i];
-        const boundary = getBoundary(complex, [{ dimension: cell.dimension, index: cell.index, sign: 1 }]);
+        const boundary = getBoundaryOfCell(cell);
         // for (let { index, sign } of boundary) {
         for (let j = 0; j < boundary.length; j++) {
-            const { index, sign } = boundary[j];
+            const { cell,  sign } = boundary[j];
             try {
-                const row = outsInverse[index];
+                const row = outsInverse[cell.index];
                 matrix[row][i] = sign;
             } catch (e) {
                 console.log("Error", e);
@@ -1055,8 +1052,8 @@ export const addFace = (complex: CWComplex, edges: AbstractEdge[], name?: string
     if (formsCycle(complex, edges)) {
         complex.cells[2].push(f);
         edges.forEach(e => { e.cob.push(f); });
+        return f;
     }
-    return f;
 }
 
 export const addBall = (complex: CWComplex, faces: AbstractFace[], name?: string): Ball => {

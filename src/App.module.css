@@ -32,7 +32,7 @@
 .lowerPanel {
     height: 200px;
     margin: left auto;
-    box-shadow: 0px 0px 0px 1px #888;
+    /* box-shadow: 0px 0px 0px 1px #888; */
     padding: 10px;
 }
 
@@ -57,10 +57,10 @@
     font-weight: bold;
 
     text-transform: none;
-    box-shadow: 0px 2px 2px 0px #0004;
+    /* box-shadow: 0px 2px 2px 0px #0004; */
     min-width: 40px;
     margin: 6px 0px;
-    border: 2px solid #0004;
+    border: none;
     border-bottom-right-radius: 0px;
     position: relative; /* Enable overlaying icons */
     display: flex;
@@ -70,7 +70,10 @@
     color: var(--unselected-fg); /* Default color */
     background-color: var(--background-color); /* Default background color */ 
 }
+.button:hover {
+    box-shadow: 0px 4.5px 4px 0px #0004;
 
+}
 
 .filePanel {
     height: 100%;
@@ -78,4 +81,8 @@
     flex-direction: column;
     padding-bottom: 10px;
     overflow: hidden;
+    /* border-width: 0px 2px 0px 0px;
+    border-color: grey;
+    border-style: solid; */
+    padding: 6px;
 }

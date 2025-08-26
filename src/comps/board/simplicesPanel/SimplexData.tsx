@@ -3,6 +3,7 @@ import { AbstractCell } from "../../../math/classes/cells";
 import styles from './SimplicesPanel.module.css';
 import Latex from "react-latex-next";
 import { texToUnicode } from "../Label";
+import { getBoundaryOfCell, printChain } from "../../../math/CWComplex";
 
 type SimplexDataProps = {
     selected?: boolean;
@@ -61,6 +62,7 @@ const SimplexData = ({ selected, cell, toggleCellSelection }: SimplexDataProps) 
                 onClick={() => toggleCellSelection(cell)}
             >
                 <div style={{paddingLeft: "20px"}}> 
+                    del = {printChain(getBoundaryOfCell(cell))}<br />
                    bd = {cell.attachingMap.map(c => c.name).join(", ")}<br />
                    star = {cell.cob.map(c => c.name).join(", ")}<br />
                    V = {cell.vertices.map(v => v.name).join(", ")}

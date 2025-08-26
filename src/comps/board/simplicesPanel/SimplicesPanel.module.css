@@ -1,11 +1,11 @@
 .panel {
-    border: 1px solid rgba(0, 0, 0, 0.5);
-    width: 250px;
+    /* border: 1px solid rgba(0, 0, 0, 0.5); */
+width: 270px;
     overflow-x: hidden;
-    height: 600px;
     max-height: 100%;
+    
     overflow-y: scroll;
-    margin: 5px 0px;
+    margin: 5px 0px 15px 6px;
 }
 .panel  td {
     text-align: left;

@@ -10,7 +10,7 @@ import { LoadComplex } from "./comps/modals/LoadComplex";
 import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import theme from "./style/theme";
-import { CWComplexStateEditor, useEditComplex } from "./hooks/useCWComplexEditor";
+import { useEditComplex } from "./hooks/useCWComplexEditor";
 import { ErrorBoundary } from "./comps/ErrorBoundary";
 import NotificationManager from "./comps/notifs/NotificationManager";
 import History from "./comps/history/History.tsx";
@@ -23,6 +23,7 @@ import { useThree } from "@react-three/fiber";
 import { Download, FolderOpen } from "@mui/icons-material";
 import { downloadHistory } from "./data/download.ts";
 import { useControls } from "leva";
+import UIButton from "./icon/UIButton.tsx";
 
 const MAX_DIM = 3;
 
@@ -59,7 +60,7 @@ function App() {
 
   const [preset, setPreset] = useState<Preset>(() => defaultComplex);
   
-  const complexEditor = useEditComplex();
+  const [editorState, complexEditor] = useEditComplex();
   
   useEffect(() => {
     complexEditor.reset();
@@ -106,14 +107,19 @@ function App() {
           </div>
           <div className={styles.panelHolder}>
             <HelpPanel setPreset={setPreset} />
+
              <div style={{minHeight: "50px"}}></div>
+            <div style={{width: "100%", borderWidth: "0px 0px 1px 0px", borderStyle: "solid", borderColor: "grey"}}></div>
+
             <div className={styles.upperPanel} style={{ display: 'flex', flexDirection: 'row' }}>
               {/* <DebugComplex complex={complex} /> */}
               <div className={styles.filePanel}>
                 <LoadComplex setPreset={setPreset} />
                 <ComplexSettings complexEditor={complexEditor} setAllowEditing={setAllowEditing} />
-                <button
-                    className={styles.button} 
+                <UIButton
+                    name="save"
+                    selected={false}
+                    disabled={true}
                     onClick={() => {
                       downloadHistory(complexEditor.editorState.history);
                     }}
@@ -124,7 +130,7 @@ function App() {
                         </div>
                         
                     </div>
-                </button>
+                    </UIButton>
               </div>
               <UIPanel
                 complexEditor={complexEditor}
@@ -142,13 +148,15 @@ function App() {
                 // unselectRep={complexEditor.toggleRepSelection}
               />
             </div>
+            <div style={{width: "100%", borderWidth: "0px 0px 1px 0px", borderStyle: "solid", borderColor: "grey"}}></div>
               <div className={`${styles.lowerPanel} lowerPanel`} key={"COMPLEX"}>
                   <HomologyPanel complex={complexEditor.currentComplex}stepIndex={complexEditor.editorState.history.length - 1} />
               </div>
         </div>
       
       <div className="centerHolder">
-        <History complexEditor={complexEditor} editorState={complexEditor.editorState} />
+        <History freezeIndex={editorState.freezeIndex} complexEditor={complexEditor} editorState={complexEditor.editorState} />
+
         <Board
           allowEditing={allowEditing} 
           viewOptions={viewOptions} 
@@ -158,23 +166,26 @@ function App() {
           stepIndex={complexEditor.editorState.history.length - 1}
           // selectedReps={complexEditor.selected}
         />
-        <div className={styles.keybinds}>
-      <div className={styles.keybindLabel}> a: add cell </div>
-      <div className={styles.keybindLabel}> s: select </div>
-      <div className={styles.keybindLabel}> m: move </div>
-      <div className={styles.keybindLabel}> t: trash </div>
-      <div className={styles.keybindLabel}> d: delete </div>
-      <div className={styles.keybindLabel}> f: fill </div>
-    </div>
-        <div className={styles.keybinds}>
-      <div className={styles.keybindLabel}> i: identify </div>
-      <div className={styles.keybindLabel}> ctrl-z: undo </div>
-      <div className={styles.keybindLabel}> ctrl-a: select all </div>
-      <div className={styles.keybindLabel}> ctrl-d: deselect all </div>
-      <div className={styles.keybindLabel}> c: clear selection</div>
-    </div>
+       
       </div>
+      
     </div>
+     <div className={styles.keybinds}>
+          <div className={styles.keybindLabel}><div>a</div> add cell </div>
+          <div className={styles.keybindLabel}><div>s</div> select </div>
+        <div className={styles.keybindLabel}><div>m</div> trash </div>
+          <div className={styles.keybindLabel}><div>d</div> delete </div>
+          <div className={styles.keybindLabel}><div>f</div> fill </div>
+          <div className={styles.keybindLabel}><div>i</div> identify </div>
+          <div className={styles.keybindLabel}><div>[</div> lower grid </div>
+          <div className={styles.keybindLabel}><div>]</div> raise grid </div>
+
+          <div className={styles.keybindLabel}><div>ctrl</div><div>z</div> undo </div>
+          <div className={styles.keybindLabel}><div>ctrl</div><div>a</div> select all </div>
+          <div className={styles.keybindLabel}><div>ctrl</div><div>d</div> deselect all </div>
+          <div className={styles.keybindLabel}><div>c</div> clear selection</div>
+          <div className={styles.keybindLabel}><div>ctrl</div><div>g</div> toggle grid style</div>
+        </div>
     </ErrorBoundary>
       </TutorialProvider>
       </ThemeProvider>

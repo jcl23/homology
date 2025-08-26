@@ -623,6 +623,42 @@ export class CWComplexStateEditor  {
             }
         });
     }
+    selectIndex = (dimension: number, index: number): void => {
+        const cells = this.editorState.complex.cells[dimension].filter(c => c.index === index);
+        if (cells.length === 0) {
+            console.notify(`No cells of dimension ${dimension} and index ${index} found`);
+            return;
+        }
+        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
+
+            const newSelected = new Set(selectedKeys);
+            cells.forEach(c => newSelected.add(c.key));
+            // this.selected_ = transferSelected(complex, newSelected);
+            return {
+                history: history,
+                complex: complex,
+                selectedKeys: newSelected,
+                meta,
+                lastSelect
+            }
+        });
+    }
+    deselectIndex(dimension: number, index: number): void {
+        const cells = this.editorState.complex.cells[dimension].filter(c => c.index === index);
+        this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
+
+            const newSelected = new Set(selectedKeys);
+            cells.forEach(c => newSelected.delete(c.key));
+            // this.selected_ = transferSelected(complex, newSelected);
+            return {
+                history: history,
+                complex: complex,
+                selectedKeys: newSelected,
+                meta,
+                lastSelect
+            }
+        }); 
+    }
     deselectRep(key: string): void {
         this.setEditorState(({history, selectedKeys, complex, meta, lastSelect}: EditorState) => {
 

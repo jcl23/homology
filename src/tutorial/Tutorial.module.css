@@ -50,7 +50,7 @@
 }
 
 .beacon {
-    border: 2px solid red;
+    border: none;
     background: rgba(255, 157, 157, 0.5);
     position: absolute;
     left: -83px;
@@ -61,6 +61,6 @@
 
     font-weight: bold;
     top: 36px;
-    min-width: calc(443px / 2 - 10px);
+    min-width: calc(var(--left-panel-width) / 2 - 10px);
     min-height: 40px;
 }

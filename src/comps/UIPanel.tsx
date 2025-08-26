@@ -169,7 +169,7 @@ const UIPanel = (props: UIPanelProps) => {
                 <div 
                     style={{
                         width: "50px",
-                        height: "258px",
+                        height: "200px",
                         transform: "translateY(5px)",
                         position: "absolute"
                     }}

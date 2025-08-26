@@ -10,24 +10,27 @@ interface UIButtonProps {
     startIcon?: JSX.Element;
     name: string;
     style?: React.CSSProperties;
+    disabled?: boolean;
 }
 
 import styles from './UIButton.module.css';
 
-const UIButton: React.FC<UIButtonProps> = ({ onClick, selected, children, name, startIcon = null, style = {}}) => {
+const UIButton: React.FC<UIButtonProps> = ({ onClick, selected, children, name, startIcon = null, style = {}, disabled = false}) => {
     const theme = useTheme();
-    const backgroundColor = `var(--${selected ? 'selected-bg' : 'unselected-bg'})`;
+    const backgroundColor = `var(--${selected ? 'selected-bg' : 'transparent'})`;
     return (
         <button
-   
+            disabled={disabled}
             onMouseDown={onClick}
-            className={`${styles.button} ${selected ? styles.selected : styles.unselected} button-${name}` }
-      
+            className={`${selected ? styles.selected : styles.unselected} ${styles.button}  button-${name}` }
+
 
             style={{
                 ...style,
                 color: `var(--${selected ? 'selected-fg' : 'unselected-fg'})`,
                 backgroundColor,
+                filter: disabled ? 'opacity(0.4)' : 'none',
+                cursor: disabled ? 'not-allowed' : 'pointer',
             }}
         >
             {children}

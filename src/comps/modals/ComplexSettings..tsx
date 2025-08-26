@@ -6,6 +6,7 @@ import { defaultComplex, complexes, Preset } from "../../data/presets";
 import { ComplexMeta, CWComplex } from "../../math/CWComplex";
 import { CWComplexStateEditor, makeDefaultMeta } from "../../hooks/useCWComplexEditor";
 import { FileOpen, FolderOpen, Settings } from "@mui/icons-material";
+import UIButton from "../../icon/UIButton";
 
 type ComplexSettingsProps = {
     complexEditor: CWComplexStateEditor;
@@ -125,17 +126,18 @@ export const ComplexSettings = function({
 
     return (
         <>
-        <button
-            className={styles.button} 
+        <UIButton
+            name="cfg"
+            selected={false}
             onClick={openModal}
+            disabled={true}
         >
             <div>
                 <div style={{marginLeft: "3px"}}>
                     <Settings />
                 </div>
-                cfg
             </div>
-        </button>
+        </UIButton>
         { showModal && wholeModal }
         </>
     );

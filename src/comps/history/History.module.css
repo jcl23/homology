@@ -1,6 +1,8 @@
 .historyOuter {
     width: 100%;
-    border: 1px solid grey;
+    border-color: grey;
+    border-style: solid;
+    border-width: 0px 0px 1px 0px;;
     margin-bottom: 15px;
     height: 70px;
     display: flex;

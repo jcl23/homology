@@ -5,7 +5,13 @@
     width: min-content;
     height: 100%;
     display: flex;
-    padding-bottom: 11px;
+    border-color: grey;
+    border-style: solid;
+    border-width: 0px 1px;
+    padding: 0px 0px 10px 10px;
+    margin-left: -5
+    px;
+    margin-right: 10px;
 }
 
 .buttonColumn {
@@ -14,7 +20,7 @@
     justify-content: baseline;
     align-items: center;
     width: min-content;
-    min-width: 75px;
+    padding: 0px;
     height: 100%;
     vertical-align: top;
 }

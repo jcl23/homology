@@ -6,6 +6,7 @@ import { defaultComplex, complexes, Preset } from "../../data/presets";
 import { CWComplex } from "../../math/CWComplex";
 import { CWComplexStateEditor } from "../../hooks/useCWComplexEditor";
 import { FileOpen, FolderOpen } from "@mui/icons-material";
+import UIButton from "../../icon/UIButton";
 
 type LoadComplexProps = {
     setPreset: (p: Preset) => void;
@@ -50,17 +51,18 @@ export const LoadComplex = function({
 
     return (
         <>
-        <button
-            className={styles.button} 
+        <UIButton
+            disabled={true}
+            name="load"
+            selected={false}
             onClick={() => { setShowModal(true); }}
         >
             <div>
                 <div style={{marginLeft: "3px"}}>
                     <FolderOpen />
                 </div>
-                load
             </div>
-        </button>
+        </UIButton>
         { showModal && wholeModal }
         </>
     );

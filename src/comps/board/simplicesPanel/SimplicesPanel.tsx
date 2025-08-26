@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { AbstractCell } from "../../../math/classes/cells";
-import { CWComplex, getBoundary, printChain } from "../../../math/CWComplex";
 import SimplexData from "./SimplexData";
 import styles from './SimplicesPanel.module.css';
 import { CWComplexStateEditor } from "../../../hooks/useCWComplexEditor";
@@ -28,19 +27,20 @@ const SimplicesPanel = ({
     }: SimplicesPanelProps) => {
         // debugger;
 
-    const [ { showIdentifiedCells}, set ] = useControls(() => ({
+    const [ { showIdentifiedCells: useID }, set ] = useControls(() => ({
         showIdentifiedCells: true
     }));
     const [vertices, edges, faces, balls] = [0, 1, 2, 3].map(dim => {
         const allCells = complexEditor.cells[dim];
         // return unique by index
-        if (showIdentifiedCells) return allCells;
+        if (useID) return allCells;
         return allCells.filter((cell, i, arr) => arr.findIndex(c => c.index === cell.index) === i);
     });
     // no buttons, just click the rows
     useEffect(() => {
         console.log("again")
     }, [complexEditor.selected, complexEditor.currentComplex]);
+    
     const toggleCellSelection = (cell: AbstractCell) => {
         console.log("Currently selected cells: ", complexEditor);
         const cellIsSelected = complexEditor.selected.has(cell);
@@ -49,10 +49,21 @@ const SimplicesPanel = ({
         // don't use .has because it compared by identity not contents
         if (cellIsSelected) {
             console.notify("Unselecting")
-            complexEditor.deselectRep(cell.key);
+            if (useID) {
+                complexEditor.deselectRep(cell.key);
+            } else {
+                complexEditor.deselectIndex(cell.dimension, cell.index);
+            }
             // unselectRep(cell.key);
         } else {
-            complexEditor.selectRep(cell.key);
+            console.notify("Selecting")
+            if (useID) {
+                complexEditor.selectRep(cell.key);
+            } else {
+                complexEditor.selectIndex(cell.dimension, cell.index);
+            }
+            // selectRep(cell.key);
+
         }
     }
 //    const [viewMode, setViewMode] = useState<"index" | "id">("id");
@@ -65,29 +76,34 @@ const SimplicesPanel = ({
         : balls.length === 0 ? 2
         : 3;
     const doSplit = totalNumCells > MAX_CELLS_BEFORE_SPLIT;
-    const sliderPinLeft = !showIdentifiedCells ? "0" : "calc(100% - 16px)";
+    const sliderPinLeft = !useID ? "0" : "calc(100% - 16px)";
 
     return (
         <div className={styles.panel}>
-            <div className={styles.header} style={{ height: "30px", border: "1px solid red", padding: '5px', marginBottom: '10px', display: "flex", }}>
+            <div className={styles.header} style={{
+                
+                height: "30px", border: "1px solid red", padding: '5px', marginBottom: '10px',
+                 display: "none", 
+                //  display: "flex", 
+                 }}>
                     <div>Index</div>
                     <div style={{
                         width: "50px", height: "100%",
-                        border: "1px solid black", backgroundColor: showIdentifiedCells ? "var(--selected-bg)" : "var(--unselected-bg)",
+                        border: "1px solid black", backgroundColor: useID ? "var(--selected-bg)" : "var(--unselected-bg)",
                         transition: "background-color 0.15s",
                         left: "calc(100% - 50px)",
                         
                         
                         
                     }}
-                    onClick={() => { set({ showIdentifiedCells: !showIdentifiedCells }) } }
+                    onClick={() => { set({ showIdentifiedCells: !useID }) } }
                     >
                         <div style={{
                             height: "100%",
                             aspectRatio: "1",
                             left: sliderPinLeft,
                             position: "relative",
-                            backgroundColor: showIdentifiedCells ? "var(--selected-fg)" : "var(--unselected-fg)",
+                            backgroundColor: useID ? "var(--selected-fg)" : "var(--unselected-fg)",
                             transition: "left 0.15s, background-color 0.15s"
                         }} />
                     </div>
@@ -174,38 +190,3 @@ const SimplicesPanel = ({
 
 export default SimplicesPanel;
 
-/* const describeBoundary = (cell: AbstractCell) => {
-        if (cell.dimension === 0) {
-            return "0";
-        }
-        if (cell.dimension > 0) {
-            const boundary = getBoundary(complex, [{dimension: cell.dimension, index: cell.index, sign: 1}]);
-            return printChain(complex, boundary);
-        }
-        return "";
-    }
-
-    const describeCoboundary = (cell: AbstractCell) => {
-        return cell.cob.map(c => c.name).join(", ");
-    }
-    const describeCell = (cell: AbstractCell) => {
-        if (cell.dimension === 0) {
-            return `${cell.id}`;
-        }
-        if (cell.dimension > 0) {
-
-            //return getVertices(cell).map(vertex => vertex.point).join(", ");
-            // let edgeString = edges.reduce((acc: string, edge: AbstractEdge, i: number, arr: AbstractEdge[]) => {
-            //     const leastIndex = edge.attachingMap.reduce((acc, vertex) => Math.min(acc, vertex.index), Infinity);
-            //     const orientationSymbol = (leastIndex % 2) == 0 ? "+" : "-";
-            //     return acc + " " + orientationSymbol + (edge?.name as any ?? "") ;
-            // }, "")
-            // remoive leading plus if it's there
-            const boundary = getBoundary(complex, [{dimension: cell.dimension, index: cell.index, sign: 1}]);
-            const boundaryExpression = printChain(complex, boundary);
-            const boundarySquared = getBoundary(complex, boundary);
-            const boundarySquaredExpression = printChain(complex, boundarySquared);
-            return `∂${cell.name} =  ${boundaryExpression}, ∂∂${cell.name} = ${boundarySquaredExpression}`; ;
-        }
-        return `${cell.id} = `;
-    }*/
