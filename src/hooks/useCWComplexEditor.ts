@@ -245,6 +245,7 @@ export class CWComplexStateEditor  {
         this.setEditorState((editorState: EditorState) => {
             return {
                 ...editorState,
+                freezeIndex: -1,
                 history: [{ 
                     type: "start", 
                     step: () => {}, 
