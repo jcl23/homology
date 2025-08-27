@@ -25,8 +25,7 @@ export const ComplexEdges = ({ mode, edges, selectedReps, toggleRepSelection, sh
     });
     // const [hovered, setHovered] = useState<AbstractEdge | null>(null);
     const [hovered, setHovered] = useState<AbstractEdge | null>(null);
-    const { size } = useThree();
-    const aspectRatio = Math.max(size.width, 700) / size.height;
+    // const aspectRatio = Math.max(size.width, 700) / size.height;
     const meshRef = useRef<Mesh>(null);
     
     const meshes: Mesh[] = [];
@@ -80,7 +79,7 @@ export const ComplexEdges = ({ mode, edges, selectedReps, toggleRepSelection, sh
                             scale={1}
                             selected={isSelected}
                             object={mesh}
-                            aspectRatio={aspectRatio}
+                            // aspectRatio={aspectRatio}
                             showArrows={showArrows}
                         />
                         <primitive 

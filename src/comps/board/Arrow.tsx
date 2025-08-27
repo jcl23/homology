@@ -2,6 +2,8 @@
 import * as THREE from "three";
 import React, { useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
+import { Html } from "@react-three/drei";
+import { H } from "vitest/dist/chunks/environment.d.cL3nLXbE.js";
 
 // Create an arrow texture
 const makeArrowGeometry = (length, showArrows, width = 0.6, height = 0.3, thickness = 0.07) => {
@@ -96,7 +98,7 @@ const selectedBg = computedStyles.getPropertyValue("--selected-bg").trim();
 const vecToScreen = function(v: THREE.Vector3, camera: THREE.Camera, aspect: number) {
   const vScreen = v.clone().project(camera);
   return new THREE.Vector3(
-    (vScreen.x + 1) / 2 *aspect,
+    (vScreen.x + 1) / 2 * aspect,
     (1 - (vScreen.y + 1) / 2) * 1,
     vScreen.z
   );
@@ -107,10 +109,11 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
   scale = 0.5,
   selected = false,
   object,
-  aspectRatio,
   opacity = 1,
   showArrows = true
 }) => {
+  const { size } = useThree();
+  
   const { camera } = useThree();
   const spriteRef = useRef<THREE.Sprite>(null);
 
@@ -118,12 +121,16 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
   const color = selected ? selectedBg : unselectedFg;
   const length = start.distanceTo(end);
 
+  let lengthProj = 0;
+  // const htmlRef = useRef<HTMLDivElement>(null);
+  useFrame(() => {
+    
+  const aspectRatio = size.width / size.height;
+
   const startOnScreen = vecToScreen(start, camera, aspectRatio);
   const endOnScreen = vecToScreen(end, camera, aspectRatio);
 
-  const lengthProj = startOnScreen.distanceTo(endOnScreen);
-
-  useFrame(() => {
+    lengthProj = startOnScreen.distanceTo(endOnScreen);
     const sprite = spriteRef.current;
     if (!sprite) return;
   
@@ -147,10 +154,6 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
     const projCenter = startProj.clone().add(endProj).multiplyScalar(0.5);
 
     // const projLength = startProj.distanceTo(endProj);
-    const startOnScreen = vecToScreen(start, camera, aspectRatio);
-    const endOnScreen = vecToScreen(end, camera, aspectRatio);
-
-  const lengthProj = startOnScreen.distanceTo(endOnScreen);
 
     // lift the projCenter back into the line
     // const liftedProjCenter = new THREE.Vector3(
@@ -160,8 +163,9 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
     // );
 
     //const aspectRatio = 2.06;
-    const dx = (endProj.x - startProj.x) * aspectRatio;
-    const dy = endProj.y - startProj.y;
+    const windowZoom = window.devicePixelRatio;
+    const dx = (endProj.x - startProj.x);
+    const dy = (endProj.y - startProj.y)/aspectRatio;
 
     const angle = Math.atan2(dy, dx);
 
@@ -173,24 +177,32 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
     const v1 = new THREE.Vector3();
     camera.getWorldDirection(v1);
     const v2 = camera.position.clone().sub(center);
-    const angleDist = v1.angleTo(v2);
-    const scale = 670 / camera.zoom; // Adjust scale based on distance from camera
-    sprite.geometry = makeArrowGeometry(lengthProj * scale, showArrows);
+    const scale = 700 / windowZoom / camera.zoom; // Adjust scale based on distance from camera
+    const d = lengthProj * scale;
+    sprite.geometry = makeArrowGeometry(d, showArrows);
 
     sprite.material.rotation = angle;
-
+    // htmlRef.current!.innerText = `
+    //   iw...${window.innerWidth}
+    //   ar:${aspectRatio.toFixed(2)}
+    //   d:${d}
+    //   lengthProj:${lengthProj.toFixed(2)}
+    //   start: ${vec2str(startOnScreen)}
+    //   end: ${vec2str(endOnScreen)}
+    //   windowZoom: ${windowZoom}
+    //   ${window.innerWidth * window.innerHeight}
+    // `;
   });
-
   
-  const vec2str = (v) => `(${v.x.toFixed(2)}, ${v.y.toFixed(2)}, ${v.z.toFixed(2)})`;
+  const vec2str = (v) => `(${v.x.toFixed(2)},${v.y.toFixed(2)},${v.z.toFixed(2)})`;
   /*
     // render order
     Board
     Cells
   */
 
-  console.log("ProjLength", lengthProj, vec2str(startOnScreen), vec2str(startOnScreen), );
-  return (
+ return (
+    <>
     <sprite
       geometry={makeArrowGeometry(1, showArrows)}
       ref={spriteRef}
@@ -203,6 +215,12 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
         color={color}
         opacity={opacity}
       />
+    {/* <Html ref={htmlRef} style={{width: 0, height: 0, pointerEvents: 'none', userSelect: 'none', fontSize: '15px', color: 'red', }} position={center} center>
+      {lengthProj}
+
+    </Html> */}
     </sprite>
+  
+      </>
   );
 };
