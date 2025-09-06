@@ -58,7 +58,7 @@
     text-rendering: geometricPrecision;
     font-size: large;
     color: rgb(110, 11, 11);
-
+    z-index: -1!important;
     font-weight: bold;
     top: 28px;
     min-width: calc(var(--left-panel-width) / 2 - 20px);

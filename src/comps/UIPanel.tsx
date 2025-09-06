@@ -179,9 +179,9 @@ const UIPanel = (props: UIPanelProps) => {
 
                 {/* LEFT COLUMN */}
                 <VertexAddButton selected={editMode == "add"} onClick={() => { complexEditor.deselectAll(); setEditMode("add")} }/>              
-                <SelectButton selected={editMode == "select"} onClick={() => { complexEditor.deselectAll(); setEditMode("select")} }/>
-
-                <MoveButton selected={editMode == "move"} onClick={() => { complexEditor.deselectAll(); setEditMode("move")} }/>
+                <SelectButton selected={editMode == "select"} onClick={() => {  setEditMode("select")} }/>
+                <div className="add_and_select" style={{marginLeft: "-5px", marginTop: "10px", position: "absolute", height: "124px", pointerEvents:"none", width: "50px"}}></div>
+                <MoveButton selected={editMode == "move"} onClick={() => { setEditMode("move")} }/>
 
                 <TrashButton selected={editMode == "remove"} onClick={() => { complexEditor.deleteCells();} }/>
 

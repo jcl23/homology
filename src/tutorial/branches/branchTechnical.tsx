@@ -83,7 +83,7 @@ export default  [
         content: 'Press undo (or Ctrl + Z) to undo the most recent step, removing the face.',
     },
     {
-        target: '.button-add, .canvas',
+        target: '.add_and_select, .canvas',
         pass: ({  complexEditor }: TutorialStepConditionProps) => {
             const { editorState, selected } = complexEditor;
             if (editorState.complex.cells[0].length <= 3) return false;

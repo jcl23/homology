@@ -120,7 +120,7 @@ export const DimensionLayer = ({dimension, matrixOut, ...groups}: DimensionLayer
     const bStroke = "white";
     const zeroFill = "black";
     return (
-        <div className={styles.homologyLayer} style={{zIndex: dimension}} onClick={() => setShowMatrix(!showMatrix)}>
+        <div className={styles.homologyLayer} style={{zIndex: 0}} onClick={() => setShowMatrix(!showMatrix)}>
             { showMatrix && <MatrixPanel namedMatrix={matrixOut} name={`∂_${dimension}`} hide={() => setShowMatrix(false)}/> }
             <svg style={{opacity: 1}} width={totalWidth} height={totalHeight}>
                 <defs>

@@ -16,29 +16,30 @@ export const examples: Example[] = [
         setter: Tetra
     },
     { 
-        name: "Klein Bottle", 
-        description: "A Klein bottle as a quotient of a square. ", 
-        image: "", 
-        setter: KleinBottle 
-    },
-    { 
-        name: "RP2", 
-        description: "The real projective plane as a quotient of a square.", 
-        image: "", 
-        setter: RP2 
-    },
-    { 
-        name: "Sphere", 
+        name: "Sphere (Glued Square)", 
         description: "description 7", 
         image: "", 
         setter: Sphere 
     },
     { 
-        name: "Klein Bottle 2", 
+        name: "Klein Bottle (Glued Square)", 
+        description: "A Klein bottle as a quotient of a square. ", 
+        image: "", 
+        setter: KleinBottle 
+    },
+    { 
+        name: "Klein Bottle (Glued Tetra)", 
         description: "description 8", 
         image: "", 
         setter: KleinBottle2 
     },
+    { 
+        name: "Projective Plane", 
+        description: "The real projective plane as a quotient of a square.", 
+        image: "", 
+        setter: RP2 
+    },
+
     { 
         name: "Triangle Parachute", 
         description: "Hatcher 2.1.4", 

@@ -129,7 +129,7 @@
 }
 /* Overlay styling */
 .react-joyride__overlay {
-    background-color: rgba(0, 0, 0, 0.4) !important;
+    background-color: var(--modal-bg) !important;
     clip: revert-layer;
     clip-path: polygon(evenodd, var(--s) var(--s), calc(100% - var(--s)) var(--s), calc(100% - var(--s)) calc(100% - var(--s)), var(--s) calc(100% - var(--s)), var(--s) var(--s), var(--shape)) content-box;
     --s: -20px;

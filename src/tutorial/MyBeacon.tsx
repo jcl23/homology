@@ -8,7 +8,8 @@ const MyBeacon = forwardRef<HTMLButtonElement, BeaconRenderProps>((props, ref) =
     className={styles.beacon} 
     // ref={ref} 
     
-    {...props}>
+    {...props}
+    style={{zIndex: "display:none!important"}}>
       Enter Tutorial
     </button>;
 });

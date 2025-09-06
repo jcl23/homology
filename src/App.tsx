@@ -24,22 +24,11 @@ import { Download, FolderOpen } from "@mui/icons-material";
 import { downloadHistory } from "./data/download.ts";
 import { useControls } from "leva";
 import UIButton from "./icon/UIButton.tsx";
+import { KeybindsModal } from "./comps/modals/Keybinds.tsx";
+import { defaultEditOptions, defaultViewOptions, EditOptions, ViewOptions } from "./options.ts";
 
 const MAX_DIM = 3;
 
-export type EditOptions = {
-  mode: "select" | "move" | "add" | "remove";
-  selectionKey: "index" | "id";
-  gridHeight: number;
-  isMouseDown: boolean;
-  dimSelected: number;
-} 
-export type SetEditOptions = React.Dispatch<React.SetStateAction<EditOptions>>;
-export type ViewOptions = {
-  nameState: boolean[];
-  gridStyle: "triangular" | "square";
-}
-export type SetViewOptions = React.Dispatch<React.SetStateAction<ViewOptions>>;
 
 
 
@@ -47,16 +36,8 @@ function App() {
   
   
   const [allowEditing, setAllowEditing] = useState(true);
-  const [ editOptions, setEditOptions] = useState<EditOptions>({
-    mode: "select",
-    selectionKey: "index",
-    gridHeight: 0,
-    isMouseDown: false,
-    dimSelected: -1
-  });
-  const [ viewOptions, setViewOptions] = useState<ViewOptions>({
-    nameState: [true, true, true, true], gridStyle:  "square"
-  });
+  const [ editOptions, setEditOptions] = useState<EditOptions>(defaultEditOptions);
+  const [ viewOptions, setViewOptions] = useState<ViewOptions>(defaultViewOptions);
 
   const [preset, setPreset] = useState<Preset>(() => defaultComplex);
   
@@ -65,7 +46,7 @@ function App() {
   useEffect(() => {
     complexEditor.reset();
     preset(complexEditor);
-    // complexEditor.deselectAll();
+    complexEditor.deselectAll();
   }, [preset]);
 
   
@@ -78,29 +59,22 @@ function App() {
     vertexNameOpacity: { value: 1, min: 0, max: 1 },
     faceNameOpacity: { value: 1, min: 0, max: 1 },
   });
+
   useEffect(() => {
     document.documentElement.style.setProperty('--edge-name-opacity', edgeNameOpacity.toString());
-  }, [edgeNameOpacity]);
-  useEffect(() => {
     document.documentElement.style.setProperty('--vertex-name-opacity', vertexNameOpacity.toString());
-  }, [vertexNameOpacity]);
-  useEffect(() => {
     document.documentElement.style.setProperty('--face-name-opacity', faceNameOpacity.toString());
-  }, [faceNameOpacity]);
+  }, [edgeNameOpacity, vertexNameOpacity, faceNameOpacity]);
 
   return (
     <ThemeProvider theme={theme}>
       <TutorialProvider
-      // complexEditor={complexEditor}
-        // editorState={complexEditor}
         editOptions={editOptions}
         viewOptions={viewOptions}
         complexEditor={complexEditor}
       >
-
       <CssBaseline />
       <NotificationManager />
-      
       <ErrorBoundary> 
         <div className="board">
           <div className="modalHolder">
@@ -131,6 +105,7 @@ function App() {
                         
                     </div>
                     </UIButton>
+                    <KeybindsModal />
               </div>
               <UIPanel
                 complexEditor={complexEditor}
@@ -156,7 +131,7 @@ function App() {
       
       <div className="centerHolder">
         <History freezeIndex={editorState.freezeIndex} complexEditor={complexEditor} editorState={complexEditor.editorState} />
-
+                    
         <Board
           allowEditing={allowEditing} 
           viewOptions={viewOptions} 
@@ -170,22 +145,7 @@ function App() {
       </div>
       
     </div>
-     <div className={styles.keybinds}>
-          <div className={styles.keybindLabel}><div>a</div> add cell </div>
-          <div className={styles.keybindLabel}><div>s</div> select </div>
-        <div className={styles.keybindLabel}><div>m</div> trash </div>
-          <div className={styles.keybindLabel}><div>d</div> delete </div>
-          <div className={styles.keybindLabel}><div>f</div> fill </div>
-          <div className={styles.keybindLabel}><div>i</div> identify </div>
-          <div className={styles.keybindLabel}><div>[</div> lower grid </div>
-          <div className={styles.keybindLabel}><div>]</div> raise grid </div>
-
-          <div className={styles.keybindLabel}><div>ctrl</div><div>z</div> undo </div>
-          <div className={styles.keybindLabel}><div>ctrl</div><div>a</div> select all </div>
-          <div className={styles.keybindLabel}><div>ctrl</div><div>d</div> deselect all </div>
-          <div className={styles.keybindLabel}><div>c</div> clear selection</div>
-          <div className={styles.keybindLabel}><div>ctrl</div><div>g</div> toggle grid style</div>
-        </div>
+        
     </ErrorBoundary>
       </TutorialProvider>
       </ThemeProvider>

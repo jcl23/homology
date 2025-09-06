@@ -165,7 +165,7 @@ export const Scene = ({ stepIndex, editComplex, viewOptions, complex, editOption
                 />
             </>
         )
-    }, [stepIndex, selectedReps.length, editComplex.recentlySelected.lastClickedDepth]);
+    }, [stepIndex, editComplex.meta.name, selectedReps.length, editComplex.recentlySelected.lastClickedDepth]);
 
     const boardColor = computedStyles.getPropertyValue("--board-color").trim();
     const boardOpacity = +computedStyles.getPropertyValue("--board-opacity").trim();

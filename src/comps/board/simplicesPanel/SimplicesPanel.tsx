@@ -135,7 +135,9 @@ const SimplicesPanel = ({
                     ))}
 
             </div>
-            {`(${doSplit ? [vertices, edges, faces, balls][selectedDim].length : totalNumCells} cells)`}
+            <h4>
+                {`(${doSplit ? [vertices, edges, faces, balls][selectedDim].length : totalNumCells} cells)`}
+                </h4>
             {/* <table cellSpacing={0} cellPadding={2} className={styles.table}>
                 <thead>
                     <tr>

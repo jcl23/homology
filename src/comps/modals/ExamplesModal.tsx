@@ -3,6 +3,7 @@ import styles from "./SettingsModals.module.css";
 import { examples } from "../../data/examples";
 import { CWComplexStateEditor } from "../../hooks/useCWComplexEditor";
 import { Preset } from "../../data/presets";
+import Latex from "react-latex-next";
 type ExamplesModalProps = {
 //   editor: CWComplexStateEditor;
     setPreset: (preset: Preset) => void; // Adjust type as needed
@@ -30,19 +31,29 @@ export const ExamplesModal: React.FC<ExamplesModalProps> = ({ setPreset }) => {
             // className="react-joyride__tooltip"
             
             >
-            <div style={{ marginBottom: "16px" }}>
-                <strong>Examples Modal</strong>
-            </div>
+            <div className={styles.header}>
+          <div className={styles.headerLeft}></div>
+          <div className={styles.headerCenter}>Examples</div>
+          <div
+            className={styles.headerRight}
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpen(false);
+            }}
+          >
+            <span className={styles.closeButton}>×</span>
+          </div>
+        </div>
                 <div className={styles.examplesBody} >
                     <div className={styles.examplesColumn}>
                         {/* Left column content */}
                         {evens.map((example, index) => (
                             <div key={index} className={styles.exampleItem} onClick={() => {
-                                        setPreset(() => example.setter);
-                                        setOpen(false);
-                                    }}
+                                    setPreset(() => example.setter);
+                                    setOpen(false);
+                                }}
                             >
-                                <h3>{example.name}</h3>
+                                <h3><Latex>{example.name}</Latex></h3>
                                 <div className={styles.exampleDescription}>{example.description}</div>
                             </div>
                         ))}
@@ -55,7 +66,7 @@ export const ExamplesModal: React.FC<ExamplesModalProps> = ({ setPreset }) => {
                                         setOpen(false);
                                     }}
                             >
-                                <h3>{example.name}</h3>
+                                <h3><Latex>{example.name}</Latex></h3>
                                 <div className={styles.exampleDescription}>{example.description}</div>
                             </div>
                         ))}
@@ -63,13 +74,7 @@ export const ExamplesModal: React.FC<ExamplesModalProps> = ({ setPreset }) => {
                 </div>
      
             {/* Content will go here */}
-            <button
-                className="react-joyride__beacon"
-                onClick={() => setOpen(false)}
-                style={{ marginTop: "16px" }}
-            >
-                Close
-            </button>
+            
             </div>
         </div>
       )}

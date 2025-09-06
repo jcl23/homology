@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 
 export const CameraUpdater = function() {
     const { camera, size } = useThree();
-
     useEffect(() => {
         // Update aspect ratio on window resize
         const handleResize = () => {

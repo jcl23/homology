@@ -7,17 +7,23 @@
   --unselected-bg: rgb(0, 4, 255);
   --unselected-fg: rgb(0, 0, 0);
   --unselected-mid: rgb(0, 115, 255) */
-  --selected-bg: rgb(255, 61, 67);
-  /* --selected-bg: red; */
+  
+  /* Selected */
   --selected-fg: white;
-  --unselected-bg: rgb(242, 247, 250);
+  --selected-mid: #ccc;
+  --selected-bg: rgb(255, 61, 67);
+  /* Unselected */
   --unselected-fg: rgb(0, 0, 0);
   --unselected-mid: #ddd;
-  --selected-mid: #ccc;
+  --unselected-bg: rgb(242, 247, 250);
   /* Board */
   --board-color: white;
   --board-opacity: 0.5;
   --left-panel-width: 514px;
+  /* Modals */
+  --modal-bg: rgba(100,0,0,0.4);
+  --modal-fg: white;
+  /* Cells */
   --vertex-name-opacity: 1;
   --edge-name-opacity: 1;
   --face-name-opacity: 1;

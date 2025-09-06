@@ -1,0 +1,129 @@
+.keybindsModalButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+}
+
+.modalBackground {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: calc(100% + 50px); 
+  height: calc(100% + 50px);
+    backdrop-filter: blur(5px);
+
+  background: var(--modal-bg);
+  color: var(--modal-fg);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modalWindow {
+  background: var(--unselected-bg, #fff);
+  color: var(--unselected-fg, #111);
+  border-radius: 2px;
+  min-width: 420px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 12px;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.headerCenter { text-align: center; flex: 1; font-family: Helvetica Neue; }
+.headerLeft { width: 32% }
+.headerRight { width: 32%; text-align: right }
+.closeButton { cursor: pointer; }
+
+.body {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.keybindItem {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  gap: 8px;
+  color: #555;
+}
+
+.keyLabel {
+  font-weight: bold;
+  font-size: 15px;
+  background: #555;
+  color: white;
+margin-top: -2px;
+  padding: 0px 4px;
+  height: 20px;
+  line-height: 21px;
+  border-radius: 3px;
+  text-align: center;
+}
+
+.twoKeys { display: flex; gap: 6px }
+
+.button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+}
+.button:hover {
+  background: #eee;
+}
+.icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+.modalBackground {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.2);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modalWindow {
+  background: #fff;
+  border-radius: 4px;
+  min-width: 500px;
+  /* make overall modal a bit shorter so key icon divs remain small */
+  min-height: 120px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.18);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.close {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #888;
+}

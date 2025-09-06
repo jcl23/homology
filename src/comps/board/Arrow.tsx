@@ -122,15 +122,29 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
   const length = start.distanceTo(end);
 
   let lengthProj = 0;
-  // const htmlRef = useRef<HTMLDivElement>(null);
+  const htmlRef = useRef<HTMLDivElement>(null);
+  let vec1 = new THREE.Vector3();
+  let vec2 = new THREE.Vector3();
   useFrame(() => {
     
   const aspectRatio = size.width / size.height;
-
+  
   const startOnScreen = vecToScreen(start, camera, aspectRatio);
   const endOnScreen = vecToScreen(end, camera, aspectRatio);
-
-    lengthProj = startOnScreen.distanceTo(endOnScreen);
+    const cameraPointingAt = new THREE.Vector3();
+    camera.getWorldDirection(cameraPointingAt);
+    // This direction and the camera position define a plane.
+    // Find where the start and end project orthogonally.
+    // Project start/end to NDC for screen-space direction
+    const startProj = start.clone().project(camera);
+    const endProj = end.clone().project(camera);
+    lengthProj = startProj.distanceTo(endProj);
+    // Calculate length in screen space accounting for aspect ratio
+    const deltaX = endOnScreen.x - startOnScreen.x;
+    const deltaY = endOnScreen.y - startOnScreen.y;
+    // Normalize the length calculation to be consistent regardless of window size
+    lengthProj = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    
     const sprite = spriteRef.current;
     if (!sprite) return;
   
@@ -147,8 +161,8 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
         .add(end.clone().multiplyScalar(c))
     );
     // Project start/end to NDC for screen-space direction
-    const startProj = start.clone().project(camera);
-    const endProj = end.clone().project(camera);
+    // const startProj = start.clone().project(camera);
+    // const endProj = end.clone().project(camera);
     const centerDelta = center.clone().sub(camera.position);
     
     const projCenter = startProj.clone().add(endProj).multiplyScalar(0.5);
@@ -174,15 +188,19 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
 
     // console.log(`Arrow angle: ${angle}`);
     const distFromCamera = center.distanceTo(camera.position);
-    const v1 = new THREE.Vector3();
-    camera.getWorldDirection(v1);
-    const v2 = camera.position.clone().sub(center);
-    const scale = 700 / windowZoom / camera.zoom; // Adjust scale based on distance from camera
-    const d = lengthProj * scale;
+    // Apply a consistent scale factor that's independent of window dimensions
+    const scale = 1 / (windowZoom * camera.zoom); // Base scale factor
+    const baseSize = Math.min(size.width, size.height); // Use the smaller dimension for stability
+    const d = lengthProj * scale * baseSize; // Scaled length with consistent factor
+    // const v2 = camera.position.clone().sub(center);
+    // const scale = 600 / (windowZoom * camera.zoom); // Adjust scale based on distance from camera
+    // const d = lengthProj * scale;
     sprite.geometry = makeArrowGeometry(d, showArrows);
 
     sprite.material.rotation = angle;
     // htmlRef.current!.innerText = `
+    //   EOS:...${vec2str(endOnScreen)}
+    //   SOS:...${vec2str(startOnScreen)}
     //   iw...${window.innerWidth}
     //   ar:${aspectRatio.toFixed(2)}
     //   d:${d}
@@ -218,7 +236,7 @@ export const EdgeArrow: React.FC<EdgeArrowProps> = ({
     {/* <Html ref={htmlRef} style={{width: 0, height: 0, pointerEvents: 'none', userSelect: 'none', fontSize: '15px', color: 'red', }} position={center} center>
       {lengthProj}
 
-    </Html> */}
+    </Html>  */}
     </sprite>
   
       </>
